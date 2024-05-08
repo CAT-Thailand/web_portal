@@ -28,7 +28,6 @@ import MuiRating from './rating'
 import MuiSelect from './select'
 import MuiSnackbar from './snackbar'
 import MuiSwitches from './switches'
-import MuiTable from './table'
 import MuiTabs from './tabs'
 import MuiTimeline from './timeline'
 import MuiToggleButton from './toggleButton'
@@ -48,7 +47,6 @@ const Overrides = (settings: Settings) => {
 	const list = MuiList()
 	const tabs = MuiTabs()
 	const input = MuiInput()
-	const tables = MuiTable()
 	const menu = MuiMenu(skin)
 	const button = MuiButton()
 	const rating = MuiRating()
@@ -83,7 +81,6 @@ const Overrides = (settings: Settings) => {
 		button,
 		dialog,
 		rating,
-		tables,
 		avatars,
 		divider,
 		popover,

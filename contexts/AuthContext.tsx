@@ -7,7 +7,7 @@ import authConfig from '../configs/auth'
 import { Storage } from '../services/storage'
 import { UserInfoSession } from './auth'
 import { AuthValuesType, UserDataType } from './types'
-import { apiUserLogin } from '@/services/api/User/LoginApi'
+import { apiUserLogin } from '@/services/api/Employee/LoginApi'
 
 
 const defaultProvider: AuthValuesType = {

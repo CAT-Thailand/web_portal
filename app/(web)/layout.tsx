@@ -58,7 +58,7 @@ const Layout = ({ children }: any) => {
   let darkTheme = createTheme(themeOptions(settings, "dark"))
   return (
     <ThemeProvider theme={darkTheme}>
-      <div className={classes.root}>
+      <div  className={classes.root}>
         <Drawer
           className={classes.drawer}
           variant="permanent"
