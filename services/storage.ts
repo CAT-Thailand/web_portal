@@ -19,6 +19,14 @@ export class Storage {
 	public setSessionToken(value: string) {
 		sessionStorage.setItem('sessionToken', value)
 	}
+	public setExpire(value: string) {
+		sessionStorage.setItem('exp', value)
+	}
+	public getExpire() {
+		if (typeof window !== 'undefined') {
+			return sessionStorage.getItem('exp') || null
+		}
+	}
 
 	public getSessionToken() {
 		if (typeof window !== 'undefined') {

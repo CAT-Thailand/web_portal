@@ -1,84 +1,86 @@
 "use client"
-import React, { useEffect } from "react";
+import { Alert, Button, FormControl, Snackbar, TextField, createTheme, OutlinedInput, ThemeProvider, CardHeader } from '@mui/material'
+import Container from '@mui/material/Container'
+import Grid from '@mui/material/Grid'
+import React from 'react'
 
-import TextField from "@mui/material/TextField";
+import { CustomerInterface } from '@/interfaces/ICustomer'
+import { UpdateCustomer, getCustomerByID } from '@/services/Customer/CustomerService'
+import { useRouter } from 'next/navigation'
+import Layout from '@/app/(web)/layout'
 
-import Button from "@mui/material/Button";
+export default function CustomerUpdate({ params: { slug } }: { params: { slug: string } }) {
 
-import { FormControl, InputAdornment, OutlinedInput, IconButton, Container, Paper, Grid, Box, Typography, Divider, Snackbar, CardHeader, ThemeProvider } from "@mui/material";
+    let router = useRouter()
+    // List all Database
+    // Get Customer by id
+    const [customer, setCustomer] = React.useState<Partial<CustomerInterface>>({})
+    const getCustomer = async (id: string | undefined) => {
+        let res = await getCustomerByID(id)
+        if (res && res.Status !== "error") {
+            console.log(res)
+            setCustomer(res)
+            console.log("customer")
+            console.log(customer)
+        }
+    }
 
-import MuiAlert, { AlertProps } from "@mui/material/Alert";
-import {
-    createTheme,
-    SelectChangeEvent,
-} from "@mui/material";
+    React.useEffect(() => {
+        console.log("slug");
+        console.log(slug);
+        getCustomer(slug);
+    }, []);
 
-import { CustomerCreateInterface } from "@/interfaces/ICustomer";
-import { CreateCustomer } from "@/services/Customer/CustomerService";
-import { useRouter } from "next/navigation";
-import Layout from "../../layout";
-function CustomerCreate() {
-    const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-        props,
-        ref
-    ) {
-        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-    });
-    const [customer, setCustomer] = React.useState<Partial<CustomerCreateInterface>>({});
-    const [message, setAlertMessage] = React.useState("");
+    // submit
     const [success, setSuccess] = React.useState(false);
-    //check max min lenght
     const [error, setError] = React.useState(false);
-
-    //Customer Create
-    const router = useRouter()
-    //submit
+    const [message, setAlertMessage] = React.useState("");
     const submit = async () => {
-        console.log("submit 1")
+        console.log(customer)
         try {
-            console.log(customer);
-            const res = await CreateCustomer(customer);
-            console.log(res);
-    
+            let res = await UpdateCustomer(customer)
             if (res && res.Status !== "error") {
                 setAlertMessage("บันทึกข้อมูลสำเร็จ");
                 setSuccess(true);
-                setTimeout(() => {
-                    router.push("/customer");
-                }, 3000);
             } else {
                 setAlertMessage(res?.Message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
                 setError(true);
             }
+
+            setTimeout(() => {
+                router.push("/customer")
+            }, 3000)
+
+
         } catch (error) {
             console.error("Error submitting customer data:", error);
             setAlertMessage("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
             setError(true);
         }
-    };
+    }
 
-    const handleClose = (
-        event?: React.SyntheticEvent | Event,
 
-        reason?: string
-    ) => {
-        if (reason === "clickaway") {
-            return;
-        }
-
-        setSuccess(false);
-        setError(false);
-    };
-
+    // handle
     const handleInputChange = (
         event: React.ChangeEvent<{ id?: string; value: any }>
     ) => {
-        const id = event.target.id as keyof typeof CustomerCreate;
+        const id = event.target.id as keyof typeof CustomerUpdate;
 
         const { value } = event.target;
 
         setCustomer({ ...customer, [id]: value });
     };
+
+    // Change Value in Box
+    const handleChange: any = (event: React.ChangeEvent<{ name: string; value: any }>) => {
+        const name = event.target.name as keyof typeof customer;
+
+        setCustomer({
+            ...customer,
+            [name]: event.target.value
+        })
+    }
+
     let theme = createTheme({ // button theme
         palette: {
             primary: {
@@ -94,10 +96,22 @@ function CustomerCreate() {
         },
     });
 
+    const handleClose = (
+        event?: React.SyntheticEvent | Event,
+
+        reason?: string
+    ) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setSuccess(false);
+        setError(false);
+    };
+
     return (
         <Layout>
             <ThemeProvider theme={theme}>
-
                 <div
                     className="flex flex-row justify-between w-full"
                     style={{ backgroundColor: "#f8f9fa" }}
@@ -115,32 +129,31 @@ function CustomerCreate() {
                         title="Create Customer Management"
                     ></CardHeader>
                 </div>
-
-                <Container maxWidth="lg" >
+                <Container maxWidth="lg">
                     <Snackbar
                         id="success"
                         open={success}
-                        autoHideDuration={8000}
+                        autoHideDuration={4000}
                         onClose={handleClose}
                         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                     >
                         <Alert onClose={handleClose} severity="success">
-                            บันทึกข้อมูลสำเร็จ
+                            แก้ไขข้อมูลสำเร็จ
                         </Alert>
                     </Snackbar>
 
                     <Snackbar
                         id="error"
                         open={error}
-                        autoHideDuration={8000}
+                        autoHideDuration={4000}
                         onClose={handleClose}
                         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                     >
                         <Alert onClose={handleClose} severity="error">
-                            {/* บันทึกข้อมูลไม่สำเร็จ */}
                             {message}
                         </Alert>
                     </Snackbar>
+
                     <div style={{ height: `calc(130vh - 300px)`, width: "100%", marginTop: "10px" }}>
                         <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                             <Grid item xs={5}>
@@ -330,7 +343,5 @@ function CustomerCreate() {
                 </Container>
             </ThemeProvider>
         </Layout>
-
     );
 }
-export default CustomerCreate;

@@ -23,3 +23,19 @@ export interface EmployeeInterface {
   Role?: RoleInterface;
   Devision?: DevisionInterface;
 }
+
+export interface EmployeeCreateInterface {
+  Name?: string;
+
+  Phone?: string;
+  LineID?: string;
+  Email?: string;
+  StartDate: Date;
+  ProbationDate?: Date;
+  TerminationDate?: Date;
+
+  RoleID?: string;
+  DevisiontID?: string;
+  EmployeeCreatedID: string;
+  SupervisorID: string;
+}

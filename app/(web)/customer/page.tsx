@@ -9,23 +9,55 @@ import React from "react";
 
 import themeOptions from "@/@core/theme/themeOptions";
 import { useSettings } from "@/@core/hooks/useSettings";
-import { DeleteCustomerById, ListCustomers } from "@/services/api/Customer/CustomerService";
+import { DeleteCustomerById, ListCustomers, getSearchCustomer } from "@/services/Customer/CustomerService";
 import Link from "next/link";
 
 
 const useStyles = makeStyles({
-    container: {
+    root: {
         display: "flex",
-        flexDirection: "column",
-        padding: "8px",
-        backgroundColor: "#f8f9fa",
-        height: "100vh"
+    },
+    appBar: {
+        zIndex: 1200,
+    },
+    drawer: {
+        width: 120,
+        flexShrink: 0,
+    },
+    drawerPaper: {
+        width: 240,
+        background:
+            "linear-gradient(0deg, rgba(3,8,20,1) 60%, rgba(8,18,50,255) 100%)",
+    },
+    toolbar: {
+        minHeight: 64,
+    },
+    content: {
+        flexGrow: 1,
+        backgroundColor: "#eaecef",
+        // padding: 8,
+    },
+    texticon: {
+        color: "#fff",
+        textDecoration: "none",
+        fontWeight: 700,
+        fontSize: "24px"
+    },
+    footer: {
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        padding: "10px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-around",
+        width: "17%",
     },
 });
 
 
 const Customer = ({ children }: any) => {
-    // const history = useHistory();
+    const classes = useStyles();
     const { settings, saveSettings } = useSettings()
     let theme = createTheme(themeOptions(settings, "dark"))
     //Customer State
@@ -60,7 +92,24 @@ const Customer = ({ children }: any) => {
         setOpenDelete(false)
 
     }
+    const [searchValue, setSearchValue] = React.useState<string>("")
+    const handleInputChange = (
+        event: React.ChangeEvent<{ value: any }>
+    ) => {
 
+        const { value } = event.target;
+        setSearchValue(value);
+    };
+
+    const handleSearch = async () => {
+        let res = await getSearchCustomer(searchValue)
+        if (res) {
+            console.log(res)
+        } else {
+            console.log(res)
+        }
+        setCustomer(res);
+    }
 
     const handleDialogDeleteOpen = (ID: string) => {
         setDeleteID(ID)
@@ -81,6 +130,7 @@ const Customer = ({ children }: any) => {
 
 
     return (
+
         <Layout>
 
             <div
@@ -119,12 +169,15 @@ const Customer = ({ children }: any) => {
                                     size="small"
                                     label="Search Name, Email"
                                     variant="outlined"
+                                    value={searchValue|| ""}
+                                    onChange={handleInputChange}
+    
                                 />
                             </Grid>
                             <Grid className="flex justify-center flex-col-reverse" sx={{ paddingTop: "4px" }} xs={0.5}>
                                 <Button
                                     variant="contained"
-                                    //   onClick={handleSearch}
+                                    onClick={() => { handleSearch() }}
                                     style={{
                                         borderRadius: "0px 10px 10px 0px",
                                         height: "100%",
@@ -192,19 +245,19 @@ const Customer = ({ children }: any) => {
                                             key={item.Id}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
-                                            <TableCell align="center">{item.CompanyName}</TableCell>
-                                            <TableCell align="center">{item.ContactPerson}</TableCell>
-                                            <TableCell align="center">{item.ContactNumber}</TableCell>
-                                            <TableCell align="center">{item.ContactEmail}</TableCell>
-                                            <TableCell align="center">{item.ContactLineID}</TableCell>
-                                            <TableCell align="center">{item.GoogleMapURL}</TableCell>
-                                            <TableCell style={{ width: "400px" }} align="center">{item.Address}</TableCell>
-                                            <TableCell align="center">{item.Description}</TableCell>
-                                            <TableCell align="center">{item.TagGroupCustomer}</TableCell>
-                                            <TableCell align="center">{item.TaxNumber}</TableCell>
+                                            <TableCell align="center">{item.CompanyName || "-"}</TableCell>
+                                            <TableCell align="center">{item.ContactPerson || "-"}</TableCell>
+                                            <TableCell align="center">{item.ContactNumber || "-"}</TableCell>
+                                            <TableCell align="center">{item.ContactEmail || "-"}</TableCell>
+                                            <TableCell align="center">{item.ContactLineID || "-"}</TableCell>
+                                            <TableCell align="center">{item.GoogleMapURL || "-"}</TableCell>
+                                            <TableCell style={{ width: "400px" }} align="center">{item.Address || "-"}</TableCell>
+                                            <TableCell align="center">{item.Description || "-"}</TableCell>
+                                            <TableCell align="center">{item.TagGroupCustomer || "-"}</TableCell>
+                                            <TableCell align="center">{item.TaxNumber || "-"}</TableCell>
                                             <TableCell>
                                                 {
-                                                    <Link href={"/route?id="+ item.Id}>
+                                                    <Link href={"/customer/update/" + item.Id}>
                                                         <Button
                                                             variant='outlined'
                                                             color='warning'

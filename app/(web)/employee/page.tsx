@@ -6,7 +6,7 @@ import Layout from "../layout";
 import { EmployeeInterface } from "@/interfaces/IEmployee";
 
 import React from "react";
-import { DeleteEmployeeById, ListEmployees } from "@/services/api/Employee/EmployeeServices";
+import { DeleteEmployeeById, ListEmployees } from "@/services/Employee/EmployeeServices";
 import themeOptions from "@/@core/theme/themeOptions";
 import { useSettings } from "@/@core/hooks/useSettings";
 import { BrowserRouter as Router } from 'react-router-dom';

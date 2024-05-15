@@ -1,18 +1,18 @@
 "use client"
 import { useSettings } from "@/@core/hooks/useSettings";
 import themeOptions from "@/@core/theme/themeOptions";
-import { useAuthens } from "@/contexts/useAuthen";
+
 import { Box, Typography, createTheme } from "@mui/material";
 import Paper from '@mui/material/Paper'
 import { Button, Checkbox, CssBaseline, FormControlLabel, Grid, TextField, ThemeProvider } from "@mui/material";
-// import { useUserContext } from "@/contexts/hook";
 import React, { useContext, useState } from "react";
-import { AuthContext, AuthProvider } from "@/contexts/AuthContext";
+import { useAuthens } from "@/contexts/useAuthen";
+// import { useCookies } from 'next-client-cookies';
+
 
 
 const LoginPage = () => {
   const { login } = useAuthens();
-  // const { login } = useContext(AuthContext)
   const { settings, saveSettings } = useSettings()
   let darkTheme = createTheme(themeOptions(settings, "dark"))
   const [email, setEmail] = useState<string>("");
@@ -44,14 +44,14 @@ const LoginPage = () => {
     setSuccess(false);
     setError(false);
   };
-
+ 
   const submit = async () => {
 
     console.log("logging in")
     console.log(email)
     console.log(password)
     await login(email, password);
-
+    
   };
   return (
 

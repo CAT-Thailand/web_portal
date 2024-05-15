@@ -14,6 +14,7 @@ export interface CustomerInterface {
   TaxNumber?: string;
   CreateDate?: Date;
   UpdateDate?: Date;
+  EmployeeCreatedID?: string;
 }
 
 export interface CustomerCreateInterface {

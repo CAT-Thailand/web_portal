@@ -1,4 +1,4 @@
-import { UserRole } from "@/services/api/api"
+import { UserRole } from "@/services/api"
 
 
 export type ErrCallbackType = (err: { [key: string]: string }) => void
@@ -17,8 +17,8 @@ export type UserDataType = {
 	email: string
 	employeeID: string
 	exp: number
-	name: number
-	roleName: UserRole
+	name: string
+	roleName: string
 }
 
 export type AuthValuesType = {

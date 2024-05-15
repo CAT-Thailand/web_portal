@@ -9,7 +9,7 @@ export async function ListCustomers() {
         }
     };
 
-    let res = await axios.get(`/customer/list`, reqOpt)
+    let res = await axios.get(`/api/customer/list`, reqOpt)
         .then((res) => {
             if (res.data) {
                 return res.data.Data
@@ -28,7 +28,24 @@ export async function getCustomerByID(id: string | undefined) {
         }
     };
 
-    let res = await axios.get(`/customer/${id}`, reqOpt)
+    let res = await axios.get(`/api/customer/${id}`, reqOpt)
+    if (res.data) {
+        return res.data.Data
+    } else {
+        return false
+    }
+
+}
+
+export async function getSearchCustomer(searchValue: string | undefined) {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/customer/search/${searchValue}`, reqOpt)
     if (res.data) {
         return res.data.Data
     } else {
@@ -44,7 +61,7 @@ export async function DeleteCustomerById(id: string) {
         }
     };
 
-    let res = await axios.post(`/customers/list`, reqOpt)
+    let res = await axios.post(`/api/customers/list`, reqOpt)
     if (res.data) {
         return res.data
     } else {
@@ -75,7 +92,7 @@ export async function CreateCustomer(customer: Partial<CustomerCreateInterface>)
             },
         };
 
-        const res = await axios.post(`/customer/create`, data, reqOpt);
+        const res = await axios.post(`/api/customer/create`, data, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -111,7 +128,7 @@ export async function UpdateCustomer(customer: Partial<CustomerInterface>) {
             },
         };
 
-        const res = await axios.post(`/customer/update`, data, reqOpt);
+        const res = await axios.patch(`/api/customer/update`, data, reqOpt);
 
         if (res.data) {
             return res.data;
