@@ -102,13 +102,19 @@ const Customer = ({ children }: any) => {
     };
 
     const handleSearch = async () => {
-        let res = await getSearchCustomer(searchValue)
-        if (res) {
-            console.log(res)
+        if (searchValue == "") {
+            getCustomer()
         } else {
-            console.log(res)
+            let res = await getSearchCustomer(searchValue)
+            if (res) {
+                console.log(res)
+            } else {
+                console.log(res)
+            }
+            setCustomer(res);
+
         }
-        setCustomer(res);
+
     }
 
     const handleDialogDeleteOpen = (ID: string) => {
@@ -169,9 +175,9 @@ const Customer = ({ children }: any) => {
                                     size="small"
                                     label="Search Name, Email"
                                     variant="outlined"
-                                    value={searchValue|| ""}
+                                    value={searchValue || ""}
                                     onChange={handleInputChange}
-    
+
                                 />
                             </Grid>
                             <Grid className="flex justify-center flex-col-reverse" sx={{ paddingTop: "4px" }} xs={0.5}>
@@ -223,18 +229,19 @@ const Customer = ({ children }: any) => {
                             <Table aria-label="simple table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell align="center"> Name </TableCell>
-                                        <TableCell align="center"> ContactPerson </TableCell>
-                                        <TableCell align="center"> Phone </TableCell>
-                                        <TableCell align="center"> Email </TableCell>
-                                        <TableCell align="center"> LineID </TableCell>
-                                        <TableCell align="center" style={{ width: "400px" }}> MapURL </TableCell> {/* Adjusted width */}
-                                        <TableCell align="center" style={{ width: "50" }}> Address </TableCell> {/* Adjusted width */}
-                                        <TableCell align="center"> Description </TableCell>
-                                        <TableCell align="center"> TagGroupCustomer </TableCell>
-                                        <TableCell align="center"> TaxNumber </TableCell>
-                                        <TableCell align="center"> Edit </TableCell>
-                                        <TableCell align="center"> Delete </TableCell>
+                                        <TableCell align="center" width="15%"> Name </TableCell>
+                                        <TableCell align="center" width="12%"> ContactPerson </TableCell>
+                                        {/* <TableCell align="center"> Phone </TableCell> */}
+                                        {/* <TableCell align="center"> Email </TableCell> */}
+                                        {/* <TableCell align="center"> LineID </TableCell> */}
+                                        <TableCell align="center" width="28%"> MapURL </TableCell> {/* Adjusted width */}
+                                        {/* <TableCell align="center" style={{ width: "50" }}> Address </TableCell> Adjusted width */}
+                                        {/* <TableCell align="center"> Description </TableCell> */}
+                                        <TableCell align="center" width="10%"> TagGroupCustomer </TableCell>
+                                        <TableCell align="center" width="10%"> TaxNumber </TableCell>
+                                        <TableCell align="center" width="5%"> contract </TableCell>
+                                        <TableCell align="center" width="5%"> View </TableCell>
+                                        <TableCell align="center" width="5%"> Delete </TableCell>
 
                                     </TableRow>
                                 </TableHead>
@@ -245,16 +252,39 @@ const Customer = ({ children }: any) => {
                                             key={item.Id}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
-                                            <TableCell align="center">{item.CompanyName || "-"}</TableCell>
+                                            <TableCell align="left">{item.CompanyName || "-"}</TableCell>
                                             <TableCell align="center">{item.ContactPerson || "-"}</TableCell>
-                                            <TableCell align="center">{item.ContactNumber || "-"}</TableCell>
-                                            <TableCell align="center">{item.ContactEmail || "-"}</TableCell>
-                                            <TableCell align="center">{item.ContactLineID || "-"}</TableCell>
-                                            <TableCell align="center">{item.GoogleMapURL || "-"}</TableCell>
-                                            <TableCell style={{ width: "400px" }} align="center">{item.Address || "-"}</TableCell>
-                                            <TableCell align="center">{item.Description || "-"}</TableCell>
+                                            {/* <TableCell align="center">{item.ContactNumber || "-"}</TableCell> */}
+                                            {/* <TableCell align="center">{item.ContactEmail || "-"}</TableCell>
+                                            <TableCell align="center">{item.ContactLineID || "-"}</TableCell> */}
+                                            <TableCell align="center">{item.GoogleMapURL ? (
+                                                <a href={item.GoogleMapURL} target="_blank" rel="noopener noreferrer">
+                                                    {item.GoogleMapURL}
+                                                </a>
+                                            ) : (
+                                                "-"
+                                            )}</TableCell>
+                                            {/* <TableCell style={{ width: "400px" }} align="center">{item.Address || "-"}</TableCell> */}
+                                            {/* <TableCell align="center">{item.Description || "-"}</TableCell> */}
                                             <TableCell align="center">{item.TagGroupCustomer || "-"}</TableCell>
                                             <TableCell align="center">{item.TaxNumber || "-"}</TableCell>
+                                            <TableCell>
+                                                {
+                                                    <Link href={"/customer/contract/create/" + item.Id}>
+                                                        <Button
+                                                            variant='outlined'
+                                                            color='warning'
+                                                            sx={{
+                                                                maxWidth: 75, // Set the maximum width of the button
+                                                                maxHeight: 60, // Set the maximum height of the button
+                                                            }}
+                                                        >
+                                                            create-contact
+                                                        </Button>
+                                                    </Link>
+
+                                                }
+                                            </TableCell>
                                             <TableCell>
                                                 {
                                                     <Link href={"/customer/update/" + item.Id}>
@@ -266,7 +296,7 @@ const Customer = ({ children }: any) => {
                                                                 maxHeight: 60, // Set the maximum height of the button
                                                             }}
                                                         >
-                                                            Update
+                                                            View
                                                         </Button>
                                                     </Link>
 

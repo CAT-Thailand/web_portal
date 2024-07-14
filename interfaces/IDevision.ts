@@ -1,4 +1,4 @@
-export interface DevisionInterface {
-    Id?: string;
+export interface DivisionInterface {
+    Id?: number;
     Name?: string;
 }

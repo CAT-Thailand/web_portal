@@ -1,4 +1,4 @@
-export interface RoleInterface {
+export interface SlaInterface {
     Id?: number;
     Name?: string;
 }

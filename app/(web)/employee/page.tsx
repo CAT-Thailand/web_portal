@@ -75,7 +75,7 @@ const Employee = ({ children }: any) => {
 
     const convertDateFormat = (date: Date) => {
         const newDate = new Date(date)
-        return `${newDate.getDate()}/${newDate.getMonth() + 1}/${newDate.getFullYear()} | ${newDate.getHours()}:${newDate.getMinutes()} น`
+        return `${newDate.getDate() < 10 ? "0"+newDate.getDate():newDate.getDate()}/${newDate.getMonth()+1 < 10 ? "0"+(newDate.getMonth()+1): newDate.getMonth()+1}/${newDate.getFullYear() < 10 ? "000"+newDate.getFullYear(): newDate.getFullYear() < 100 ? "00"+newDate.getFullYear() : newDate.getFullYear()<1000 ? "0"+newDate.getFullYear() : newDate.getFullYear()}`
     }
 
 

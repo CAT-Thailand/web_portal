@@ -1,5 +1,3 @@
-import { EmployeeInterface } from "./IEmployee";
-
 export interface CustomerInterface {
   Id: string;
   CompanyName?: string;

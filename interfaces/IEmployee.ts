@@ -1,4 +1,4 @@
-import { DevisionInterface } from "./IDevision";
+import { DivisionInterface } from "./IDevision";
 import { RoleInterface } from "./IRole";
 export interface EmployeeInterface {
   Id: string;
@@ -13,15 +13,15 @@ export interface EmployeeInterface {
   UpdateDate: Date;
   CreateDate: Date;
 
-  RoleID?: string;
-  DevisiontID?: string;
+  RoleID?: number;
+  DivisionID?: number;
   EmployeeCreatedID: string;
   SupervisorID: string;
 
   EmployeeCreated?: EmployeeInterface;
   Supervisor?: EmployeeInterface;
   Role?: RoleInterface;
-  Devision?: DevisionInterface;
+  Devision?: DivisionInterface;
 }
 
 export interface EmployeeCreateInterface {
@@ -30,12 +30,12 @@ export interface EmployeeCreateInterface {
   Phone?: string;
   LineID?: string;
   Email?: string;
-  StartDate: Date;
-  ProbationDate?: Date;
-  TerminationDate?: Date;
+  StartDate: string;
+  ProbationDate?: string;
+  TerminationDate?: string;
 
-  RoleID?: string;
-  DevisiontID?: string;
+  RoleID?: number;
+  DivisionID?: number;
   EmployeeCreatedID: string;
   SupervisorID: string;
 }

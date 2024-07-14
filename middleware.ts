@@ -28,8 +28,8 @@ export function middleware(request: NextRequest) {
     // const exp = token.value * 1000; // Convert to milliseconds
     // Check if token has expired
     const currentTime = Date.now();
-    console.log("currentTime: ", currentTime)
-    console.log("userInfo.exp: ", userInfo.exp*1000)
+    // console.log("currentTime: ", currentTime)
+    // console.log("userInfo.exp: ", userInfo.exp*1000)
 
     if (userInfo.exp*1000 <= currentTime) {
         // Token has expired, redirect to home
