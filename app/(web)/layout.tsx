@@ -66,6 +66,7 @@ const Layout = ({ children }: any) => {
             paper: classes.drawerPaper
           }}
           anchor="left"
+          // style={{ color: "#CBD1D7"}}
         >
           <Toolbar>
             <Typography variant="h6" className={classes.texticon}>
@@ -88,6 +89,14 @@ const Layout = ({ children }: any) => {
               </ListItemIcon>
               <Typography style={{ color: "#CBD1D7", fontSize: "16px", fontWeight: 700 }}>Customer</Typography>
             </ListItemButton>
+
+            <ListItemButton onClick={() => router.push("/customer/contract")}>
+              <ListItemIcon style={{ color: "#CBD1D7"}}>
+                <PeopleIcon />
+              </ListItemIcon>
+              <Typography style={{ color: "#CBD1D7", fontSize: "16px", fontWeight: 700 }}>Contract</Typography>
+            </ListItemButton>
+
           </List>
 
         </Drawer>

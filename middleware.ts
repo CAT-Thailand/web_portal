@@ -16,7 +16,6 @@ export function middleware(request: NextRequest) {
     // const expString = storage.getExpire()
     // console.log(expString)
     const token = request.cookies.get('token'); // Assuming the token is stored in cookies
-    console.log(token)
     if (!token) {
         // Token not present, redirect to home or login page
         return NextResponse.redirect(new URL('/', request.url));

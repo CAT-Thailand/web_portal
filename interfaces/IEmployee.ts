@@ -1,4 +1,4 @@
-import { DivisionInterface } from "./IDevision";
+import { DivisionInterface } from "./IDivision";
 import { RoleInterface } from "./IRole";
 export interface EmployeeInterface {
   Id: string;
@@ -21,7 +21,7 @@ export interface EmployeeInterface {
   EmployeeCreated?: EmployeeInterface;
   Supervisor?: EmployeeInterface;
   Role?: RoleInterface;
-  Devision?: DivisionInterface;
+  Division?: DivisionInterface;
 }
 
 export interface EmployeeCreateInterface {

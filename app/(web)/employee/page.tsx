@@ -175,7 +175,7 @@ const Employee = ({ children }: any) => {
                                         <TableCell align="center" width="5%"> LineID </TableCell>
                                         <TableCell align="center" width="10%"> Phone </TableCell>
                                         <TableCell align="center" width="5%"> Role </TableCell>
-                                        <TableCell align="center" width="10%"> Devision </TableCell>
+                                        <TableCell align="center" width="10%"> Division </TableCell>
                                         <TableCell align="center" width="12%"> Supervisor </TableCell>
                                         <TableCell align="center" width="10%"> StartDate </TableCell>
                                         <TableCell align="center" width="10%"> ProbationDate </TableCell>
@@ -196,13 +196,13 @@ const Employee = ({ children }: any) => {
                                             <TableCell align="center">{item.LineID}</TableCell>
                                             <TableCell align="center">{item.Phone}</TableCell>
                                             <TableCell align="center">{item.Role?.Name}</TableCell>
-                                            <TableCell align="center">{item.Devision?.Name}</TableCell>
+                                            <TableCell align="center">{item.Division?.Name}</TableCell>
                                             <TableCell align="center">{item.Supervisor?.Name}</TableCell>
                                             <TableCell align="center">{convertDateFormat(item.StartDate)}</TableCell>
                                             <TableCell align="center">{convertDateFormat(item.ProbationDate)}</TableCell>
                                             <TableCell>
                                                 {
-                                                    <a href={"/employee/update/" + item.Id}>
+                                                    <a href={"/employee/update/" + item.Email}>
                                                         <Button
                                                             variant='outlined'
                                                             color='warning'

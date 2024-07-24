@@ -2,7 +2,7 @@
 import { Button, CardHeader, Divider, Grid, TextField, CardContent, Container, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TableContainer, Table, TableBody, TableRow, TableCell, TableHead, ThemeProvider, createTheme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
-import Layout from "../layout";
+import Layout from "../../layout";
 import { CustomerInterface } from "@/interfaces/ICustomer";
 
 import React from "react";
@@ -11,6 +11,9 @@ import themeOptions from "@/@core/theme/themeOptions";
 import { useSettings } from "@/@core/hooks/useSettings";
 import { DeleteCustomerById, ListCustomers, getSearchCustomer } from "@/services/Customer/CustomerServices";
 import Link from "next/link";
+
+import { ContractInterface } from "@/interfaces/IContract";
+import { ListContracts } from "@/services/Contract/ContractServices";
 
 
 const useStyles = makeStyles({
@@ -56,23 +59,23 @@ const useStyles = makeStyles({
 });
 
 
-const Customer = ({ children }: any) => {
+const Contract = ({ children }: any) => {
     const classes = useStyles();
     const { settings, saveSettings } = useSettings()
     let theme = createTheme(themeOptions(settings, "dark"))
     //Customer State
-    const [customer, setCustomer] = React.useState<CustomerInterface[]>([])
-    const getCustomer = async () => {
-        let res = await ListCustomers();
+    const [contract, setContract] = React.useState<ContractInterface[]>([])
+    const getContract = async () => {
+        let res = await ListContracts();
         if (res) {
-            setCustomer(res)
+            setContract(res)
             console.log(res)
-            console.log(customer)
+            console.log(contract)
         }
     }
     React.useEffect(() => {
-        getCustomer();
-        console.log(customer)
+        getContract();
+        // console.log(contract)
 
     }, [])
     //For Delete state 
@@ -88,7 +91,7 @@ const Customer = ({ children }: any) => {
         } else {
             console.log(res.data)
         }
-        getCustomer();
+        getContract();
         setOpenDelete(false)
 
     }
@@ -103,15 +106,15 @@ const Customer = ({ children }: any) => {
 
     const handleSearch = async () => {
         if (searchValue == "") {
-            getCustomer()
+            getContract()
         } else {
             let res = await getSearchCustomer(searchValue)
             if (res) {
                 console.log(res)
+                setContract(res);
             } else {
                 console.log(res)
             }
-            setCustomer(res);
 
         }
 
@@ -131,7 +134,7 @@ const Customer = ({ children }: any) => {
 
     const convertDateFormat = (date: Date) => {
         const newDate = new Date(date)
-        return `${newDate.getDate()}/${newDate.getMonth() + 1}/${newDate.getFullYear()} | ${newDate.getHours()}:${newDate.getMinutes()} น`
+        return `${newDate.getDate() < 10 ? "0" + newDate.getDate() : newDate.getDate()}/${newDate.getMonth() + 1 < 10 ? "0" + (newDate.getMonth() + 1) : newDate.getMonth() + 1}/${newDate.getFullYear() < 10 ? "000" + newDate.getFullYear() : newDate.getFullYear() < 100 ? "00" + newDate.getFullYear() : newDate.getFullYear() < 1000 ? "0" + newDate.getFullYear() : newDate.getFullYear()}`
     }
 
 
@@ -153,7 +156,7 @@ const Customer = ({ children }: any) => {
                         },
                     }}
                     className="font-bold"
-                    title="Customer Admin Management"
+                    title="Contract Admin Management"
                 ></CardHeader>
             </div>
             <CardContent style={{ backgroundColor: "#f8f9fa" }} sx={{ p: 0, px: 2, py: 2, flexGrow: 1 }}>
@@ -202,7 +205,7 @@ const Customer = ({ children }: any) => {
                             <Grid item xs={7}>
 
                             </Grid>
-                            <Grid
+                            {/* <Grid
                                 className="flex justify-center flex-col-reverse"
                                 item
                                 xs={1.5}
@@ -217,7 +220,7 @@ const Customer = ({ children }: any) => {
                                 >
                                     + Create
                                 </Button>
-                            </Grid>
+                            </Grid> */}
 
                         </Grid>
                     </div>
@@ -229,48 +232,43 @@ const Customer = ({ children }: any) => {
                             <Table aria-label="simple table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell align="center" width="15%"> Name </TableCell>
-                                        <TableCell align="center" width="12%"> ContactPerson </TableCell>
-                                        {/* <TableCell align="center"> Phone </TableCell> */}
-                                        {/* <TableCell align="center"> Email </TableCell> */}
-                                        {/* <TableCell align="center"> LineID </TableCell> */}
-                                        <TableCell align="center" width="28%"> MapURL </TableCell> {/* Adjusted width */}
-                                        {/* <TableCell align="center" style={{ width: "50" }}> Address </TableCell> Adjusted width */}
-                                        {/* <TableCell align="center"> Description </TableCell> */}
-                                        <TableCell align="center" width="10%"> TagGroupCustomer </TableCell>
-                                        <TableCell align="center" width="10%"> TaxNumber </TableCell>
-                                        <TableCell align="center" width="5%"> contract </TableCell>
+                                        <TableCell align="center" width="20%"> Company Name </TableCell>
+                                        <TableCell align="center" width="10%"> ProjectName </TableCell> {/* Adjusted width */}
+                                        <TableCell align="center" width="10%"> ContractStart </TableCell>
+                                        <TableCell align="center" width="10%"> ContractStop </TableCell> {/* Adjusted width */}
+                                        <TableCell align="center" width="10%"> VendorPO </TableCell>
+                                        <TableCell align="center" width="10%"> CustomerPO </TableCell> {/* Adjusted width */}
+                                        <TableCell align="center" width="5%"> IncidentPerYear </TableCell>
+                                        <TableCell align="center" width="5%"> IncidentPerContract </TableCell>
+                                        <TableCell align="center" width="10%"> Sla </TableCell>
                                         <TableCell align="center" width="5%"> View </TableCell>
+                                        <TableCell align="center" width="5%"> Ticket </TableCell>
                                         <TableCell align="center" width="5%"> Delete </TableCell>
 
                                     </TableRow>
                                 </TableHead>
 
                                 <TableBody>
-                                    {customer.map((item: CustomerInterface) => (
+                                    {contract.map((item: ContractInterface) => (
                                         <TableRow
                                             key={item.Id}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
-                                            <TableCell align="left">{item.CompanyName || "-"}</TableCell>
-                                            <TableCell align="center">{item.ContactPerson || "-"}</TableCell>
-                                            {/* <TableCell align="center">{item.ContactNumber || "-"}</TableCell> */}
-                                            {/* <TableCell align="center">{item.ContactEmail || "-"}</TableCell>
-                                            <TableCell align="center">{item.ContactLineID || "-"}</TableCell> */}
-                                            <TableCell align="center">{item.GoogleMapURL ? (
-                                                <a href={item.GoogleMapURL} target="_blank" rel="noopener noreferrer">
-                                                    {item.GoogleMapURL}
-                                                </a>
-                                            ) : (
-                                                "-"
-                                            )}</TableCell>
+                                            <TableCell align="left">{item.Customer?.CompanyName || "-"}</TableCell>
+                                            <TableCell align="center">{item.ProjectName}</TableCell>
+                                            <TableCell align="center">{convertDateFormat(item.ContractStart!) || "-"}</TableCell>
+                                            <TableCell align="center">{convertDateFormat(item.ContractStop!) || "-"}</TableCell>
+
                                             {/* <TableCell style={{ width: "400px" }} align="center">{item.Address || "-"}</TableCell> */}
                                             {/* <TableCell align="center">{item.Description || "-"}</TableCell> */}
-                                            <TableCell align="center">{item.TagGroupCustomer || "-"}</TableCell>
-                                            <TableCell align="center">{item.TaxNumber || "-"}</TableCell>
+                                            <TableCell align="center">{item.VendorPO || "-"}</TableCell>
+                                            <TableCell align="center">{item.CustomerPO || "-"}</TableCell>
+                                            <TableCell align="center">{item.IncidentPerYear || "-"}</TableCell>
+                                            <TableCell align="center">{item.IncidentPerContract || "-"}</TableCell>
+                                            <TableCell align="center">{item.Sla?.Name || "-"}</TableCell>
                                             <TableCell>
                                                 {
-                                                    <Link href={"/customer/contract/create/" + item.Id}>
+                                                    <Link href={"/customer/contract/update/" + item.Id}>
                                                         <Button
                                                             variant='outlined'
                                                             color='warning'
@@ -279,7 +277,7 @@ const Customer = ({ children }: any) => {
                                                                 maxHeight: 60, // Set the maximum height of the button
                                                             }}
                                                         >
-                                                            create-contact
+                                                            view
                                                         </Button>
                                                     </Link>
 
@@ -287,16 +285,16 @@ const Customer = ({ children }: any) => {
                                             </TableCell>
                                             <TableCell>
                                                 {
-                                                    <Link href={"/customer/update/" + item.Id}>
+                                                    <Link href={"/customer/contract/ticket/create/" + item.Id}>
                                                         <Button
                                                             variant='outlined'
-                                                            color='warning'
+                                                            color='info'
                                                             sx={{
                                                                 maxWidth: 75, // Set the maximum width of the button
                                                                 maxHeight: 60, // Set the maximum height of the button
                                                             }}
                                                         >
-                                                            View
+                                                            ticket
                                                         </Button>
                                                     </Link>
 
@@ -338,7 +336,7 @@ const Customer = ({ children }: any) => {
                             }}
                         >
                             <DialogTitle id="alert-dialog-title">
-                                {`คุณต้องการลบข้อมูลของลูกค้า ${customer.filter((emp) => (emp.Id === deleteID)).at(0)?.CompanyName} จริงหรือไม่`}
+                                {`คุณต้องการลบสัญญษโปรเจค ${contract.filter((emp) => (emp.Id === deleteID)).at(0)?.ProjectName} จริงหรือไม่`}
                             </DialogTitle>
                             <DialogContent>
                                 <DialogContentText id="alert-dialog-description">
@@ -363,4 +361,4 @@ const Customer = ({ children }: any) => {
 
 }
 
-export default Customer;
+export default Contract;

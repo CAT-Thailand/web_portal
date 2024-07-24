@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid'
 import React from 'react'
 
 import { CustomerInterface } from '@/interfaces/ICustomer'
-import { UpdateCustomer, getCustomerByID } from '@/services/Customer/CustomerService'
+import { UpdateCustomer, getCustomerByID } from '@/services/Customer/CustomerServices'
 import { useRouter } from 'next/navigation'
 import Layout from '@/app/(web)/layout'
 
@@ -335,7 +335,7 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                         },
                                     }}
                                 >
-                                    Submit
+                                    Update
                                 </Button>
                             </Grid>
                         </Grid>

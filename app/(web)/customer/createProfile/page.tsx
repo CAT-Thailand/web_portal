@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 
 import { CustomerCreateInterface } from "@/interfaces/ICustomer";
-import { CreateCustomer } from "@/services/Customer/CustomerService";
+import { CreateCustomer } from "@/services/Customer/CustomerServices";
 import { useRouter } from "next/navigation";
 import Layout from "../../layout";
 function CustomerCreate() {

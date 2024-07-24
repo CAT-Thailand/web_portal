@@ -20,6 +20,26 @@ export async function ListCustomers() {
     return res
 }
 
+export async function DeleteCustomerById(id: string) {
+    const reqOpt = {
+        method: "GET",
+        headers:{
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.delete(`/api/customer/delete/${id}`, reqOpt)
+    .then((res) => {
+        if(res.data){
+            return res.data
+        } else{
+            return false
+        }
+    })
+    return res
+}
+
 export async function getCustomerByID(id: string | undefined) {
     const reqOpt = {
         headers: {
@@ -53,22 +73,7 @@ export async function getSearchCustomer(searchValue: string | undefined) {
     }
 
 }
-export async function DeleteCustomerById(id: string) {
-    const reqOpt = {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem("at")}`,
-            "Content-Type": "application/json",
-        }
-    };
 
-    let res = await axios.post(`/api/customers/list`, reqOpt)
-    if (res.data) {
-        return res.data
-    } else {
-        return false
-    }
-
-}
 
 export async function CreateCustomer(customer: Partial<CustomerCreateInterface>) {
     try {

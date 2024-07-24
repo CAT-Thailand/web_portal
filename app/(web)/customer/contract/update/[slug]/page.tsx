@@ -15,89 +15,111 @@ import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ListDevisions } from '@/services/Devision/DevisionService'
-import { ListRoles } from '@/services/Role/RoleServices'
+
 import { RoleInterface } from '@/interfaces/IRole'
 import { DivisionInterface } from '@/interfaces/IDivision'
+import { ListServiceCatalogs } from '@/services/ServiceCatalog/ServiceCatalogServices'
 
-export default function EmployeeUpdate({ params: { slug } }: { params: { slug: string } }) {
+import { SlaInterface } from '@/interfaces/ISla'
+import { ContractCreateInterface, ContractInterface, ContractUpdateInterface } from '@/interfaces/IContract'
+import { CustomerInterface } from '@/interfaces/ICustomer'
+import { ServiceCatalogInterface } from '@/interfaces/IServiceCatalog'
+import { time } from 'console'
+import { getContractByID, UpdateContract } from '@/services/Contract/ContractServices'
+import { ListSlas } from '@/services/Sla/SlaServices'
+
+export default function ContractUpdate({ params: { slug } }: { params: { slug: string } }) {
 
     let router = useRouter()
-    // List all Database
-    // Get Employee by email
-    const [employee, setEmployee] = React.useState<Partial<EmployeeInterface>>({})
-    const [devision, setDevision] = React.useState<DivisionInterface[]>([]);
-    const [supervisor, setSupervisor] = React.useState<EmployeeInterface[]>([]);
-    const [role, setRole] = React.useState<RoleInterface[]>([])
-    const [probationDate, setProbationDate] = React.useState<Dayjs>(dayjs())
-    const [startDate, setStartDate] = React.useState<Dayjs>(dayjs())
-    const [terminateDate, setTerminateDate] = React.useState<Dayjs>(dayjs())
-    const getEmployee = async (email: string | undefined) => {
-        let res = await getEmployeeByEmail(email)
+    const [sla, setSla] = React.useState<SlaInterface[]>([])
+    const [service_catalog, setServiceCatalog] = React.useState<ServiceCatalogInterface[]>([])
+    const [contract, setContract] = React.useState<Partial<ContractUpdateInterface>>({
+        Cost: 0.0,
+        ServiceCatalogID: 0,
+        SlaID: 0
+    })
+    const [contractStart, setContractStart] = React.useState<Dayjs>(dayjs())
+    const [contractStop, setContractStop] = React.useState<Dayjs>(dayjs())
+    const [noticeDate, setNoticeDate] = React.useState<Dayjs>(dayjs())
+    const getContract = async (id: string | undefined) => {
+        let res = await getContractByID(id)
         if (res && res.Status !== "error") {
             console.log(res)
-            setEmployee(res)
-            console.log("employee")
-            console.log(employee)
-        }
-        if (res.ProbationDate && res.ProbationDate !== "") {
-            setProbationDate(dayjs(res.ProbationDate.substring(0, 10)));
-        }
-        if (res.StartDate && res.StartDate !== "") {
-            setStartDate(dayjs(res.StartDate.substring(0, 10)))
-        }
-        if (res.TerminateDate && res.TerminateDate !== "") {
-            setTerminateDate(dayjs(res.TerminateDate.substring(0, 10)))
-        }
+            setContract(res)
+            console.log("contract")
+            console.log(contract)
 
-    }
+            if (res.ContractStart && res.ContractStart !== "") {
+                setContractStart(dayjs(res.ContractStart.substring(0, 10)));
+            }
+            if (res.ContractStop && res.ContractStop !== "") {
+                setContractStop(dayjs(res.ContractStop.substring(0, 10)))
+            }
 
-    const getSupervisor = async () => {
-
-        let res = await ListEmployees();
-        console.log(res);
-        if (res) {
-            setSupervisor(res);
-        }
-    }
-    // // get Role
-    const getRole = async () => {
-        let res = await ListRoles();
-        console.log(res);
-        if (res) {
-            setRole(res);
-        }
-    }
-    // get Department
-    const getDevision = async () => {
-        //let id =0;
-        let res = await ListDevisions();
-        console.log(res);
-        if (res) {
-            setDevision(res);
         }
     }
 
     React.useEffect(() => {
-        console.log("slug");
-        console.log(slug);
-        getEmployee(slug);
-        getSupervisor();
-        getDevision();
-        getRole();
-        if (employee.ProbationDate) {
-            setProbationDate(dayjs(employee.ProbationDate, "DDMMYYYY"));
-          }
-        console.log("probation date: ", probationDate.toString);
+        if (contractStart) {
+            console.log("Updated contractStart:", contractStart.format("YYYY-MM-DD"));
+        }
+    }, [contractStart]);
+
+    React.useEffect(() => {
+        if (contractStop) {
+            console.log("Updated contractStop:", contractStop.format("YYYY-MM-DD"));
+        }
+    }, [contractStop]);
+
+    const getServiceCatalog = async () => {
+
+        let res = await ListServiceCatalogs();
+        console.log(res);
+        if (res) {
+            setServiceCatalog(res);
+        }
+    }
+    // get Role
+    const getSla = async () => {
+        let res = await ListSlas();
+        console.log(res);
+        if (res) {
+            setSla(res);
+        }
+    }
+    React.useEffect(() => {
+        // console.log("slug");
+        // console.log(slug);
+        getContract(slug);
+        getServiceCatalog();
+        getSla();
     }, []);
 
     // submit
     const [success, setSuccess] = React.useState(false);
     const [error, setError] = React.useState(false);
     const [message, setAlertMessage] = React.useState("");
+
+    const convertType = (data: string | number | undefined) => {
+        let val = typeof data === "string" ? parseInt(data) : data;
+        return val;
+    };
     const submit = async () => {
-        console.log(employee)
+        // console.log(customer)
         try {
-            let res = await UpdateCustomer(employee)
+            contract.ContractStart = contractStart.format("YYYY-MM-DD").toString()
+            contract.ContractStop = contractStop.format("YYYY-MM-DD").toString()
+            contract.NoticeDate = noticeDate.format("YYYY-MM-DD").toString()
+            if (contract.IncidentPerContract != null) {
+                contract.IncidentPerContract = contract.IncidentPerContract * 1
+            }
+            if (contract.IncidentPerYear != null) {
+                contract.IncidentPerYear = contract.IncidentPerYear * 1
+            }
+            contract.Cost = typeof contract.Cost == "string" ? parseFloat(contract.Cost) : 0.0
+            contract.SlaID = convertType(contract.SlaID)
+            contract.ServiceCatalogID = convertType(contract.ServiceCatalogID)
+            let res = await UpdateContract(contract)
             if (res && res.Status !== "error") {
                 setAlertMessage("บันทึกข้อมูลสำเร็จ");
                 setSuccess(true);
@@ -106,40 +128,34 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
                 setError(true);
             }
 
-            setTimeout(() => {
-                router.push("/customer")
-            }, 3000)
+            // setTimeout(() => {
+            //     router.push("/contract")
+            // }, 3000)
 
 
         } catch (error) {
-            console.error("Error submitting customer data:", error);
+            console.error("Error submitting contract data:", error);
             setAlertMessage("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
             setError(true);
         }
     }
 
 
+    // handle
     const handleInputChange = (
         event: React.ChangeEvent<{ id?: string; value: any }>
     ) => {
-        const id = event.target.id as keyof typeof EmployeeUpdate;
+        const id = event.target.id as keyof typeof ContractUpdate;
 
         const { value } = event.target;
 
-        setEmployee({ ...employee, [id]: value });
+        setContract({ ...contract, [id]: value });
     };
 
     const handleChangeNumber = (event: SelectChangeEvent<number>) => {
-        const name = event.target.name as keyof typeof employee;
-        setEmployee({
-            ...employee,
-            [name]: event.target.value,
-        });
-    };
-    const handleChangeString = (event: SelectChangeEvent<string>) => {
-        const name = event.target.name as keyof typeof employee;
-        setEmployee({
-            ...employee,
+        const name = event.target.name as keyof typeof contract;
+        setContract({
+            ...contract,
             [name]: event.target.value,
         });
     };
@@ -177,7 +193,6 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Layout>
                 <ThemeProvider theme={theme}>
-
                     <div
                         className="flex flex-row justify-between w-full"
                         style={{ backgroundColor: "#f8f9fa" }}
@@ -192,15 +207,14 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
                                 },
                             }}
                             className="font-bold"
-                            title="Create Employee Management"
+                            title={`สัญญาโปรเจค ${contract.ProjectName || ""}`}
                         ></CardHeader>
                     </div>
-
-                    <Container maxWidth="lg" >
+                    <Container maxWidth="lg">
                         <Snackbar
                             id="success"
                             open={success}
-                            autoHideDuration={8000}
+                            autoHideDuration={4000}
                             onClose={handleClose}
                             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                         >
@@ -212,116 +226,101 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
                         <Snackbar
                             id="error"
                             open={error}
-                            autoHideDuration={8000}
+                            autoHideDuration={4000}
                             onClose={handleClose}
                             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                         >
                             <Alert onClose={handleClose} severity="error">
-                                {/* บันทึกข้อมูลไม่สำเร็จ */}
                                 {message}
                             </Alert>
                         </Snackbar>
-                        <div style={{ height: `calc(130vh - 300px)`, width: "100%", marginTop: "10px" }}>
+
+                        <div style={{ height: `calc(140vh - 300px)`, width: "100%", marginTop: "10px" }}>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={5}>
+                                <Grid item xs={10}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Name</p>
+                                        <p style={{ color: "black" }}>Project Name</p>
 
                                         <TextField
-                                            id="Name"
+                                            id="ProjectName"
                                             variant="outlined"
                                             type="string"
                                             size="medium"
-                                            value={employee.Name || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-
-                                        />
-                                    </FormControl>
-                                </Grid>
-
-                                <Grid item xs={5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Phone</p>
-                                        <TextField
-                                            id="Phone"
-                                            variant="outlined"
-                                            type="string"
-                                            size="medium"
-                                            value={employee.Phone || ""}
+                                            value={contract.ProjectName || ""}
                                             onChange={handleInputChange}
                                             style={{ color: "black" }}
                                         />
                                     </FormControl>
                                 </Grid>
+
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>LineID</p>
+                                        <p style={{ color: "black" }}>Customer Po Number</p>
 
                                         <TextField
-                                            id="LineID"
+                                            id="CustomerPO"
                                             variant="outlined"
                                             type="string"
                                             size="medium"
-                                            value={employee.LineID || ""}
+                                            value={contract.CustomerPO || ""}
                                             onChange={handleInputChange}
-
                                             style={{ color: "black" }}
-                                            inputProps={{ maxLength: 10 }}
-
+                                            inputProps={{ maxLength: 13 }}
                                         />
                                     </FormControl>
                                 </Grid>
-
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Email</p>
+                                        <p style={{ color: "black" }}>Vendor PO Number</p>
+
                                         <TextField
-                                            id="Email"
+                                            id="VendorPO"
                                             variant="outlined"
                                             type="string"
                                             size="medium"
-                                            value={employee.Email || ""}
+                                            value={contract.VendorPO || ""}
                                             onChange={handleInputChange}
                                             style={{ color: "black" }}
+                                            inputProps={{ maxLength: 13 }}
                                         />
                                     </FormControl>
                                 </Grid>
+
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>Contract Start</p>
 
-                                        <p style={{ color: "black" }}>StartDate</p>
                                         <DatePicker
+                                            value={contractStart}
                                             views={["day", "month", "year"]}
-                                            value={startDate}
                                             onChange={(newValue: any) => {
                                                 if (newValue !== null && newValue != undefined) {
-                                                    setStartDate(newValue)
+                                                    setContractStart(newValue)
                                                 }
                                             }}
-                                            format="DDMMYYYY"
+                                            format="DD/MM/YYYY"
                                         />
-
                                     </FormControl>
                                 </Grid>
+
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>ProbationDate</p>
+                                        <p style={{ color: "black" }}>Contract Stop</p>
+
                                         <DatePicker
+                                            value={contractStop}
                                             views={["day", "month", "year"]}
-                                            value={probationDate}
                                             onChange={(newValue: any) => {
                                                 if (newValue !== null && newValue != undefined) {
-                                                    setProbationDate(newValue)
+                                                    setContractStop(newValue)
                                                 }
                                             }}
-                                            format="DDMMYYYY"
+                                            format="DD/MM/YYYY"
                                         />
-
                                     </FormControl>
                                 </Grid>
 
@@ -330,91 +329,135 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>TerminationDate</p>
-                                        <DatePicker
-                                            value={terminateDate}
-                                            views={["day", "month", "year"]}
-                                            onChange={(newValue: any) => {
-                                                if (newValue !== null && newValue != undefined) {
-                                                    setTerminateDate(newValue)
-                                                }
-                                            }}
-                                            format="DDMMYYYY"
+                                        <p style={{ color: "black" }}>Incident Per Year</p>
+
+                                        <TextField
+                                            id="IncidentPerYear"
+                                            variant="outlined"
+                                            type="number"
+                                            size="medium"
+                                            value={contract.IncidentPerYear || ""}
+                                            onChange={handleInputChange}
+
+                                            style={{ color: "black" }}
+
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>Incident Per Contract</p>
+                                        <TextField
+                                            id="IncidentPerContract"
+                                            variant="outlined"
+                                            type="number"
+                                            size="medium"
+                                            value={contract.IncidentPerContract || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
                                         />
                                     </FormControl>
                                 </Grid>
 
+                            </Grid>
+                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Role</p>
+                                        <p style={{ color: "black" }}>Scope of Work Link</p>
+
+                                        <TextField
+                                            id="ScopeOfWorkURL"
+                                            variant="outlined"
+                                            type="string"
+                                            size="medium"
+                                            value={contract.ScopeOfWorkURL || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>Cost</p>
+
+                                        <TextField
+                                            id="Cost"
+                                            variant="outlined"
+                                            type="number"
+                                            size="medium"
+                                            value={contract.Cost || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
+                                        />
+                                    </FormControl>
+                                </Grid>
+
+                            </Grid>
+                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>SLA</p>
                                         <Select
                                             native
-                                            value={employee.RoleID ?? 0}
+                                            value={contract.SlaID ?? 0}
                                             onChange={handleChangeNumber}
                                             inputProps={{
-                                                name: "RoleID",
+                                                name: "SlaID",
                                             }}
                                         >
                                             <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ role
+                                                กรุณา เลือกชนิดของ sla
                                             </option>
-                                            {role.map((item: RoleInterface) => (
+                                            {sla.map((item: SlaInterface) => (
                                                 <option value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
                                 </Grid>
-
-                            </Grid>
-
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Division</p>
+                                        <p style={{ color: "black" }}>Service Catalog</p>
                                         <Select
                                             native
-                                            value={employee.DivisionID}
+                                            value={contract.ServiceCatalogID ?? 0}
                                             onChange={handleChangeNumber}
                                             inputProps={{
-                                                name: "DivisionID",
+                                                name: "ServiceCatalogID",
                                             }}
                                         >
                                             <option value={0} key={0}>
-                                                กรุณา เลือกแผนก
+                                                กรุณา เลือกชนิดของ Service Catalog
                                             </option>
-                                            {devision.map((item: DivisionInterface) => (
+                                            {service_catalog.map((item: SlaInterface) => (
                                                 <option value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
                                 </Grid>
-
-                                <Grid item xs={5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Supervisor</p>
-                                        <Select
-                                            native
-                                            value={employee.SupervisorID}
-                                            onChange={handleChangeString}
-                                            inputProps={{
-                                                name: "SupervisorID",
-                                            }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณาเลือก supervisor
-                                            </option>
-                                            {supervisor.map((item: EmployeeInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-
                             </Grid>
+                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                <Grid item xs={10}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>Description</p>
+                                        <OutlinedInput
+                                            id="Description"
+                                            type="string"
+                                            size="medium"
+                                            value={contract.Description || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
+                                            rows={1}
+                                            multiline
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+
+
 
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={4}>
-                                    <a href={"/employee"}>
+                                    <a href={"/customer/contract"}>
                                         <Button
                                             variant="contained"
                                             sx={{

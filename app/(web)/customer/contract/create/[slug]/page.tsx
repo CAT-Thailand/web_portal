@@ -5,23 +5,20 @@ import Grid from '@mui/material/Grid'
 import React from 'react'
 
 import { CustomerInterface } from '@/interfaces/ICustomer'
-import { UpdateCustomer, getCustomerByID } from '@/services/Customer/CustomerService'
-import { useRouter } from 'next/navigation'
+import { UpdateCustomer, getCustomerByID } from '@/services/Customer/CustomerServices'
 import Layout from '@/app/(web)/layout'
 import { SlaInterface } from '@/interfaces/ISla'
 import { ServiceCatalogInterface } from '@/interfaces/IServiceCatalog'
-import { ListServiceCatalogs } from '@/services/ServiceCatalog/ServiceCatalogService'
-import { ListSlas } from '@/services/Sla/SlaService'
+import { ListServiceCatalogs } from '@/services/ServiceCatalog/ServiceCatalogServices'
+import { ListSlas } from '@/services/Sla/SlaServices'
 import { ContractCreateInterface } from '@/interfaces/IContract'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { CreateContract } from '@/services/Contract/ContractService'
+import { CreateContract } from '@/services/Contract/ContractServices'
 
 export default function ContractCreate({ params: { slug } }: { params: { slug: string } }) {
-
-    let router = useRouter()
     // List all Database
     // Get Customer by id
     const [customer, setCustomer] = React.useState<Partial<CustomerInterface>>({})
@@ -83,7 +80,15 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
         try {
             contract.ContractStart = contractStart.format("YYYY-MM-DD").toString()
             contract.ContractStop = contractStop.format("YYYY-MM-DD").toString()
-            contract.NoticeDate = noticeDate.format("YYYY-MM-DD").toString()
+            // Calculate notice dates
+            let noticeDate1 = contractStop.clone().subtract(90, 'days');
+            let noticeDate2 = contractStop.clone().subtract(60, 'days');
+            let noticeDate3 = contractStop.clone().subtract(30, 'days');
+
+            // Set the notice dates in the contract object
+            contract.NoticeDate1 = noticeDate1.format("YYYY-MM-DD");
+            contract.NoticeDate2 = noticeDate2.format("YYYY-MM-DD");
+            contract.NoticeDate3 = noticeDate3.format("YYYY-MM-DD");
             contract.CustomerID = slug
             if (contract.IncidentPerContract != null) {
                 contract.IncidentPerContract = contract.IncidentPerContract * 1
@@ -191,7 +196,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                 },
                             }}
                             className="font-bold"
-                            title={`${customer.CompanyName}`}
+                            title={`สัญญาโปรเจค ${contract.ProjectName || ""}`}
                         ></CardHeader>
                     </div>
                     <Container maxWidth="lg">
@@ -221,7 +226,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
 
                         <div style={{ height: `calc(130vh - 300px)`, width: "100%", marginTop: "10px" }}>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={5}>
+                                <Grid item xs={10}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Project Name</p>
 
@@ -236,22 +241,42 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                         />
                                     </FormControl>
                                 </Grid>
+
+                            </Grid>
+                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>PoNumber</p>
+                                        <p style={{ color: "black" }}>Customer Po Number</p>
 
                                         <TextField
-                                            id="PoNumber"
+                                            id="CustomerPO"
                                             variant="outlined"
                                             type="string"
                                             size="medium"
-                                            value={contract.PoNumber || ""}
+                                            value={contract.CustomerPO || ""}
                                             onChange={handleInputChange}
                                             style={{ color: "black" }}
                                             inputProps={{ maxLength: 13 }}
                                         />
                                     </FormControl>
                                 </Grid>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>Vendor PO Number</p>
+
+                                        <TextField
+                                            id="VendorPO"
+                                            variant="outlined"
+                                            type="string"
+                                            size="medium"
+                                            value={contract.VendorPO || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
+                                            inputProps={{ maxLength: 13 }}
+                                        />
+                                    </FormControl>
+                                </Grid>
+
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
@@ -266,7 +291,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                                     setContractStart(newValue)
                                                 }
                                             }}
-                                            format="DDMMYYYY"
+                                            format="DD/MM/YYYY"
                                         />
                                     </FormControl>
                                 </Grid>
@@ -283,7 +308,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                                     setContractStop(newValue)
                                                 }
                                             }}
-                                            format="DDMMYYYY"
+                                            format="DD/MM/YYYY"
                                         />
                                     </FormControl>
                                 </Grid>
@@ -291,22 +316,6 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
 
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Notice Date</p>
-
-                                        <DatePicker
-                                            value={noticeDate}
-                                            views={["day", "month", "year"]}
-                                            onChange={(newValue: any) => {
-                                                if (newValue !== null && newValue != undefined) {
-                                                    setNoticeDate(newValue)
-                                                }
-                                            }}
-                                            format="DDMMYYYY"
-                                        />
-                                    </FormControl>
-                                </Grid>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Incident Per Year</p>
@@ -324,10 +333,6 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                         />
                                     </FormControl>
                                 </Grid>
-
-
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Incident Per Contract</p>
@@ -337,6 +342,24 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                             type="number"
                                             size="medium"
                                             value={contract.IncidentPerContract || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
+                                        />
+                                    </FormControl>
+                                </Grid>
+
+                            </Grid>
+                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>Scope of Work Link</p>
+
+                                        <TextField
+                                            id="ScopeOfWorkURL"
+                                            variant="outlined"
+                                            type="string"
+                                            size="medium"
+                                            value={contract.ScopeOfWorkURL || ""}
                                             onChange={handleInputChange}
                                             style={{ color: "black" }}
                                         />
@@ -357,6 +380,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                         />
                                     </FormControl>
                                 </Grid>
+
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
@@ -411,6 +435,8 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                             value={contract.Description || ""}
                                             onChange={handleInputChange}
                                             style={{ color: "black" }}
+                                            rows={1}
+                                            multiline
                                         />
                                     </FormControl>
                                 </Grid>
@@ -420,7 +446,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
 
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={4}>
-                                    <a href={"/customer"}>
+                                    <a href={"/customer/contract"}>
                                         <Button
                                             variant="contained"
                                             sx={{

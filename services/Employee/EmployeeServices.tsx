@@ -30,7 +30,7 @@ export async function DeleteEmployeeById(id: string) {
         }
     };
 
-    let res = await axios.post(`/api/employees/list`, reqOpt)
+    let res = await axios.delete(`/api/employee/delete/${id}`, reqOpt)
     .then((res) => {
         if(res.data){
             return res.data
@@ -52,8 +52,11 @@ export async function CreateEmployee(employee: Partial<EmployeeCreateInterface>)
             startDate: employee.StartDate,
             probationDate: employee.ProbationDate,
             terminationDate: employee.TerminationDate,
+            divisionID: employee.DivisionID,
+            roleID: employee.RoleID,
+            supervisorID: employee.SupervisorID
         };
-
+      
         const reqOpt = {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -89,7 +92,21 @@ export async function getEmployeeByEmail(email: string | undefined) {
         return false
     }
 }
+export async function ListEmployeeByDivision(id: number | undefined) {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
 
+    let res = await axios.get(`/api/employee/division/list/${id}`, reqOpt)
+    if (res.data) {
+        return res.data.Data
+    } else {
+        return false
+    }
+}
 export async function Updateemployee(employee: Partial<EmployeeInterface>) {
     try {
         const data = {

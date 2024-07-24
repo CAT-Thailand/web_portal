@@ -17,9 +17,9 @@ import { EmployeeCreateInterface, EmployeeInterface } from "@/interfaces/IEmploy
 import { CreateEmployee, ListEmployees } from "@/services/Employee/EmployeeServices";
 import { useRouter } from "next/navigation";
 import Layout from "../../layout";
-import { DivisionInterface } from "@/interfaces/IDevision";
+import { DivisionInterface } from "@/interfaces/IDivision"; 
 import { RoleInterface } from "@/interfaces/IRole";
-import { ListRoles } from "@/services/Role/RoleService";
+import { ListRoles } from "@/services/Role/RoleServices"; 
 import { ListDevisions } from "@/services/Devision/DevisionService";
 import TextField from "@mui/material/TextField";
 import { format } from "date-fns"
@@ -37,7 +37,8 @@ function EmployeeCreate() {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
     });
     const [employee, setEmployee] = React.useState<Partial<EmployeeCreateInterface>>({
-
+        DivisionID: 0,
+        RoleID: 0,
     });
     const [devision, setDevision] = React.useState<DivisionInterface[]>([]);
     const [supervisor, setSupervisor] = React.useState<EmployeeInterface[]>([]);
@@ -52,6 +53,10 @@ function EmployeeCreate() {
 
     //Employee Create
     const router = useRouter()
+    const convertType = (data: string | number | undefined) => {
+        let val = typeof data === "string" ? parseInt(data) : data;
+        return val;
+    };
     //submit
     const submit = async () => {
         console.log("submit 1")
@@ -59,6 +64,8 @@ function EmployeeCreate() {
             employee.ProbationDate = probationDate.format("DDMMYYYY").toString()
             employee.StartDate = startDate.format("DDMMYYYY").toString()
             employee.TerminationDate = terminateDate.format("DDMMYYYY").toString()
+            employee.DivisionID = convertType(employee.DivisionID)
+            employee.RoleID = convertType(employee.RoleID)
             console.log(employee);
             const res = await CreateEmployee(employee);
             console.log(res);
@@ -338,7 +345,7 @@ function EmployeeCreate() {
 
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p>Role</p>
+                                        <p style={{ color: "black" }}>Role</p>
                                         <Select
                                             native
                                             value={employee.RoleID ?? 0}
@@ -348,7 +355,7 @@ function EmployeeCreate() {
                                             }}
                                         >
                                             <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ role
+                                                กรุณาเลือก role
                                             </option>
                                             {role.map((item: RoleInterface) => (
                                                 <option value={item.Id}>{item.Name}</option>
@@ -362,17 +369,17 @@ function EmployeeCreate() {
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p>Devision</p>
+                                        <p style={{ color: "black" }}>Division</p>
                                         <Select
                                             native
                                             value={employee.DivisionID}
                                             onChange={handleChangeNumber}
                                             inputProps={{
-                                                name: "DevisionID",
+                                                name: "DivisionID",
                                             }}
                                         >
                                             <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของแลปแผนก
+                                                กรุณา เลือกแผนก
                                             </option>
                                             {devision.map((item: DivisionInterface) => (
                                                 <option value={item.Id}>{item.Name}</option>
@@ -383,7 +390,7 @@ function EmployeeCreate() {
 
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p>Supervisor</p>
+                                        <p style={{ color: "black" }}>Supervisor</p>
                                         <Select
                                             native
                                             value={employee.SupervisorID}
