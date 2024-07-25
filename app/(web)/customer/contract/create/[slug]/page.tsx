@@ -184,7 +184,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                 <ThemeProvider theme={theme}>
                     <div
                         className="flex flex-row justify-between w-full"
-                        style={{ backgroundColor: "#f8f9fa" }}
+                    // style={{ backgroundColor: "#f8f9fa" }}
                     >
 
                         <CardHeader
@@ -200,29 +200,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                         ></CardHeader>
                     </div>
                     <Container maxWidth="lg">
-                        <Snackbar
-                            id="success"
-                            open={success}
-                            autoHideDuration={4000}
-                            onClose={handleClose}
-                            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                        >
-                            <Alert onClose={handleClose} severity="success">
-                                บันทึกข้อมูลสำเร็จ
-                            </Alert>
-                        </Snackbar>
 
-                        <Snackbar
-                            id="error"
-                            open={error}
-                            autoHideDuration={4000}
-                            onClose={handleClose}
-                            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                        >
-                            <Alert onClose={handleClose} severity="error">
-                                {message}
-                            </Alert>
-                        </Snackbar>
 
                         <div style={{ height: `calc(130vh - 300px)`, width: "100%", marginTop: "10px" }}>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>

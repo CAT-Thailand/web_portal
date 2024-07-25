@@ -140,11 +140,11 @@ const Contract = ({ children }: any) => {
 
     return (
 
-        <Layout>
+        <Layout >
 
             <div
                 className="flex flex-row justify-between w-full"
-                style={{ backgroundColor: "#f8f9fa" }}
+                // style={{ backgroundColor: "#f8f9fa" }}
             >
 
                 <CardHeader
@@ -159,7 +159,7 @@ const Contract = ({ children }: any) => {
                     title="Contract Admin Management"
                 ></CardHeader>
             </div>
-            <CardContent style={{ backgroundColor: "#f8f9fa" }} sx={{ p: 0, px: 2, py: 2, flexGrow: 1 }}>
+            <CardContent  sx={{ p: 0, px: 2, py: 2, flexGrow: 1 }}>
                 <div>
                     <div style={{ marginTop: "10px" }}>
                         <Grid container spacing={1} >
@@ -253,22 +253,24 @@ const Contract = ({ children }: any) => {
                                         <TableRow
                                             key={item.Id}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell align="left">{item.Customer?.CompanyName || "-"}</TableCell>
-                                            <TableCell align="center">{item.ProjectName}</TableCell>
-                                            <TableCell align="center">{convertDateFormat(item.ContractStart!) || "-"}</TableCell>
-                                            <TableCell align="center">{convertDateFormat(item.ContractStop!) || "-"}</TableCell>
 
-                                            {/* <TableCell style={{ width: "400px" }} align="center">{item.Address || "-"}</TableCell> */}
-                                            {/* <TableCell align="center">{item.Description || "-"}</TableCell> */}
-                                            <TableCell align="center">{item.VendorPO || "-"}</TableCell>
-                                            <TableCell align="center">{item.CustomerPO || "-"}</TableCell>
-                                            <TableCell align="center">{item.IncidentPerYear || "-"}</TableCell>
-                                            <TableCell align="center">{item.IncidentPerContract || "-"}</TableCell>
-                                            <TableCell align="center">{item.Sla?.Name || "-"}</TableCell>
+                                        >
+
+
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="left">{item.Customer?.CompanyName || "-"}</TableCell>
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.ProjectName}</TableCell>
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{convertDateFormat(item.ContractStart!) || "-"}</TableCell>
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{convertDateFormat(item.ContractStop!) || "-"}</TableCell>
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.VendorPO || "-"}</TableCell>
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.CustomerPO || "-"}</TableCell>
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.IncidentPerYear || "-"}</TableCell>
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.IncidentPerContract || "-"}</TableCell>
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.Sla?.Name || "-"}</TableCell>
+
+
                                             <TableCell>
                                                 {
-                                                    <Link href={"/customer/contract/update/" + item.Id}>
+                                                    <Link href={"/customer/contract/device/" + item.Id}>
                                                         <Button
                                                             variant='outlined'
                                                             color='warning'
@@ -277,7 +279,7 @@ const Contract = ({ children }: any) => {
                                                                 maxHeight: 60, // Set the maximum height of the button
                                                             }}
                                                         >
-                                                            view
+                                                            device
                                                         </Button>
                                                     </Link>
 
@@ -311,6 +313,7 @@ const Contract = ({ children }: any) => {
                                                             maxWidth: 75, // Set the maximum width of the button
                                                             maxHeight: 60, // Set the maximum height of the button
                                                         }}
+
                                                     >
                                                         Delete
                                                     </Button>
