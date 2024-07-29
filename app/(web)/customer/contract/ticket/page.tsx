@@ -9,7 +9,7 @@ import React from "react";
 
 import themeOptions from "@/@core/theme/themeOptions";
 import { useSettings } from "@/@core/hooks/useSettings";
-import { DeleteCustomerById, ListCustomers, getSearchCustomer } from "@/services/Customer/CustomerServices";
+import {GetSearchCustomer } from "@/services/Customer/CustomerServices";
 import Link from "next/link";
 
 import { ContractInterface } from "@/interfaces/IContract";
@@ -108,7 +108,7 @@ const Ticket = ({ children }: any) => {
         if (searchValue == "") {
             getOperation()
         } else {
-            let res = await getSearchCustomer(searchValue)
+            let res = await GetSearchCustomer(searchValue)
             if (res) {
                 console.log(res)
                 setOperation(res);
@@ -224,10 +224,9 @@ const Ticket = ({ children }: any) => {
                                         <TableCell align="center" width="10%"> Phone </TableCell> 
                                         <TableCell align="center" width="5%"> Status </TableCell>
                                         <TableCell align="center" width="5%"> Company </TableCell>
-                                        <TableCell align="center" width="10%"> Sla </TableCell>
-                                        {/* <TableCell align="center" width="10%"> UAT </TableCell> */}
+                                        <TableCell align="center" width="10%"> Status </TableCell>
+                                        <TableCell align="center" width="10%"> Priority </TableCell>
                                         <TableCell align="center" width="5%"> View </TableCell>
-                                        <TableCell align="center" width="5%"> Ticket </TableCell>
                                         <TableCell align="center" width="5%"> Delete </TableCell>
 
                                     </TableRow>
@@ -247,7 +246,8 @@ const Ticket = ({ children }: any) => {
                                             <TableCell align="center">{item.ContactNumber || "-"}</TableCell>
                                             <TableCell align="center">{item.Status?.Name || "-"}</TableCell>
                                             <TableCell align="center">{item.Contract?.Customer?.CompanyName || "-"}</TableCell>
-                                            {/* <TableCell align="center">{item.Sla?.Name || "-"}</TableCell> */}
+                                            <TableCell align="center">{item.Status?.Name || "-"}</TableCell>
+                                            <TableCell align="center">{item.Priority?.Name || "-"}</TableCell>
                                             <TableCell>
                                                 {
                                                     <Link href={"/customer/contract/ticket/update/" + item.Id}>
@@ -260,23 +260,6 @@ const Ticket = ({ children }: any) => {
                                                             }}
                                                         >
                                                             view
-                                                        </Button>
-                                                    </Link>
-
-                                                }
-                                            </TableCell>
-                                            <TableCell>
-                                                {
-                                                    <Link href={"/customer/contract/update/" + item.Id}>
-                                                        <Button
-                                                            variant='outlined'
-                                                            color='info'
-                                                            sx={{
-                                                                maxWidth: 75, // Set the maximum width of the button
-                                                                maxHeight: 60, // Set the maximum height of the button
-                                                            }}
-                                                        >
-                                                            ticket
                                                         </Button>
                                                     </Link>
 

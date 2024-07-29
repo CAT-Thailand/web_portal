@@ -1,3 +1,4 @@
+import { internal_resolveProps } from "@mui/utils";
 import { CustomerInterface } from "./ICustomer";
 import { EmployeeInterface } from "./IEmployee";
 import { ServiceCatalogInterface } from "./IServiceCatalog";
@@ -70,4 +71,32 @@ export interface ContractInterface {
   Customer?: CustomerInterface;
   EmployeeCreatedID?: string;
   EmployeeCreated?: EmployeeInterface;
+}
+
+export interface DeviceInterface {
+  Id?: string;
+  Brand?: string;
+  Model?: string;
+  Serial?: string;
+  License?: string;
+  Sku?: string;
+  StartLicenseDate?: Date;
+  ExpiredLicenseDate?: Date;
+
+  ContractID?: string;
+  Contract?: ContractInterface;
+  EmployeeCreatedID?: string;
+  EmployeeCreated?: EmployeeInterface;
+}
+
+export interface CreateDeviceInterface {
+  Id?: string;
+  Brand?: string;
+  Model?: string;
+  Serial?: string;
+  License?: string;
+  Sku?: string;
+  StartLicenseDate?: string;
+  ExpiredLicenseDate?: string;
+  ContractID?: string;
 }

@@ -9,7 +9,7 @@ import React from "react";
 
 import themeOptions from "@/@core/theme/themeOptions";
 import { useSettings } from "@/@core/hooks/useSettings";
-import { DeleteCustomerById, ListCustomers, getSearchCustomer } from "@/services/Customer/CustomerServices";
+import { DeleteCustomerById, ListCustomers, GetSearchCustomer } from "@/services/Customer/CustomerServices";
 import Link from "next/link";
 
 import { ContractInterface } from "@/interfaces/IContract";
@@ -108,7 +108,7 @@ const Contract = ({ children }: any) => {
         if (searchValue == "") {
             getContract()
         } else {
-            let res = await getSearchCustomer(searchValue)
+            let res = await GetSearchCustomer(searchValue)
             if (res) {
                 console.log(res)
                 setContract(res);
@@ -242,6 +242,7 @@ const Contract = ({ children }: any) => {
                                         <TableCell align="center" width="5%"> IncidentPerContract </TableCell>
                                         <TableCell align="center" width="10%"> Sla </TableCell>
                                         <TableCell align="center" width="5%"> View </TableCell>
+                                        <TableCell align="center" width="5%"> Device </TableCell>
                                         <TableCell align="center" width="5%"> Ticket </TableCell>
                                         <TableCell align="center" width="5%"> Delete </TableCell>
 
@@ -266,16 +267,32 @@ const Contract = ({ children }: any) => {
                                             <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.IncidentPerYear || "-"}</TableCell>
                                             <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.IncidentPerContract || "-"}</TableCell>
                                             <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.Sla?.Name || "-"}</TableCell>
+                                            <TableCell>
+                                                {
+                                                    <Link href={"/customer/contract/update/" + item.Id}>
+                                                        <Button
+                                                            variant='outlined'
+                                                            color='warning'
+                                                            sx={{
+                                                                maxWidth: 60, // Set the maximum width of the button
+                                                                maxHeight: 60, // Set the maximum height of the button
+                                                            }}
+                                                        >
+                                                            view
+                                                        </Button>
+                                                    </Link>
 
+                                                }
+                                            </TableCell>
 
                                             <TableCell>
                                                 {
                                                     <Link href={"/customer/contract/device/" + item.Id}>
                                                         <Button
                                                             variant='outlined'
-                                                            color='warning'
+                                                            color='primary'
                                                             sx={{
-                                                                maxWidth: 75, // Set the maximum width of the button
+                                                                maxWidth: 60, // Set the maximum width of the button
                                                                 maxHeight: 60, // Set the maximum height of the button
                                                             }}
                                                         >
@@ -292,7 +309,7 @@ const Contract = ({ children }: any) => {
                                                             variant='outlined'
                                                             color='info'
                                                             sx={{
-                                                                maxWidth: 75, // Set the maximum width of the button
+                                                                maxWidth: 60, // Set the maximum width of the button
                                                                 maxHeight: 60, // Set the maximum height of the button
                                                             }}
                                                         >
@@ -310,7 +327,7 @@ const Contract = ({ children }: any) => {
                                                         color='error'
                                                         onClick={() => { handleDialogDeleteOpen(item.Id) }}
                                                         sx={{
-                                                            maxWidth: 75, // Set the maximum width of the button
+                                                            maxWidth: 60, // Set the maximum width of the button
                                                             maxHeight: 60, // Set the maximum height of the button
                                                         }}
 

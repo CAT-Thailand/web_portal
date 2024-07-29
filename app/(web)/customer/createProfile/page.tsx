@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 
 import Button from "@mui/material/Button";
 
-import { FormControl, InputAdornment, OutlinedInput, IconButton, Container, Paper, Grid, Box, Typography, Divider, Snackbar, CardHeader, ThemeProvider } from "@mui/material";
+import { FormControl, InputAdornment, OutlinedInput, IconButton, Container, Paper, Grid, Box, Typography, Divider, Snackbar, CardHeader, ThemeProvider, Select } from "@mui/material";
 
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import {
@@ -13,8 +13,8 @@ import {
     SelectChangeEvent,
 } from "@mui/material";
 
-import { CustomerCreateInterface } from "@/interfaces/ICustomer";
-import { CreateCustomer } from "@/services/Customer/CustomerServices";
+import { CustomerCreateInterface, CustomerGroupInterface } from "@/interfaces/ICustomer";
+import { CreateCustomer, ListCustomerGroups } from "@/services/Customer/CustomerServices";
 import { useRouter } from "next/navigation";
 import Layout from "../../layout";
 function CustomerCreate() {
@@ -24,7 +24,10 @@ function CustomerCreate() {
     ) {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
     });
-    const [customer, setCustomer] = React.useState<Partial<CustomerCreateInterface>>({});
+    const [customer, setCustomer] = React.useState<Partial<CustomerCreateInterface>>({
+        CustomerGroupId: 0,
+    });
+    const [customerGroup, setCustomerGroup] = React.useState<CustomerGroupInterface[]>([]);
     const [message, setAlertMessage] = React.useState("");
     const [success, setSuccess] = React.useState(false);
     //check max min lenght
@@ -32,14 +35,36 @@ function CustomerCreate() {
 
     //Customer Create
     const router = useRouter()
+
+    const getCustomerGroup = async () => {
+        try {
+            const res = await ListCustomerGroups();
+            if (res && res.Status !== "error") {
+                setCustomerGroup(res)
+            } else {
+                console.log(res)
+                setAlertMessage(res?.Message || "เกิดข้อผิดพลาดดึงข้อมูล Customer Group");
+                setError(true);
+            }
+        } catch (error) {
+            console.log(error)
+            setAlertMessage("เกิดข้อผิดพลาดดึงข้อมูล Customer Group");
+            setError(true);
+        }
+    }
+    const convertType = (data: string | number | undefined) => {
+        let val = typeof data === "string" ? parseInt(data) : data;
+        return val;
+    };
     //submit
     const submit = async () => {
         console.log("submit 1")
         try {
+            customer.CustomerGroupId = convertType(customer.CustomerGroupId)
             console.log(customer);
             const res = await CreateCustomer(customer);
             console.log(res);
-    
+
             if (res && res.Status !== "error") {
                 setAlertMessage("บันทึกข้อมูลสำเร็จ");
                 setSuccess(true);
@@ -69,6 +94,9 @@ function CustomerCreate() {
         setSuccess(false);
         setError(false);
     };
+    React.useEffect(() => {
+        getCustomerGroup();
+    }, []);
 
     const handleInputChange = (
         event: React.ChangeEvent<{ id?: string; value: any }>
@@ -78,6 +106,13 @@ function CustomerCreate() {
         const { value } = event.target;
 
         setCustomer({ ...customer, [id]: value });
+    };
+    const handleChangeNumber = (event: SelectChangeEvent<number>) => {
+        const name = event.target.name as keyof typeof customer;
+        setCustomer({
+            ...customer,
+            [name]: event.target.value,
+        });
     };
     let theme = createTheme({ // button theme
         palette: {
@@ -229,54 +264,21 @@ function CustomerCreate() {
 
                             <Grid item xs={5}>
                                 <FormControl fullWidth variant="outlined">
-                                    <p style={{ color: "black" }}>GoogleMapURL</p>
+                                    <p style={{ color: "black" }}>Description</p>
                                     <OutlinedInput
-                                        id="GoogleMapURL"
+                                        id="Description"
                                         type="string"
                                         size="medium"
-                                        value={customer.GoogleMapURL || ""}
+                                        value={customer.Description || ""}
                                         onChange={handleInputChange}
                                         style={{ color: "black" }}
                                     />
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                            <Grid item xs={10}>
-                                <FormControl fullWidth variant="outlined">
-                                    <p style={{ color: "black" }}>Address</p>
-
-                                    <TextField
-                                        id="Address"
-                                        variant="outlined"
-                                        type="string"
-                                        size="medium"
-                                        value={customer.Address || ""}
-                                        onChange={handleInputChange}
-                                        style={{ color: "black" }}
-                                        multiline
-                                        rows={3}
-                                    />
-                                </FormControl>
-                            </Grid>
-                        </Grid>
+                        
 
                         <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                            <Grid item xs={5}>
-                                <FormControl fullWidth variant="outlined">
-                                    <p style={{ color: "black" }}>TagGroupCustomer</p>
-
-                                    <TextField
-                                        id="TagGroupCustomer"
-                                        variant="outlined"
-                                        type="string"
-                                        size="medium"
-                                        value={customer.TagGroupCustomer || ""}
-                                        onChange={handleInputChange}
-                                        style={{ color: "black" }}
-                                    />
-                                </FormControl>
-                            </Grid>
                             <Grid item xs={5}>
                                 <FormControl fullWidth variant="outlined">
                                     <p style={{ color: "black" }}>Tax Number</p>
@@ -291,6 +293,26 @@ function CustomerCreate() {
                                         style={{ color: "black" }}
                                         inputProps={{ maxLength: 13 }}
                                     />
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={5}>
+                                <FormControl fullWidth variant="outlined">
+                                    <p style={{ color: "black" }}>Customer Group</p>
+                                    <Select
+                                        native
+                                        value={customer.CustomerGroupId ?? 0}
+                                        onChange={handleChangeNumber}
+                                        inputProps={{
+                                            name: "CustomerGroupId",
+                                        }}
+                                    >
+                                        <option value={0} key={0}>
+                                            กรุณา เลือก customer group
+                                        </option>
+                                        {customerGroup.map((item: CustomerGroupInterface) => (
+                                            <option value={item.Id}>{item.Name}</option>
+                                        ))}
+                                    </Select>
                                 </FormControl>
                             </Grid>
                         </Grid>

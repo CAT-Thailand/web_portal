@@ -71,7 +71,7 @@ export async function UpdateOperationService(contract: Partial<UpdateOperationSe
             },
         };
 
-        const res = await axios.post(`/api/operation/update`, contract, reqOpt);
+        const res = await axios.patch(`/api/operation/update`, contract, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -104,3 +104,24 @@ export async function DeleteOperationServiceById(id: string) {
         })
     return res
 }
+
+export async function GetOperationServiceById(id: string) {
+    const reqOpt = {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/operation/${id}`, reqOpt)
+        .then((res) => {
+            if (res.data) {
+                return res.data.Data
+            } else {
+                return false
+            }
+        })
+    return res
+}
+

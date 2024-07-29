@@ -9,7 +9,7 @@ import React from "react";
 
 import themeOptions from "@/@core/theme/themeOptions";
 import { useSettings } from "@/@core/hooks/useSettings";
-import { DeleteCustomerById, ListCustomers, getSearchCustomer } from "@/services/Customer/CustomerServices";
+import { DeleteCustomerById, ListCustomers, GetSearchCustomer } from "@/services/Customer/CustomerServices";
 import Link from "next/link";
 
 
@@ -105,7 +105,7 @@ const Customer = ({ children }: any) => {
         if (searchValue == "") {
             getCustomer()
         } else {
-            let res = await getSearchCustomer(searchValue)
+            let res = await GetSearchCustomer(searchValue)
             if (res) {
                 console.log(res)
             } else {
@@ -229,17 +229,17 @@ const Customer = ({ children }: any) => {
                             <Table aria-label="simple table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell align="center" width="15%"> Name </TableCell>
+                                        <TableCell align="center" width="15%"> Company Name </TableCell>
+                                        <TableCell align="center"> TaxNumber </TableCell>
                                         <TableCell align="center" width="12%"> ContactPerson </TableCell>
-                                        {/* <TableCell align="center"> Phone </TableCell> */}
-                                        {/* <TableCell align="center"> Email </TableCell> */}
+                                        <TableCell align="center"> Phone </TableCell>
                                         {/* <TableCell align="center"> LineID </TableCell> */}
-                                        <TableCell align="center" width="28%"> MapURL </TableCell> {/* Adjusted width */}
+                                        {/* <TableCell align="center" width="15%"> MapURL </TableCell>  */}
                                         {/* <TableCell align="center" style={{ width: "50" }}> Address </TableCell> Adjusted width */}
                                         {/* <TableCell align="center"> Description </TableCell> */}
                                         <TableCell align="center" width="10%"> TagGroupCustomer </TableCell>
                                         <TableCell align="center" width="10%"> TaxNumber </TableCell>
-                                        <TableCell align="center" width="5%"> contract </TableCell>
+                                        <TableCell align="center" width="10%"> contract </TableCell>
                                         <TableCell align="center" width="5%"> View </TableCell>
                                         <TableCell align="center" width="5%"> Delete </TableCell>
 
@@ -253,33 +253,32 @@ const Customer = ({ children }: any) => {
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
                                             <TableCell align="left">{item.CompanyName || "-"}</TableCell>
+                                            <TableCell align="center">{item.TaxNumber || "-"}</TableCell>
                                             <TableCell align="center">{item.ContactPerson || "-"}</TableCell>
-                                            {/* <TableCell align="center">{item.ContactNumber || "-"}</TableCell> */}
-                                            {/* <TableCell align="center">{item.ContactEmail || "-"}</TableCell>
-                                            <TableCell align="center">{item.ContactLineID || "-"}</TableCell> */}
-                                            <TableCell align="center">{item.GoogleMapURL ? (
+                                            <TableCell align="center">{item.ContactNumber || "-"}</TableCell>
+                                            {/* <TableCell align="center">{item.ContactLineID || "-"}</TableCell> */}
+                                            {/* <TableCell align="center">{item.GoogleMapURL ? (
                                                 <a href={item.GoogleMapURL} target="_blank" rel="noopener noreferrer">
                                                     {item.GoogleMapURL}
                                                 </a>
                                             ) : (
                                                 "-"
                                             )}</TableCell>
-                                            {/* <TableCell style={{ width: "400px" }} align="center">{item.Address || "-"}</TableCell> */}
-                                            {/* <TableCell align="center">{item.Description || "-"}</TableCell> */}
-                                            <TableCell align="center">{item.TagGroupCustomer || "-"}</TableCell>
+                                            */}
+                                            <TableCell align="center">{item.CustomerGroup.Name || "-"}</TableCell>
                                             <TableCell align="center">{item.TaxNumber || "-"}</TableCell>
-                                            <TableCell>
+                                            <TableCell align="center">
                                                 {
                                                     <Link href={"/customer/contract/create/" + item.Id}>
                                                         <Button
                                                             variant='outlined'
-                                                            color='warning'
+                                                            color='info'
                                                             sx={{
-                                                                maxWidth: 75, // Set the maximum width of the button
+                                                                maxWidth: 85, // Set the maximum width of the button
                                                                 maxHeight: 60, // Set the maximum height of the button
                                                             }}
                                                         >
-                                                            create-contact
+                                                            contract
                                                         </Button>
                                                     </Link>
 

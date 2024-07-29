@@ -1,18 +1,19 @@
 "use client"
 
 import Layout from "@/app/(web)/layout"
-import { ContractCreateInterface, ContractInterface } from "@/interfaces/IContract"
+import { ContractCreateInterface, ContractInterface, ContractUpdateInterface } from "@/interfaces/IContract"
 import { CustomerInterface } from "@/interfaces/ICustomer"
-import { CreateOperationServiceInterface } from "@/interfaces/IOperationService"
+import { CreateOperationServiceInterface, UpdateOperationServiceInterface } from "@/interfaces/IOperationService"
 import { PriorityInterface } from "@/interfaces/IPriority"
 import { ServiceCatalogInterface } from "@/interfaces/IServiceCatalog"
 import { SlaInterface } from "@/interfaces/ISla"
 import { StatusInterface } from "@/interfaces/IStatus"
 import { getContractByID } from "@/services/Contract/ContractServices"
-import { CreateOperationService, ListOperationTypes } from "@/services/Operation/OperationServices"
+import { CreateOperationService, GetOperationServiceById, ListOperationTypes, UpdateOperationService } from "@/services/Operation/OperationServices"
 import { ListPriorities } from "@/services/Priority/PriorityServices"
-import { useRouter } from 'next/navigation'
 
+import { ListServiceCatalogs } from "@/services/ServiceCatalog/ServiceCatalogServices"
+import { ListSlas } from "@/services/Sla/SlaServices"
 import { ListStatus } from "@/services/Status/StatusServices"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
@@ -23,9 +24,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import { ListDevisions } from "@/services/Devision/DevisionService"
 import { ListEmployeeByDivision, ListEmployees } from "@/services/Employee/EmployeeServices"
 import { DivisionInterface } from "@/interfaces/IDivision"
-
-import { EmployeeInterface } from "@/interfaces/IEmployee"
-export default function OperationTicket({ params: { slug } }: { params: { slug: string } }) {
+import { OperationTypeInterface } from "@/interfaces/IOperationType"
+import { EmployeeCreateInterface, EmployeeInterface } from "@/interfaces/IEmployee"
+import { useRouter } from 'next/navigation'
+export default function UpdateOperationTicket({ params: { slug } }: { params: { slug: string } }) {
     let router = useRouter()
     const [operationType, setOperationType] = React.useState<ServiceCatalogInterface[]>([])
     const [status, setStatus] = React.useState<StatusInterface[]>([])
@@ -33,22 +35,32 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
     const [divisions, setDivisions] = React.useState<DivisionInterface[]>([])
     const [employee, setEmployee] = React.useState<EmployeeInterface[]>([])
     const [division, setDivision] = React.useState<number>(0)
-    const [contract, setContract] = React.useState<Partial<ContractInterface>>({
-        Cost: 0.0,
-        ServiceCatalogID: 0,
-        SlaID: 0
-    })
-    const [operation, setOperation] = React.useState<Partial<CreateOperationServiceInterface>>({
+    const [operation, setOperation] = React.useState<Partial<UpdateOperationServiceInterface>>({
         StatusID: 0,
         PriorityID: 0,
         OperationTypeID: 0,
     })
-    const [dateOfVisit, setDateOfVisit] = React.useState<Dayjs>(dayjs())
+    const [contract, setContract] = React.useState<Partial<ContractUpdateInterface>>({
+        Cost: 0.0,
+        ServiceCatalogID: 0,
+        SlaID: 0
+    })
     const getContract = async (id: string | undefined) => {
         let res = await getContractByID(id)
         if (res && res.Status !== "error") {
             console.log(res)
             setContract(res)
+            console.log("contract")
+            console.log(contract)
+
+        }
+    }
+    const [dateOfVisit, setDateOfVisit] = React.useState<Dayjs>(dayjs())
+    const getOperation = async (id: string) => {
+        let res = await GetOperationServiceById(id)
+        if (res && res.Status !== "error") {
+            console.log(res)
+            setOperation(res)
         }
     }
 
@@ -106,11 +118,12 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
     }
 
     React.useEffect(() => {
-        getContract(slug);
+        getOperation(slug);
         getPriority();
         getOperationType();
         getStatus();
         getDivision();
+
     }, []);
 
     React.useEffect(() => {
@@ -135,7 +148,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
             operation.OperationTypeID = convertType(operation.OperationTypeID)
             operation.PriorityID = convertType(operation.PriorityID)
 
-            let res = await CreateOperationService(operation)
+            let res = await UpdateOperationService(operation)
             if (res && res.Status !== "error") {
                 setAlertMessage("บันทึกข้อมูลสำเร็จ");
                 setSuccess(true);
@@ -144,9 +157,9 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                 setError(true);
             }
 
-            setTimeout(() => {
-                router.push("/contract/ticket")
-            }, 3000)
+            // setTimeout(() => {
+            //     router.push("/customer/contract/ticket")
+            // }, 3000)
 
 
         } catch (error) {
@@ -159,7 +172,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
     const handleInputChange = (
         event: React.ChangeEvent<{ id?: string; value: any }>
     ) => {
-        const id = event.target.id as keyof typeof OperationTicket;
+        const id = event.target.id as keyof typeof UpdateOperationTicket;
 
         const { value } = event.target;
 
@@ -244,7 +257,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                 },
                             }}
                             className="font-bold"
-                            title={`สร้าง operation จากสัญญาโปรเจค ${contract.ProjectName || ""} customerPo: ${contract.CustomerPO || ""}`}
+                            title={`operation ticket: ${operation.OperationSubject } `}
                         ></CardHeader>
                     </div>
                     <Container maxWidth="lg">
@@ -578,7 +591,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
 
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={4}>
-                                    <a href={"/customer/contract"}>
+                                    <a href={"/customer/contract/ticket"}>
                                         <Button
                                             variant="contained"
                                             sx={{
@@ -603,7 +616,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                             },
                                         }}
                                     >
-                                        Submit
+                                        Update
                                     </Button>
                                 </Grid>
                             </Grid>

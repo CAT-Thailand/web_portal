@@ -7,14 +7,15 @@ import { useRouter } from "next/navigation";
 import { makeStyles } from '@mui/styles';
 import PeopleIcon from '@mui/icons-material/People';
 import BadgeIcon from '@mui/icons-material/Badge';
+import { color } from "@mui/system";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
   },
-  appBar: {
-    zIndex: 1200,
-  },
+  // appBar: {
+  //   zIndex: 1200,
+  // },
   drawer: {
     width: 120,
     flexShrink: 0,
@@ -65,6 +66,8 @@ const Layout = ({ children }: any) => {
           variant="permanent"
           classes={{ paper: classes.drawerPaper }}
           anchor="left"
+          style={{background:"linear-gradient(0deg, rgba(3,8,20,1) 60%, rgba(8,18,50,255) 100%)", width: 120,
+            flexShrink: 0,}}
         >
           <Toolbar>
             <Typography variant="h6" className={classes.texticon}>
@@ -92,9 +95,15 @@ const Layout = ({ children }: any) => {
               </ListItemIcon>
               <Typography style={{ color: "#CBD1D7", fontSize: "16px", fontWeight: 700 }}>Contract</Typography>
             </ListItemButton>
+            <ListItemButton onClick={() => router.push("/customer/contract/ticket")}>
+              <ListItemIcon style={{ color: "#CBD1D7" }}>
+                <PeopleIcon />
+              </ListItemIcon>
+              <Typography style={{ color: "#CBD1D7", fontSize: "16px", fontWeight: 700 }}>Ticket</Typography>
+            </ListItemButton>
           </List>
         </Drawer>
-        <main className={classes.content}>{children}</main>
+        <main style={{background:"#f8f9fa"}} className={classes.content}>{children}</main>
       </div>
     </ThemeProvider>
   );

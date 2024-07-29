@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid'
 import React from 'react'
 
 import { CustomerInterface } from '@/interfaces/ICustomer'
-import { UpdateCustomer, getCustomerByID } from '@/services/Customer/CustomerServices'
+import {  GetCustomerByID } from '@/services/Customer/CustomerServices'
 import Layout from '@/app/(web)/layout'
 import { SlaInterface } from '@/interfaces/ISla'
 import { ServiceCatalogInterface } from '@/interfaces/IServiceCatalog'
@@ -33,7 +33,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
     const [contractStop, setContractStop] = React.useState<Dayjs>(dayjs())
     const [noticeDate, setNoticeDate] = React.useState<Dayjs>(dayjs())
     const getCustomer = async (id: string | undefined) => {
-        let res = await getCustomerByID(id)
+        let res = await GetCustomerByID(id)
         if (res && res.Status !== "error") {
             console.log(res)
             setCustomer(res)

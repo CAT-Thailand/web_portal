@@ -1,4 +1,4 @@
-import { CustomerCreateInterface, CustomerInterface } from "@/interfaces/ICustomer";
+import { CreateCustomerAddressInterface, CreateCustomerGroupInterface, CustomerAddressInterface, CustomerCreateInterface, CustomerGroupInterface, CustomerInterface } from "@/interfaces/ICustomer";
 import axios from "axios";
 
 export async function ListCustomers() {
@@ -22,7 +22,6 @@ export async function ListCustomers() {
 
 export async function DeleteCustomerById(id: string) {
     const reqOpt = {
-        method: "GET",
         headers:{
             Authorization: `Bearer ${localStorage.getItem("at")}`,
             "Content-Type": "application/json",
@@ -40,7 +39,7 @@ export async function DeleteCustomerById(id: string) {
     return res
 }
 
-export async function getCustomerByID(id: string | undefined) {
+export async function GetCustomerByID(id: string | undefined) {
     const reqOpt = {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -57,7 +56,7 @@ export async function getCustomerByID(id: string | undefined) {
 
 }
 
-export async function getSearchCustomer(searchValue: string | undefined) {
+export async function GetSearchCustomer(searchValue: string | undefined) {
     const reqOpt = {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -77,19 +76,6 @@ export async function getSearchCustomer(searchValue: string | undefined) {
 
 export async function CreateCustomer(customer: Partial<CustomerCreateInterface>) {
     try {
-        const data = {
-            companyName: customer.CompanyName,
-            ContactPerson: customer.ContactPerson,
-            ContactNumber: customer.ContactNumber,
-            ContactEmail: customer.ContactEmail,
-            ContactLineID: customer.ContactLineID,
-            GoogleMapURL: customer.GoogleMapURL,
-            Address: customer.Address,
-            Description: customer.Description,
-            TagGroupCustomer: customer.TagGroupCustomer,
-            TaxNumber: customer.TaxNumber,
-        };
-
         const reqOpt = {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -97,7 +83,7 @@ export async function CreateCustomer(customer: Partial<CustomerCreateInterface>)
             },
         };
 
-        const res = await axios.post(`/api/customer/create`, data, reqOpt);
+        const res = await axios.post(`/api/customer/create`, customer, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -112,20 +98,6 @@ export async function CreateCustomer(customer: Partial<CustomerCreateInterface>)
 
 export async function UpdateCustomer(customer: Partial<CustomerInterface>) {
     try {
-        const data = {
-            id: customer.Id,
-            companyName: customer.CompanyName,
-            contactPerson: customer.ContactPerson,
-            contactNumber: customer.ContactNumber,
-            contactEmail: customer.ContactEmail,
-            contactLineID: customer.ContactLineID,
-            googleMapURL: customer.GoogleMapURL,
-            address: customer.Address,
-            description: customer.Description,
-            tagGroupCustomer: customer.TagGroupCustomer,
-            taxNumber: customer.TaxNumber,
-        };
-
         const reqOpt = {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -133,7 +105,239 @@ export async function UpdateCustomer(customer: Partial<CustomerInterface>) {
             },
         };
 
-        const res = await axios.patch(`/api/customer/update`, data, reqOpt);
+        const res = await axios.patch(`/api/customer/update`, customer, reqOpt);
+
+        if (res.data) {
+            return res.data;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error("Error creating customer:", error);
+        return false;
+    }
+}
+
+export async function ListCustomerAddresses() {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/customer/address/list`, reqOpt)
+        .then((res) => {
+            if (res.data) {
+                return res.data.Data
+            } else {
+                return false
+            }
+        })
+    return res
+}
+
+export async function DeleteCustomerAddressById(id: string) {
+    const reqOpt = {
+        method: "GET",
+        headers:{
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.delete(`/api/customer/address/delete/${id}`, reqOpt)
+    .then((res) => {
+        if(res.data){
+            return res.data
+        } else{
+            return false
+        }
+    })
+    return res
+}
+
+export async function GetCustomerAddressByID(id: string | undefined) {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/customer/address/${id}`, reqOpt)
+    if (res.data) {
+        return res.data.Data
+    } else {
+        return false
+    }
+
+}
+export async function GetCustomerAddressCustomerByID(id: string | undefined) {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/customer/address/customer/${id}`, reqOpt)
+    if (res.data) {
+        return res.data.Data
+    } else {
+        return false
+    }
+
+}
+
+
+export async function CreateCustomerAddress(customer: Partial<CreateCustomerAddressInterface>) {
+    try {
+        const reqOpt = {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("at")}`,
+                "Content-Type": "application/json",
+            },
+        };
+
+        const res = await axios.post(`/api/customer/address/create`, customer, reqOpt);
+
+        if (res.data) {
+            return res.data;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error("Error creating customer:", error);
+        return false;
+    }
+}
+
+export async function UpdateCustomerAddress(customer: Partial<CustomerAddressInterface>) {
+    try {
+        const reqOpt = {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("at")}`,
+                "Content-Type": "application/json",
+            },
+        };
+
+        const res = await axios.patch(`/api/customer/address/update`, customer, reqOpt);
+
+        if (res.data) {
+            return res.data;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error("Error creating customer:", error);
+        return false;
+    }
+}
+export async function ListCustomerGroups() {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/customer/group/list`, reqOpt)
+        .then((res) => {
+            if (res.data) {
+                return res.data.Data
+            } else {
+                return false
+            }
+        })
+    return res
+}
+export async function DeleteCustomerGroupById(id: string) {
+    const reqOpt = {
+        method: "GET",
+        headers:{
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.delete(`/api/customer/group/delete/${id}`, reqOpt)
+    .then((res) => {
+        if(res.data){
+            return res.data
+        } else{
+            return false
+        }
+    })
+    return res
+}
+
+export async function GetCustomerGroupByID(id: string | undefined) {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/customer/group/${id}`, reqOpt)
+    if (res.data) {
+        return res.data.Data
+    } else {
+        return false
+    }
+
+}
+export async function GetCustomerGroupCustomerByID(id: string | undefined) {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/customer/group/customer/${id}`, reqOpt)
+    if (res.data) {
+        return res.data.Data
+    } else {
+        return false
+    }
+
+}
+
+
+export async function CreateCustomerGroup(customer: Partial<CreateCustomerGroupInterface>) {
+    try {
+        const reqOpt = {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("at")}`,
+                "Content-Type": "application/json",
+            },
+        };
+
+        const res = await axios.post(`/api/customer/group/create`, customer, reqOpt);
+
+        if (res.data) {
+            return res.data;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error("Error creating customer:", error);
+        return false;
+    }
+}
+
+export async function UpdateCustomerGroup(customer: Partial<CustomerGroupInterface>) {
+    try {
+        const reqOpt = {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("at")}`,
+                "Content-Type": "application/json",
+            },
+        };
+
+        const res = await axios.patch(`/api/customer/group/update`, customer, reqOpt);
 
         if (res.data) {
             return res.data;
