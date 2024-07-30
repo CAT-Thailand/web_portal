@@ -3,25 +3,6 @@ import axios from "axios";
 
 export async function CreateContract(contract: Partial<ContractCreateInterface>) {
     try {
-        const data = {
-
-            customerID: contract.CustomerID,
-            contractStart: contract.ContractStart,
-            contractStop: contract.ContractStop,
-            incidentPerYear: contract.IncidentPerYear,
-            incidentPerContract: contract.IncidentPerContract,
-            cost: contract.Cost,
-            description: contract.Description,
-            noticeDate1: contract.NoticeDate1,
-            noticeDate2: contract.NoticeDate2,
-            noticeDate3: contract.NoticeDate3,
-            projectName: contract.ProjectName,
-            customerPO: contract.CustomerPO,
-            vendorPO: contract.VendorPO,
-            scopeOfWorkURL:contract.ScopeOfWorkURL,
-            serviceCatalogID: contract.ServiceCatalogID,
-            slaID: contract.SlaID
-        };
 
         const reqOpt = {
             headers: {
@@ -30,7 +11,7 @@ export async function CreateContract(contract: Partial<ContractCreateInterface>)
             },
         };
 
-        const res = await axios.post(`/api/customer/contract/create`, data, reqOpt);
+        const res = await axios.post(`/api/customer/contract/create`, contract, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -96,7 +77,7 @@ export async function UpdateDevice(device: Partial<CreateDeviceInterface>) {
             },
         };
 
-        const res = await axios.post(`/api/customer/contract/device/update`, data, reqOpt);
+        const res = await axios.patch(`/api/customer/contract/device/update`, data, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -225,7 +206,6 @@ export async function DeleteContractById(id: string) {
 
 export async function DeleteDeviceById(id: string) {
     const reqOpt = {
-        method: "GET",
         headers:{
             Authorization: `Bearer ${localStorage.getItem("at")}`,
             "Content-Type": "application/json",

@@ -70,7 +70,7 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
             [name]: event.target.value,
         });
     };
-    
+
     const getDeviceByContractId = async (id: string) => {
         let res = await ListDeviceByContractId(id);
         if (res && res.Status !== "error") {
@@ -99,9 +99,9 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
         setExpiredLisenceDate(dayjs());
     }
 
-    const handleUpdate = (device : DeviceInterface) => {
+    const handleUpdate = (device: DeviceInterface) => {
         setUpdateState(true)
-        setCreateDevice( {
+        setCreateDevice({
             ...createDevice,
             Id: device.Id,
             Brand: device.Brand,

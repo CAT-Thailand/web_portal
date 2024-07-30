@@ -1,11 +1,11 @@
 "use client"
-import { Alert, Button, FormControl, Snackbar, TextField, createTheme, OutlinedInput, ThemeProvider, CardHeader, SelectChangeEvent, Select, Tabs, Tab, Box, Divider, Table, TableBody, TableRow, TableCell, TableContainer, TableHead } from '@mui/material'
+import { Alert, Button, FormControl, Snackbar, TextField, createTheme, OutlinedInput, ThemeProvider, CardHeader, SelectChangeEvent, Select, Tabs, Tab, Box, Divider, Table, TableBody, TableRow, TableCell, TableContainer, TableHead, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import React from 'react'
 
-import { CustomerAddressInterface, CustomerGroupInterface, CustomerInterface } from '@/interfaces/ICustomer'
-import { UpdateCustomer, GetCustomerByID, ListCustomerGroups, ListCustomerAddresses, CreateCustomerAddress, DeleteCustomerAddressById } from '@/services/Customer/CustomerServices'
+import { CreateCustomerGroupInterface, CustomerAddressInterface, CustomerGroupInterface, CustomerInterface } from '@/interfaces/ICustomer'
+import { UpdateCustomer, GetCustomerByID, ListCustomerGroups, ListCustomerAddresses, CreateCustomerAddress, DeleteCustomerAddressById, UpdateCustomerAddress, GetCustomerAddressCustomerByID } from '@/services/Customer/CustomerServices'
 import { useRouter } from 'next/navigation'
 import Layout from '@/app/(web)/layout'
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -30,7 +30,6 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
             console.log(customer)
         }
     }
-
     const [customerGroup, setCustomerGroup] = React.useState<CustomerGroupInterface[]>([]);
     const getCustomerGroup = async () => {
         try {
@@ -51,7 +50,7 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
     const [customerAddress, setCustomerAddress] = React.useState<CustomerAddressInterface[]>([]);
     const getCustomerAddress = async () => {
         try {
-            const res = await ListCustomerAddresses();
+            const res = await GetCustomerAddressCustomerByID(slug);
             if (res && res.Status !== "error") {
                 setCustomerAddress(res)
             } else {
@@ -66,17 +65,31 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
         }
     }
     const [customerAddressCreate, setCustomerAddressCreate] = React.useState<Partial<CustomerAddressInterface>>({});
-    const createCustomerAddress = async () => {
+    const submitCustomerAddress = async () => {
         try {
             customerAddressCreate.CustomerID = slug
-            const res = await CreateCustomerAddress(customerAddressCreate);
-            if (res && res.Status !== "error") {
-                getCustomerAddress();
+            if (updateState) {
+                const res = await UpdateCustomerAddress(customerAddressCreate);
+                if (res && res.Status !== "error") {
+                    getCustomerAddress();
+                } else {
+                    console.log(res)
+                    setAlertMessage(res?.Message || "เกิดข้อผิดพลาดในการอัพเดท customer address");
+                    setError(true);
+                }
+                setUpdateState(false)
             } else {
-                console.log(res)
-                setAlertMessage(res?.Message || "เกิดข้อผิดพลาดดึงข้อมูล Customer Group");
-                setError(true);
+                const res = await CreateCustomerAddress(customerAddressCreate);
+                if (res && res.Status !== "error") {
+                    getCustomerAddress();
+                } else {
+                    console.log(res)
+                    setAlertMessage(res?.Message || "เกิดข้อผิดพลาดในการสร้าง customer address");
+                    setError(true);
+                }
+
             }
+
         } catch (error) {
             console.log(error)
             setAlertMessage("เกิดข้อผิดพลาดดึงข้อมูล Customer Address");
@@ -239,6 +252,10 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
         setTabValue(newValue);
     };
 
+    const handleDiscard = () => {
+        setCustomerAddressCreate({});
+    }
+
     return (
         <Layout>
             <ThemeProvider theme={theme} >
@@ -289,12 +306,11 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
                             <Tab label="Customer Profile" value="1" />
                             <Tab label="Address" value="2" />
-                            <Tab label="Item Three" value="3" />
                         </TabList>
                     </Box>
                     <TabPanel value="1">
                         <Container maxWidth="lg" >
-                            <div style={{ backgroundColor: "#f8f9fa", height: `calc(130vh - 300px)`, width: "100%", marginTop: "10px" }}>
+                            <div className="flex flex-col h-screen">
                                 <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                     <Grid item xs={5}>
                                         <FormControl fullWidth variant="outlined">
@@ -539,23 +555,22 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
 
                                 <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                     <Grid item xs={4}>
-                                        <a href={"/customer"}>
-                                            <Button
-                                                variant="contained"
-                                                sx={{
-                                                    "&.MuiButton-root": {
-                                                        backgroundColor: "#0082EF",
-                                                    },
-                                                }}
-                                            >
-                                                Clear
-                                            </Button>
-                                        </a>
+                                        <Button
+                                            variant="contained"
+                                            sx={{
+                                                "&.MuiButton-root": {
+                                                    backgroundColor: "#0082EF",
+                                                },
+                                            }}
+                                            onClick={handleDiscard}
+                                        >
+                                            Discard
+                                        </Button>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Button
                                             style={{ float: "right" }}
-                                            onClick={createCustomerAddress}
+                                            onClick={submitCustomerAddress}
                                             variant="contained"
                                             color="primary"
                                             sx={{
@@ -638,11 +653,37 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
+                                <Dialog
+                                    open={openDelete}
+                                    onClose={handleDialogDeleteclose}
+                                    aria-labelledby="alert-dialog-title"
+                                    aria-describedby="alert-dialog-description"
+                                    PaperProps={{
+                                        style: {
+                                            backgroundColor: "#f8f9fa",
+                                        },
+                                    }}
+                                >
+                                    <DialogTitle id="alert-dialog-title">
+                                        {`คุณต้องการลบข้อมูล site: ${customerAddress.filter((cus) => (cus.Id === deleteID)).at(0)?.SiteName} ของลูกค้า ${customer?.CompanyName} จริงหรือไม่`}
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText id="alert-dialog-description">
+                                            หากคุณลบข้อมูลนี้แล้วนั้น คุณจะไม่สามารถกู้คืนได้อีก คุณต้องการลบข้อมูลนี้ใช่หรือไม่
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleDialogDeleteclose}>ยกเลิก</Button>
+                                        <Button onClick={handleDelete} className="bg-red" autoFocus>
+                                            ยืนยัน
+                                        </Button>
+                                    </DialogActions>
+
+                                </Dialog>
                             </div>
                         </div>
 
                     </TabPanel>
-                    <TabPanel value="3">Item Three</TabPanel>
                 </TabContext>
 
             </ThemeProvider>
