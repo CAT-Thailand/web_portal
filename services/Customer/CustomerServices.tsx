@@ -137,7 +137,7 @@ export async function ListCustomerAddresses() {
     return res
 }
 
-export async function DeleteCustomerAddressById(id: string) {
+export async function DeleteCustomerAddressById(id: number) {
     const reqOpt = {
         method: "GET",
         headers:{

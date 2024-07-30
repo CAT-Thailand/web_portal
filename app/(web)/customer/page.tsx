@@ -256,15 +256,6 @@ const Customer = ({ children }: any) => {
                                             <TableCell align="center">{item.TaxNumber || "-"}</TableCell>
                                             <TableCell align="center">{item.ContactPerson || "-"}</TableCell>
                                             <TableCell align="center">{item.ContactNumber || "-"}</TableCell>
-                                            {/* <TableCell align="center">{item.ContactLineID || "-"}</TableCell> */}
-                                            {/* <TableCell align="center">{item.GoogleMapURL ? (
-                                                <a href={item.GoogleMapURL} target="_blank" rel="noopener noreferrer">
-                                                    {item.GoogleMapURL}
-                                                </a>
-                                            ) : (
-                                                "-"
-                                            )}</TableCell>
-                                            */}
                                             <TableCell align="center">{item.CustomerGroup.Name || "-"}</TableCell>
                                             <TableCell align="center">{item.TaxNumber || "-"}</TableCell>
                                             <TableCell align="center">

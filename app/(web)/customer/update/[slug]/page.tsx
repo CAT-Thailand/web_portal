@@ -1,11 +1,11 @@
 "use client"
-import { Alert, Button, FormControl, Snackbar, TextField, createTheme, OutlinedInput, ThemeProvider, CardHeader, SelectChangeEvent, Select, Tabs, Tab, Box } from '@mui/material'
+import { Alert, Button, FormControl, Snackbar, TextField, createTheme, OutlinedInput, ThemeProvider, CardHeader, SelectChangeEvent, Select, Tabs, Tab, Box, Divider, Table, TableBody, TableRow, TableCell, TableContainer, TableHead } from '@mui/material'
 import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import React from 'react'
 
-import { CustomerGroupInterface, CustomerInterface } from '@/interfaces/ICustomer'
-import { UpdateCustomer, GetCustomerByID, ListCustomerGroups } from '@/services/Customer/CustomerServices'
+import { CustomerAddressInterface, CustomerGroupInterface, CustomerInterface } from '@/interfaces/ICustomer'
+import { UpdateCustomer, GetCustomerByID, ListCustomerGroups, ListCustomerAddresses, CreateCustomerAddress, DeleteCustomerAddressById } from '@/services/Customer/CustomerServices'
 import { useRouter } from 'next/navigation'
 import Layout from '@/app/(web)/layout'
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -48,12 +48,48 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
             setError(true);
         }
     }
+    const [customerAddress, setCustomerAddress] = React.useState<CustomerAddressInterface[]>([]);
+    const getCustomerAddress = async () => {
+        try {
+            const res = await ListCustomerAddresses();
+            if (res && res.Status !== "error") {
+                setCustomerAddress(res)
+            } else {
+                console.log(res)
+                setAlertMessage(res?.Message || "เกิดข้อผิดพลาดดึงข้อมูล Customer Group");
+                setError(true);
+            }
+        } catch (error) {
+            console.log(error)
+            setAlertMessage("เกิดข้อผิดพลาดดึงข้อมูล Customer Address");
+            setError(true);
+        }
+    }
+    const [customerAddressCreate, setCustomerAddressCreate] = React.useState<Partial<CustomerAddressInterface>>({});
+    const createCustomerAddress = async () => {
+        try {
+            customerAddressCreate.CustomerID = slug
+            const res = await CreateCustomerAddress(customerAddressCreate);
+            if (res && res.Status !== "error") {
+                getCustomerAddress();
+            } else {
+                console.log(res)
+                setAlertMessage(res?.Message || "เกิดข้อผิดพลาดดึงข้อมูล Customer Group");
+                setError(true);
+            }
+        } catch (error) {
+            console.log(error)
+            setAlertMessage("เกิดข้อผิดพลาดดึงข้อมูล Customer Address");
+            setError(true);
+        }
+    }
 
     React.useEffect(() => {
         console.log("slug");
         console.log(slug);
         getCustomerGroup();
         getCustomer(slug);
+        getCustomerAddress();
     }, []);
 
     // submit
@@ -100,6 +136,15 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
 
         setCustomer({ ...customer, [id]: value });
     };
+    const handleInputChangeAddress = (
+        event: React.ChangeEvent<{ id?: string; value: any }>
+    ) => {
+        const id = event.target.id as keyof typeof CustomerUpdate;
+
+        const { value } = event.target;
+
+        setCustomerAddressCreate({ ...customerAddressCreate, [id]: value });
+    };
     const handleChangeNumber = (event: SelectChangeEvent<number>) => {
         const name = event.target.name as keyof typeof customer;
         setCustomer({
@@ -118,6 +163,47 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
         })
     }
 
+    //For Delete state 
+    const [deleteID, setDeleteID] = React.useState<number>(0)
+
+    // For Set dialog open
+    const [openDelete, setOpenDelete] = React.useState(false);
+
+    const handleDelete = async () => { // when click submit
+        let res = await DeleteCustomerAddressById(deleteID)
+        if (res) {
+            console.log(res.data)
+        } else {
+            console.log(res.data)
+        }
+        getCustomerAddress();
+        setOpenDelete(false)
+
+    }
+    const handleDialogDeleteOpen = (ID: number) => {
+        setDeleteID(ID)
+        setOpenDelete(true)
+    }
+
+    const handleDialogDeleteclose = () => {
+        setOpenDelete(false)
+        setTimeout(() => {
+            setDeleteID(0)
+        }, 500)
+    }
+    const [updateState, setUpdateState] = React.useState<boolean>(false)
+    const handleUpdate = (customerAddress: CustomerAddressInterface) => {
+        setUpdateState(true)
+        setCustomerAddressCreate({
+            ...customerAddressCreate,
+            Id: customerAddress.Id,
+            SiteName: customerAddress.SiteName,
+            Address: customerAddress.Address,
+            GoogleMapURL: customerAddress.GoogleMapURL,
+            Description: customerAddress.Description,
+        });
+    }
+
     let theme = createTheme({ // button theme
         palette: {
             primary: {
@@ -130,7 +216,7 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                 primary: "#000000",
                 secondary: "#000000"
             },
-            background:{ default: "#f8f9fa" }
+            background: { default: "#f8f9fa" }
         },
     });
 
@@ -174,6 +260,30 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                         title="Customer Management"
                     ></CardHeader>
                 </div>
+                <Snackbar
+                    id="success"
+                    open={success}
+                    autoHideDuration={8000}
+                    onClose={handleClose}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                >
+                    <Alert onClose={handleClose} severity="success">
+                        บันทึกข้อมูลสำเร็จ
+                    </Alert>
+                </Snackbar>
+
+                <Snackbar
+                    id="error"
+                    open={error}
+                    autoHideDuration={8000}
+                    onClose={handleClose}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                >
+                    <Alert onClose={handleClose} severity="error">
+                        {/* บันทึกข้อมูลไม่สำเร็จ */}
+                        {message}
+                    </Alert>
+                </Snackbar>
                 <TabContext value={String(tabValue)}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChangeTab} aria-label="lab API tabs example">
@@ -184,31 +294,7 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                     </Box>
                     <TabPanel value="1">
                         <Container maxWidth="lg" >
-                            <Snackbar
-                                id="success"
-                                open={success}
-                                autoHideDuration={8000}
-                                onClose={handleClose}
-                                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                            >
-                                <Alert onClose={handleClose} severity="success">
-                                    บันทึกข้อมูลสำเร็จ
-                                </Alert>
-                            </Snackbar>
-
-                            <Snackbar
-                                id="error"
-                                open={error}
-                                autoHideDuration={8000}
-                                onClose={handleClose}
-                                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                            >
-                                <Alert onClose={handleClose} severity="error">
-                                    {/* บันทึกข้อมูลไม่สำเร็จ */}
-                                    {message}
-                                </Alert>
-                            </Snackbar>
-                            <div style={{backgroundColor: "#f8f9fa" , height: `calc(130vh - 300px)`, width: "100%", marginTop: "10px" }}>
+                            <div style={{ backgroundColor: "#f8f9fa", height: `calc(130vh - 300px)`, width: "100%", marginTop: "10px" }}>
                                 <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                     <Grid item xs={5}>
                                         <FormControl fullWidth variant="outlined">
@@ -374,14 +460,188 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                                 },
                                             }}
                                         >
-                                            UPdate
+                                            Update
                                         </Button>
                                     </Grid>
                                 </Grid>
                             </div>
                         </Container>
                     </TabPanel>
-                    <TabPanel value="2">Item Two</TabPanel>
+                    <TabPanel value="2">
+                        <div className="flex flex-col h-screen">
+                            <div className=" justify-center ">
+                                <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                    <Grid item xs={5}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <p style={{ color: "black" }}>SiteName</p>
+
+                                            <TextField
+                                                id="SiteName"
+                                                variant="outlined"
+                                                type="string"
+                                                size="medium"
+                                                value={customerAddressCreate.SiteName || ""}
+                                                onChange={handleInputChangeAddress}
+                                                style={{ color: "black" }}
+
+                                            />
+                                        </FormControl>
+                                    </Grid>
+
+                                    <Grid item xs={5}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <p style={{ color: "black" }}>Address</p>
+                                            <TextField
+                                                id="Address"
+                                                variant="outlined"
+                                                type="string"
+                                                size="medium"
+                                                value={customerAddressCreate.Address || ""}
+                                                onChange={handleInputChangeAddress}
+                                                style={{ color: "black" }}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                                <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                    <Grid item xs={5}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <p style={{ color: "black" }}>GoogleMapURL</p>
+
+                                            <TextField
+                                                id="GoogleMapURL"
+                                                variant="outlined"
+                                                type="string"
+                                                size="medium"
+                                                value={customerAddressCreate.GoogleMapURL || ""}
+                                                onChange={handleInputChangeAddress}
+
+                                                style={{ color: "black" }}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+
+                                    <Grid item xs={5}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <p style={{ color: "black" }}>Description</p>
+                                            <TextField
+                                                id="Description"
+                                                variant="outlined"
+                                                type="string"
+                                                size="medium"
+                                                value={customerAddressCreate.Description || ""}
+                                                onChange={handleInputChangeAddress}
+                                                style={{ color: "black" }}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+
+                                <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                    <Grid item xs={4}>
+                                        <a href={"/customer"}>
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    "&.MuiButton-root": {
+                                                        backgroundColor: "#0082EF",
+                                                    },
+                                                }}
+                                            >
+                                                Clear
+                                            </Button>
+                                        </a>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <Button
+                                            style={{ float: "right" }}
+                                            onClick={createCustomerAddress}
+                                            variant="contained"
+                                            color="primary"
+                                            sx={{
+                                                "&.MuiButton-root": {
+                                                    backgroundColor: "#0082EF",
+                                                },
+                                            }}
+                                        >
+                                            Submit
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </div>
+                            <Divider sx={{ borderColor: "border-gray-600" }} />
+                            <div className="flex-1 p-3 justify-center">
+                                <TableContainer style={{ maxHeight: `calc(100vh - 350px)` }} >
+                                    <Table aria-label="simple table">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell align="center" width="10%"> SiteName </TableCell>
+                                                <TableCell align="center" width="20%"> Address </TableCell>
+                                                <TableCell align="center" width="10%"> GoogleMapURL </TableCell>
+                                                <TableCell align="center" width="10%"> Description </TableCell>
+                                                <TableCell align="center" width="5%"> Update </TableCell>
+                                                <TableCell align="center" width="5%"> Delete </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+
+                                        <TableBody>
+                                            {customerAddress.map((item: CustomerAddressInterface) => (
+                                                <TableRow
+                                                    key={item.Id}
+                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                >
+                                                    <TableCell align="center">{item.SiteName}</TableCell>
+                                                    <TableCell align="center">{item.Address}</TableCell>
+                                                    <TableCell align="center">{item.GoogleMapURL ? (
+                                                        <a href={item.GoogleMapURL} target="_blank" rel="noopener noreferrer">
+                                                            {item.GoogleMapURL}
+                                                        </a>
+                                                    ) : (
+                                                        "-"
+                                                    )}</TableCell>
+
+                                                    <TableCell align="center">{item.Description}</TableCell>
+                                                    <TableCell align="center">
+                                                        {
+                                                            <Button
+                                                                variant='outlined'
+                                                                color='warning'
+                                                                sx={{
+                                                                    maxWidth: 75, // Set the maximum width of the button
+                                                                    maxHeight: 60, // Set the maximum height of the button
+                                                                }}
+                                                                onClick={() => handleUpdate(item)}
+                                                            >
+                                                                Update
+                                                            </Button>
+                                                        }
+                                                    </TableCell>
+                                                    <TableCell align="center">
+                                                        {
+
+                                                            <Button
+                                                                variant='outlined'
+                                                                color='error'
+                                                                onClick={() => { handleDialogDeleteOpen(item.Id) }}
+                                                                sx={{
+                                                                    maxWidth: 75, // Set the maximum width of the button
+                                                                    maxHeight: 60, // Set the maximum height of the button
+                                                                }}
+                                                            >
+                                                                Delete
+                                                            </Button>
+                                                        }
+
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </div>
+                        </div>
+
+                    </TabPanel>
                     <TabPanel value="3">Item Three</TabPanel>
                 </TabContext>
 
