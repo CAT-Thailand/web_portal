@@ -5,17 +5,17 @@ import Grid from '@mui/material/Grid'
 import React from 'react'
 
 
-import { UpdateCustomer, getCustomerByID } from '@/services/Customer/CustomerServices'
+import { UpdateCustomer } from '@/services/Customer/CustomerServices'
 import { useRouter } from 'next/navigation'
 import Layout from '@/app/(web)/layout'
-import { getEmployeeByEmail, ListEmployees } from '@/services/Employee/EmployeeServices'
-import { EmployeeInterface } from '@/interfaces/IEmployee'
+import { getEmployeeByEmail, ListEmployees, UpdateEmployee } from '@/services/Employee/EmployeeServices'
+import { EmployeeInterface, EmployeeUpdateInterface } from '@/interfaces/IEmployee'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ListDevisions } from '@/services/Devision/DevisionService'
-import { ListRoles } from '@/services/Role/RoleServices'
+import { ListRoles, ListRolesByDivisionId } from '@/services/Role/RoleServices'
 import { RoleInterface } from '@/interfaces/IRole'
 import { DivisionInterface } from '@/interfaces/IDivision'
 
@@ -24,7 +24,9 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
     let router = useRouter()
     // List all Database
     // Get Employee by email
-    const [employee, setEmployee] = React.useState<Partial<EmployeeInterface>>({})
+    const [employee, setEmployee] = React.useState<Partial<EmployeeUpdateInterface>>({
+        DivisionID: 0,
+    })
     const [devision, setDevision] = React.useState<DivisionInterface[]>([]);
     const [supervisor, setSupervisor] = React.useState<EmployeeInterface[]>([]);
     const [role, setRole] = React.useState<RoleInterface[]>([])
@@ -38,6 +40,7 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
             setEmployee(res)
             console.log("employee")
             console.log(employee)
+            // getRoleByDivisionId(res.DivisionID)
         }
         if (res.ProbationDate && res.ProbationDate !== "") {
             setProbationDate(dayjs(res.ProbationDate.substring(0, 10)));
@@ -45,9 +48,10 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
         if (res.StartDate && res.StartDate !== "") {
             setStartDate(dayjs(res.StartDate.substring(0, 10)))
         }
-        if (res.TerminateDate && res.TerminateDate !== "") {
-            setTerminateDate(dayjs(res.TerminateDate.substring(0, 10)))
+        if (res.TerminationDate && res.TerminationDate !== "") {
+            setTerminateDate(dayjs(res.TerminationDate.substring(0, 10)))
         }
+
 
     }
 
@@ -60,8 +64,8 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
         }
     }
     // // get Role
-    const getRole = async () => {
-        let res = await ListRoles();
+    const getRoleByDivisionId = async (id: number) => {
+        let res = await ListRolesByDivisionId(id);
         console.log(res);
         if (res) {
             setRole(res);
@@ -83,21 +87,29 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
         getEmployee(slug);
         getSupervisor();
         getDevision();
-        getRole();
-        if (employee.ProbationDate) {
-            setProbationDate(dayjs(employee.ProbationDate, "DDMMYYYY"));
-          }
-        console.log("probation date: ", probationDate.toString);
     }, []);
+    React.useEffect(() => {
+        getRoleByDivisionId(employee.DivisionID!);
+    }, [employee.DivisionID]);
+
+    const convertType = (data: string | number | undefined) => {
+        let val = typeof data === "string" ? parseInt(data) : data;
+        return val;
+    };
 
     // submit
     const [success, setSuccess] = React.useState(false);
     const [error, setError] = React.useState(false);
     const [message, setAlertMessage] = React.useState("");
     const submit = async () => {
+        employee.ProbationDate = probationDate.format("YYYY-MM-DD").toString()
+        employee.StartDate = startDate.format("YYYY-MM-DD").toString()
+        employee.TerminationDate = terminateDate.format("YYYY-MM-DD").toString()
+        employee.DivisionID = convertType(employee.DivisionID)
+        employee.RoleID = convertType(employee.RoleID)
         console.log(employee)
         try {
-            let res = await UpdateCustomer(employee)
+            let res = await UpdateEmployee(employee)
             if (res && res.Status !== "error") {
                 setAlertMessage("บันทึกข้อมูลสำเร็จ");
                 setSuccess(true);
@@ -107,7 +119,7 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
             }
 
             setTimeout(() => {
-                router.push("/customer")
+                router.push("/employee")
             }, 3000)
 
 

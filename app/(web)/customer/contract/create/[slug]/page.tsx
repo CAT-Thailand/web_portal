@@ -5,12 +5,12 @@ import Grid from '@mui/material/Grid'
 import React from 'react'
 
 import { CustomerInterface } from '@/interfaces/ICustomer'
-import {  GetCustomerByID } from '@/services/Customer/CustomerServices'
+import { GetCustomerByID } from '@/services/Customer/CustomerServices'
 import Layout from '@/app/(web)/layout'
-import { SlaInterface } from '@/interfaces/ISla'
+import { SlaInterface, SlaTypeInterface } from '@/interfaces/ISla'
 import { ServiceCatalogInterface } from '@/interfaces/IServiceCatalog'
 import { ListServiceCatalogs } from '@/services/ServiceCatalog/ServiceCatalogServices'
-import { ListSlas } from '@/services/Sla/SlaServices'
+import { ListSlas, ListSlasByType, ListSlaTypes } from '@/services/Sla/SlaServices'
 import { ContractCreateInterface } from '@/interfaces/IContract'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
@@ -23,6 +23,8 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
     // Get Customer by id
     const [customer, setCustomer] = React.useState<Partial<CustomerInterface>>({})
     const [sla, setSla] = React.useState<SlaInterface[]>([])
+    const [slaType, setSlaType] = React.useState<SlaTypeInterface[]>([])
+    const [slaTypeNumber, setSlaTypeNumber] = React.useState<number>(0)
     const [service_catalog, setServiceCatalog] = React.useState<ServiceCatalogInterface[]>([])
     const [contract, setContract] = React.useState<Partial<ContractCreateInterface>>({
         Cost: 0.0,
@@ -51,11 +53,27 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
         }
     }
     // get Role
-    const getSla = async () => {
-        let res = await ListSlas();
+    const getSlaByType = async (id: number) => {
+        if(slaTypeNumber==0){
+            let res = await ListSlas();
+            console.log(res);
+            if (res) {
+                setSla(res);
+            }
+
+        }else{
+            let res = await ListSlasByType(id);
+            console.log(res);
+            if (res) {
+                setSla(res);
+            }
+        }
+    }
+    const getSlaType = async () => {
+        let res = await ListSlaTypes();
         console.log(res);
         if (res) {
-            setSla(res);
+            setSlaType(res);
         }
     }
     React.useEffect(() => {
@@ -63,8 +81,14 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
         // console.log(slug);
         getCustomer(slug);
         getServiceCatalog();
-        getSla();
+        getSlaType();
     }, []);
+    React.useEffect(() => {
+        getSlaByType(slaTypeNumber);
+    }, [slaTypeNumber]);
+    const handleInputChangeSlaType = (event: SelectChangeEvent<number>) => {
+        setSlaTypeNumber(Number(event.target.value)); // Ensure value is converted to a number
+    };
 
     // submit
     const [success, setSuccess] = React.useState(false);
@@ -202,9 +226,9 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                     <Container maxWidth="lg">
 
 
-                        <div style={{ height: `calc(130vh - 300px)`, width: "100%", marginTop: "10px" }}>
+                    <div className="flex flex-col h-screen">
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={10}>
+                                <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Project Name</p>
 
@@ -214,6 +238,21 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                             type="string"
                                             size="medium"
                                             value={contract.ProjectName || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>Cost</p>
+
+                                        <TextField
+                                            id="Cost"
+                                            variant="outlined"
+                                            type="number"
+                                            size="medium"
+                                            value={contract.Cost || ""}
                                             onChange={handleInputChange}
                                             style={{ color: "black" }}
                                         />
@@ -345,22 +384,48 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                 </Grid>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Cost</p>
-
-                                        <TextField
-                                            id="Cost"
-                                            variant="outlined"
-                                            type="number"
-                                            size="medium"
-                                            value={contract.Cost || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-                                        />
+                                        <p style={{ color: "black" }}>Service Catalog</p>
+                                        <Select
+                                            native
+                                            value={contract.ServiceCatalogID ?? 0}
+                                            onChange={handleChangeNumber}
+                                            inputProps={{
+                                                name: "ServiceCatalogID",
+                                            }}
+                                        >
+                                            <option value={0} key={0}>
+                                                กรุณา เลือกชนิดของ Service Catalog
+                                            </option>
+                                            {service_catalog.map((item: ServiceCatalogInterface) => (
+                                                <option value={item.Id}>{item.Name}</option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
                                 </Grid>
 
+
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>SLA type</p>
+                                        <Select
+                                            native
+                                            value={slaTypeNumber ?? 1}
+                                            onChange={handleInputChangeSlaType}
+                                            // inputProps={{
+                                            //     name: "SlaID",
+                                            // }}
+                                        >
+                                            <option value={0} key={0}>
+                                                กรุณา เลือกชนิดของ sla type
+                                            </option>
+                                            {slaType.map((item: SlaTypeInterface) => (
+                                                <option value={item.Id}>{item.Type}</option>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>SLA</p>
@@ -376,31 +441,12 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                                 กรุณา เลือกชนิดของ sla
                                             </option>
                                             {sla.map((item: SlaInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option value={item.Id}>{item.Response}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Service Catalog</p>
-                                        <Select
-                                            native
-                                            value={contract.ServiceCatalogID ?? 0}
-                                            onChange={handleChangeNumber}
-                                            inputProps={{
-                                                name: "ServiceCatalogID",
-                                            }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ Service Catalog
-                                            </option>
-                                            {service_catalog.map((item: SlaInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
+
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={10}>

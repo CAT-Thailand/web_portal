@@ -4,7 +4,7 @@ import Container from '@mui/material/Container'
 import Grid from '@mui/material/Grid'
 import React from 'react'
 
-import { CreateCustomerGroupInterface, CustomerAddressInterface, CustomerGroupInterface, CustomerInterface } from '@/interfaces/ICustomer'
+import { CustomerAddressInterface, CustomerGroupInterface, CustomerInterface } from '@/interfaces/ICustomer'
 import { UpdateCustomer, GetCustomerByID, ListCustomerGroups, ListCustomerAddresses, CreateCustomerAddress, DeleteCustomerAddressById, UpdateCustomerAddress, GetCustomerAddressCustomerByID } from '@/services/Customer/CustomerServices'
 import { useRouter } from 'next/navigation'
 import Layout from '@/app/(web)/layout'
@@ -214,6 +214,12 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
             Address: customerAddress.Address,
             GoogleMapURL: customerAddress.GoogleMapURL,
             Description: customerAddress.Description,
+            ContactEmail: customerAddress.ContactEmail,
+            ContactLineID: customerAddress.ContactLineID,
+            ContactNumber: customerAddress.ContactNumber,
+            ContactPerson: customerAddress.ContactPerson,
+            CustomerID: slug,
+
         });
     }
 
@@ -297,7 +303,6 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                     anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                 >
                     <Alert onClose={handleClose} severity="error">
-                        {/* บันทึกข้อมูลไม่สำเร็จ */}
                         {message}
                     </Alert>
                 </Snackbar>
@@ -312,7 +317,7 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                         <Container maxWidth="lg" >
                             <div className="flex flex-col h-screen">
                                 <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                    <Grid item xs={5}>
+                                    <Grid item xs={10}>
                                         <FormControl fullWidth variant="outlined">
                                             <p style={{ color: "black" }}>Company Name</p>
 
@@ -329,87 +334,9 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                         </FormControl>
                                     </Grid>
 
-                                    <Grid item xs={5}>
-                                        <FormControl fullWidth variant="outlined">
-                                            <p style={{ color: "black" }}>Contact Person</p>
-                                            <TextField
-                                                id="ContactPerson"
-                                                variant="outlined"
-                                                type="string"
-                                                size="medium"
-                                                value={customer.ContactPerson || ""}
-                                                onChange={handleInputChange}
-                                                style={{ color: "black" }}
-                                            />
-                                        </FormControl>
-                                    </Grid>
+
                                 </Grid>
-                                <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                    <Grid item xs={5}>
-                                        <FormControl fullWidth variant="outlined">
-                                            <p style={{ color: "black" }}>Phone</p>
 
-                                            <TextField
-                                                id="ContactNumber"
-                                                variant="outlined"
-                                                type="string"
-                                                size="medium"
-                                                value={customer.ContactNumber || ""}
-                                                onChange={handleInputChange}
-
-                                                style={{ color: "black" }}
-                                                inputProps={{ maxLength: 10 }}
-
-                                            />
-                                        </FormControl>
-                                    </Grid>
-
-                                    <Grid item xs={5}>
-                                        <FormControl fullWidth variant="outlined">
-                                            <p style={{ color: "black" }}>Email</p>
-                                            <TextField
-                                                id="ContactEmail"
-                                                variant="outlined"
-                                                type="string"
-                                                size="medium"
-                                                value={customer.ContactEmail || ""}
-                                                onChange={handleInputChange}
-                                                style={{ color: "black" }}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                </Grid>
-                                <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                    <Grid item xs={5}>
-                                        <FormControl fullWidth variant="outlined">
-                                            <p style={{ color: "black" }}>LineID</p>
-
-                                            <TextField
-                                                id="ContactLineID"
-                                                variant="outlined"
-                                                type="string"
-                                                size="medium"
-                                                value={customer.ContactLineID || ""}
-                                                onChange={handleInputChange}
-                                                style={{ color: "black" }}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-
-                                    <Grid item xs={5}>
-                                        <FormControl fullWidth variant="outlined">
-                                            <p style={{ color: "black" }}>Description</p>
-                                            <OutlinedInput
-                                                id="Description"
-                                                type="string"
-                                                size="medium"
-                                                value={customer.Description || ""}
-                                                onChange={handleInputChange}
-                                                style={{ color: "black" }}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                </Grid>
                                 <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                     <Grid item xs={5}>
                                         <FormControl fullWidth variant="outlined">
@@ -487,7 +414,7 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                         <div className="flex flex-col h-screen">
                             <div className=" justify-center ">
                                 <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                    <Grid item xs={5}>
+                                    <Grid item xs={3}>
                                         <FormControl fullWidth variant="outlined">
                                             <p style={{ color: "black" }}>SiteName</p>
 
@@ -503,24 +430,7 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                             />
                                         </FormControl>
                                     </Grid>
-
-                                    <Grid item xs={5}>
-                                        <FormControl fullWidth variant="outlined">
-                                            <p style={{ color: "black" }}>Address</p>
-                                            <TextField
-                                                id="Address"
-                                                variant="outlined"
-                                                type="string"
-                                                size="medium"
-                                                value={customerAddressCreate.Address || ""}
-                                                onChange={handleInputChangeAddress}
-                                                style={{ color: "black" }}
-                                            />
-                                        </FormControl>
-                                    </Grid>
-                                </Grid>
-                                <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                    <Grid item xs={5}>
+                                    <Grid item xs={3}>
                                         <FormControl fullWidth variant="outlined">
                                             <p style={{ color: "black" }}>GoogleMapURL</p>
 
@@ -536,13 +446,111 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                             />
                                         </FormControl>
                                     </Grid>
+                                    <Grid item xs={3}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <p style={{ color: "black" }}>Contact Person</p>
+                                            <TextField
+                                                id="ContactPerson"
+                                                variant="outlined"
+                                                type="string"
+                                                size="medium"
+                                                value={customerAddressCreate.ContactPerson || ""}
+                                                onChange={handleInputChangeAddress}
+                                                style={{ color: "black" }}
+                                            />
+                                        </FormControl>
+                                    </Grid>
 
-                                    <Grid item xs={5}>
+
+                                </Grid>
+                                <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                    <Grid item xs={3}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <p style={{ color: "black" }}>LineID</p>
+
+                                            <TextField
+                                                id="ContactLineID"
+                                                variant="outlined"
+                                                type="string"
+                                                size="medium"
+                                                value={customerAddressCreate.ContactLineID || ""}
+                                                onChange={handleInputChangeAddress}
+                                                style={{ color: "black" }}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <p style={{ color: "black" }}>Phone</p>
+
+                                            <TextField
+                                                id="ContactNumber"
+                                                variant="outlined"
+                                                type="string"
+                                                size="medium"
+                                                value={customerAddressCreate.ContactNumber || ""}
+                                                onChange={handleInputChangeAddress}
+
+                                                style={{ color: "black" }}
+                                                inputProps={{ maxLength: 10 }}
+
+                                            />
+                                        </FormControl>
+                                    </Grid>
+
+                                    <Grid item xs={3}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <p style={{ color: "black" }}>Email</p>
+                                            <TextField
+                                                id="ContactEmail"
+                                                variant="outlined"
+                                                type="string"
+                                                size="medium"
+                                                value={customerAddressCreate.ContactEmail || ""}
+                                                onChange={handleInputChangeAddress}
+                                                style={{ color: "black" }}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                                <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+
+                                    <Grid item xs={3}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <p style={{ color: "black" }}>Contact Person</p>
+                                            <TextField
+                                                id="ContactPerson"
+                                                variant="outlined"
+                                                type="string"
+                                                size="medium"
+                                                value={customerAddressCreate.ContactPerson || ""}
+                                                onChange={handleInputChangeAddress}
+                                                style={{ color: "black" }}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                              
+                                
+                                    <Grid item xs={3}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <p style={{ color: "black" }}>Address</p>
+                                            <TextField
+                                                id="Address"
+                                                variant="outlined"
+                                                type="string"
+                                                size="medium"
+                                                value={customerAddressCreate.Address || ""}
+                                                onChange={handleInputChangeAddress}
+                                                style={{ color: "black" }}
+                                            />
+                                        </FormControl>
+                                    </Grid>
+
+                                    <Grid item xs={3}>
                                         <FormControl fullWidth variant="outlined">
                                             <p style={{ color: "black" }}>Description</p>
-                                            <TextField
+                                            <OutlinedInput
                                                 id="Description"
-                                                variant="outlined"
                                                 type="string"
                                                 size="medium"
                                                 value={customerAddressCreate.Description || ""}
@@ -551,10 +559,12 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                             />
                                         </FormControl>
                                     </Grid>
+
                                 </Grid>
 
+
                                 <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={1}>
                                         <Button
                                             variant="contained"
                                             sx={{
@@ -567,7 +577,7 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                             Discard
                                         </Button>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={8}>
                                         <Button
                                             style={{ float: "right" }}
                                             onClick={submitCustomerAddress}
@@ -579,7 +589,7 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                                 },
                                             }}
                                         >
-                                            Submit
+                                            create / update
                                         </Button>
                                     </Grid>
                                 </Grid>
@@ -591,7 +601,11 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell align="center" width="10%"> SiteName </TableCell>
-                                                <TableCell align="center" width="20%"> Address </TableCell>
+                                                {/* <TableCell align="center" width="20%"> Address </TableCell> */}
+                                                <TableCell align="center" width="20%"> Contact Person </TableCell>
+                                                <TableCell align="center" width="20%"> LineID </TableCell>
+                                                <TableCell align="center" width="20%"> Phone </TableCell>
+                                                <TableCell align="center" width="20%"> Email </TableCell>
                                                 <TableCell align="center" width="10%"> GoogleMapURL </TableCell>
                                                 <TableCell align="center" width="10%"> Description </TableCell>
                                                 <TableCell align="center" width="5%"> Update </TableCell>
@@ -606,7 +620,12 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                 >
                                                     <TableCell align="center">{item.SiteName}</TableCell>
-                                                    <TableCell align="center">{item.Address}</TableCell>
+                                                   
+                                                    {/* <TableCell align="center">{item.Address}</TableCell> */}
+                                                    <TableCell align="center">{item.ContactPerson}</TableCell>
+                                                    <TableCell align="center">{item.ContactLineID}</TableCell>
+                                                    <TableCell align="center">{item.ContactNumber}</TableCell>
+                                                    <TableCell align="center">{item.ContactEmail}</TableCell>
                                                     <TableCell align="center">{item.GoogleMapURL ? (
                                                         <a href={item.GoogleMapURL} target="_blank" rel="noopener noreferrer">
                                                             {item.GoogleMapURL}
@@ -614,7 +633,6 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                                     ) : (
                                                         "-"
                                                     )}</TableCell>
-
                                                     <TableCell align="center">{item.Description}</TableCell>
                                                     <TableCell align="center">
                                                         {

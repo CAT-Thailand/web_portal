@@ -1,8 +1,7 @@
 "use client"
 
 import Layout from "@/app/(web)/layout"
-import { ContractCreateInterface, ContractInterface } from "@/interfaces/IContract"
-import { CustomerInterface } from "@/interfaces/ICustomer"
+import { ContractInterface } from "@/interfaces/IContract"
 import { CreateOperationServiceInterface } from "@/interfaces/IOperationService"
 import { PriorityInterface } from "@/interfaces/IPriority"
 import { ServiceCatalogInterface } from "@/interfaces/IServiceCatalog"
@@ -25,6 +24,9 @@ import { ListEmployeeByDivision, ListEmployees } from "@/services/Employee/Emplo
 import { DivisionInterface } from "@/interfaces/IDivision"
 
 import { EmployeeInterface } from "@/interfaces/IEmployee"
+import { CustomerAddressInterface } from "@/interfaces/ICustomer"
+import { GetCustomerAddressCustomerByID } from "@/services/Customer/CustomerServices"
+import { OperationTypeInterface } from "@/interfaces/IOperationType"
 export default function OperationTicket({ params: { slug } }: { params: { slug: string } }) {
     let router = useRouter()
     const [operationType, setOperationType] = React.useState<ServiceCatalogInterface[]>([])
@@ -36,7 +38,8 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
     const [contract, setContract] = React.useState<Partial<ContractInterface>>({
         Cost: 0.0,
         ServiceCatalogID: 0,
-        SlaID: 0
+        SlaID: 0,
+        CustomerID: ""
     })
     const [operation, setOperation] = React.useState<Partial<CreateOperationServiceInterface>>({
         StatusID: 0,
@@ -49,6 +52,24 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
         if (res && res.Status !== "error") {
             console.log(res)
             setContract(res)
+            getCustomerAddress(res.CustomerID)
+        }
+    }
+    const [customerAddress, setCustomerAddress] = React.useState<CustomerAddressInterface[]>([]);
+    const getCustomerAddress = async (id: string) => {
+        try {
+            const res = await GetCustomerAddressCustomerByID(id);
+            if (res && res.Status !== "error") {
+                setCustomerAddress(res)
+            } else {
+                console.log(res)
+                setAlertMessage(res?.Message || "เกิดข้อผิดพลาดดึงข้อมูล Customer Address");
+                setError(true);
+            }
+        } catch (error) {
+            console.log(error)
+            setAlertMessage("เกิดข้อผิดพลาดดึงข้อมูล Customer Address");
+            setError(true);
         }
     }
 
@@ -112,10 +133,10 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
         getStatus();
         getDivision();
     }, []);
-
     React.useEffect(() => {
-        getEmployeeByDivision(division);
-    }, [division])
+        getEmployeeByDivision(division)
+    }, [division]);
+
     // submit
     const [success, setSuccess] = React.useState(false);
     const [error, setError] = React.useState(false);
@@ -144,9 +165,9 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                 setError(true);
             }
 
-            setTimeout(() => {
-                router.push("/contract/ticket")
-            }, 3000)
+            // setTimeout(() => {
+            //     router.push("/customer/contract/ticket")
+            // }, 3000)
 
 
         } catch (error) {
@@ -165,6 +186,8 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
 
         setOperation({ ...operation, [id]: value });
     };
+
+
 
     const handleInputChangeDivision = (event: SelectChangeEvent<number>) => {
         setDivision(Number(event.target.value)); // Ensure value is converted to a number
@@ -185,6 +208,31 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
             ...operation,
             [name]: event.target.value,
         });
+    };
+
+    const handleChangeSiteName = (event: SelectChangeEvent<string>) => {
+        const { name, value } = event.target;
+        setOperation((prevOperation) => ({
+            ...prevOperation,
+            [name as string]: value,
+        }));
+
+        // Find the selected site by name
+        const selectedSite = customerAddress.find((site) => site.SiteName === value);
+        console.log("selectedSite: ", selectedSite)
+        if (selectedSite) {
+            // Update the fields with the selected site's data
+            setOperation({
+                OperationSiteName: selectedSite.SiteName,
+                OperationSiteAddress: selectedSite.Address,
+                ContactPerson: selectedSite.ContactPerson,
+                ContactLineID: selectedSite.ContactLineID,
+                ContactNumber: selectedSite.ContactNumber,
+                ContactEmail: selectedSite.ContactEmail,
+                OperationSiteGoogleMap: selectedSite.GoogleMapURL
+            });
+        }
+        console.log("operation: ",operation)
     };
 
     // Change Value in Box
@@ -272,9 +320,9 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                             </Alert>
                         </Snackbar>
 
-                        <div style={{ height: `calc(160vh - 300px)`, width: "100%", marginTop: "10px" }}>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={10}>
+                        <div className="w-full">
+                        <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Subject</p>
 
@@ -289,6 +337,21 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                         />
                                     </FormControl>
                                 </Grid>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>ScopeOfWorkURL</p>
+
+                                        <TextField
+                                            id="ScopeOfWorkURL"
+                                            variant="outlined"
+                                            type="string"
+                                            size="medium"
+                                            value={operation.ScopeOfWorkURL || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
+                                        />
+                                    </FormControl>
+                                </Grid>
 
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
@@ -296,22 +359,57 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>SiteName</p>
 
-                                        <TextField
-                                            id="OperationSiteName"
-                                            variant="outlined"
-                                            type="string"
-                                            size="medium"
-                                            value={operation.OperationSiteName || ""}
-                                            onChange={handleInputChange}
+                                        <Select
+                                            native
+                                            value={operation.OperationSiteName}
+                                            onChange={handleChangeSiteName}
+                                            inputProps={{
+                                                name: "OperationSiteName",
+                                            }}
                                             style={{ color: "black" }}
-                                        />
+                                        >
+                                            <option value={0} key={0}>
+                                                กรุณา เลือกชนิดของ site name
+                                            </option>
+                                            {customerAddress.map((item: CustomerAddressInterface) => (
+                                                <option value={item.SiteName} key={item.Id}>
+                                                {item.SiteName}
+                                              </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>Map URL</p>
+
+                                        <TextField
+                                        disabled
+                                            id="OperationSiteGoogleMap"
+                                            variant="outlined"
+                                            type="string"
+                                            size="medium"
+                                            value={operation.OperationSiteGoogleMap || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
+                                            InputProps={{
+                                                style: {
+                                                    backgroundColor: "#e8e8e8", // Dark background color
+                                                    color: "#000000", // Light text color
+                                                },
+                                            }}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                                
+                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                            <Grid item xs={10}>
+                                    <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Address</p>
 
                                         <TextField
+                                        disabled
                                             id="OperationSiteAddress"
                                             variant="outlined"
                                             type="string"
@@ -319,28 +417,18 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                             value={operation.OperationSiteAddress || ""}
                                             onChange={handleInputChange}
                                             style={{ color: "black" }}
+                                            InputProps={{
+                                                style: {
+                                                    backgroundColor: "#e8e8e8", // Dark background color
+                                                    color: "#000000", // Light text color
+                                                },
+                                            }}
                                         />
                                     </FormControl>
                                 </Grid>
-
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Date Of Visit</p>
 
-                                        <DatePicker
-                                            value={dateOfVisit}
-                                            views={["day", "month", "year"]}
-                                            onChange={(newValue: any) => {
-                                                if (newValue !== null && newValue != undefined) {
-                                                    setDateOfVisit(newValue)
-                                                }
-                                            }}
-                                            format="DD/MM/YYYY"
-                                        />
-                                    </FormControl>
-                                </Grid>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>ContactPerson</p>
@@ -354,6 +442,20 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
 
                                             style={{ color: "black" }}
 
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>LineID</p>
+
+                                        <TextField
+                                            id="ContactLineID"
+                                            variant="outlined"
+                                            size="medium"
+                                            value={operation.ContactLineID || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
                                         />
                                     </FormControl>
                                 </Grid>
@@ -394,17 +496,20 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
 
+
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>LineID</p>
+                                        <p style={{ color: "black" }}>Date Of Visit</p>
 
-                                        <TextField
-                                            id="ContactLineID"
-                                            variant="outlined"
-                                            size="medium"
-                                            value={operation.ContactLineID || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
+                                        <DatePicker
+                                            value={dateOfVisit}
+                                            views={["day", "month", "year"]}
+                                            onChange={(newValue: any) => {
+                                                if (newValue !== null && newValue != undefined) {
+                                                    setDateOfVisit(newValue)
+                                                }
+                                            }}
+                                            format="DD/MM/YYYY"
                                         />
                                     </FormControl>
                                 </Grid>
@@ -418,11 +523,12 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                             inputProps={{
                                                 name: "PriorityID",
                                             }}
+                                            style={{ color: "black" }}
                                         >
                                             <option value={0} key={0}>
                                                 กรุณา เลือกชนิดของ priority
                                             </option>
-                                            {priority.map((item: SlaInterface) => (
+                                            {priority.map((item: PriorityInterface) => (
                                                 <option value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
@@ -436,7 +542,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                         <p style={{ color: "black" }}>Status</p>
                                         <Select
                                             native
-                                            value={operation.StatusID ?? 1}
+                                            value={operation.StatusID ?? 0}
                                             onChange={handleChangeNumber}
                                             inputProps={{
                                                 name: "StatusID",
@@ -445,7 +551,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                             <option value={0} key={0}>
                                                 กรุณา เลือกชนิดของ status
                                             </option>
-                                            {status.map((item: SlaInterface) => (
+                                            {status.map((item: StatusInterface) => (
                                                 <option value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
@@ -465,7 +571,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                             <option value={0} key={0}>
                                                 กรุณา เลือกชนิดของ OperationType
                                             </option>
-                                            {operationType.map((item: SlaInterface) => (
+                                            {operationType.map((item: OperationTypeInterface) => (
                                                 <option value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>

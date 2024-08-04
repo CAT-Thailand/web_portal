@@ -39,3 +39,20 @@ export interface EmployeeCreateInterface {
   EmployeeCreatedID: string;
   SupervisorID: string;
 }
+
+export interface EmployeeUpdateInterface {
+  Id: string;
+  Name?: string;
+
+  Phone?: string;
+  LineID?: string;
+  Email?: string;
+  StartDate: string;
+  ProbationDate?: string;
+  TerminationDate?: string;
+
+  RoleID?: number;
+  DivisionID?: number;
+  EmployeeCreatedID: string;
+  SupervisorID: string;
+}

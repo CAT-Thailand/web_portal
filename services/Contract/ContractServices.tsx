@@ -1,4 +1,4 @@
-import { ContractCreateInterface, ContractInterface, ContractUpdateInterface, CreateDeviceInterface, DeviceInterface } from "@/interfaces/IContract";
+import { ContractCreateInterface, ContractInterface, ContractUpdateInterface, CreateDeviceInterface, CreateSoftwareInterface, DeviceInterface } from "@/interfaces/IContract";
 import axios from "axios";
 
 export async function CreateContract(contract: Partial<ContractCreateInterface>) {
@@ -25,18 +25,6 @@ export async function CreateContract(contract: Partial<ContractCreateInterface>)
 }
 export async function CreateDevice(device: Partial<CreateDeviceInterface>) {
     try {
-
-        const data = {
-            Brand: device.Brand,
-            Model: device.Model,
-            License: device.License,
-            Sku: device.Sku,
-            Serial: device.Serial,
-            ExpiredLicenseDate: device.ExpiredLicenseDate,
-            StartLicenseDate: device.StartLicenseDate,
-            ContractID: device.ContractID,
-            
-        };
         const reqOpt = {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -44,7 +32,7 @@ export async function CreateDevice(device: Partial<CreateDeviceInterface>) {
             },
         };
 
-        const res = await axios.post(`/api/customer/contract/device/create`, data, reqOpt);
+        const res = await axios.post(`/api/customer/contract/device/create`, device, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -56,20 +44,8 @@ export async function CreateDevice(device: Partial<CreateDeviceInterface>) {
         return false;
     }
 }
-export async function UpdateDevice(device: Partial<CreateDeviceInterface>) {
+export async function CreateSoftware(sf: Partial<CreateSoftwareInterface>) {
     try {
-
-        const data = {
-            Id: device.Id,
-            Brand: device.Brand,
-            Model: device.Model,
-            License: device.License,
-            Sku: device.Sku,
-            ExpiredLicenseDate: device.ExpiredLicenseDate,
-            StartLicenseDate: device.StartLicenseDate,
-            ContractID: device.ContractID,
-            
-        };
         const reqOpt = {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -77,7 +53,28 @@ export async function UpdateDevice(device: Partial<CreateDeviceInterface>) {
             },
         };
 
-        const res = await axios.patch(`/api/customer/contract/device/update`, data, reqOpt);
+        const res = await axios.post(`/api/customer/contract/software/create`, sf, reqOpt);
+
+        if (res.data) {
+            return res.data;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error("Error creating software:", error);
+        return false;
+    }
+}
+export async function UpdateDevice(device: Partial<CreateDeviceInterface>) {
+    try {
+        const reqOpt = {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("at")}`,
+                "Content-Type": "application/json",
+            },
+        };
+
+        const res = await axios.patch(`/api/customer/contract/device/update`, device, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -86,6 +83,27 @@ export async function UpdateDevice(device: Partial<CreateDeviceInterface>) {
         }
     } catch (error) {
         console.error("Error creating contract:", error);
+        return false;
+    }
+}
+export async function UpdateSoftware(device: Partial<CreateSoftwareInterface>) {
+    try {
+        const reqOpt = {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("at")}`,
+                "Content-Type": "application/json",
+            },
+        };
+
+        const res = await axios.patch(`/api/customer/contract/software/update`, device, reqOpt);
+
+        if (res.data) {
+            return res.data;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error("Error creating software:", error);
         return false;
     }
 }
@@ -115,7 +133,25 @@ export async function ListDeviceByContractId(id :string) {
         }
     };
 
-    let res = await axios.get(`/api/customer/device/list/contract/${id}`, reqOpt)
+    let res = await axios.get(`/api/customer/contract/device/list/${id}`, reqOpt)
+        .then((res) => {
+            if (res.data) {
+                return res.data.Data
+            } else {
+                return false
+            }
+        })
+    return res
+}
+export async function LisSoftwareByContractId(id :string) {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/customer/contract/software/list/${id}`, reqOpt)
         .then((res) => {
             if (res.data) {
                 return res.data.Data
@@ -145,25 +181,7 @@ export async function getContractByID(id: string | undefined) {
 
 export async function UpdateContract(contract: Partial<ContractUpdateInterface>) {
     try {
-        const data = {
-            id: contract.Id,
-            customerID: contract.CustomerID,
-            contractStart: contract.ContractStart,
-            contractStop: contract.ContractStop,
-            incidentPerYear: contract.IncidentPerYear,
-            incidentPerContract: contract.IncidentPerContract,
-            cost: contract.Cost,
-            description: contract.Description,
-            noticeDate: contract.NoticeDate,
-            projectName: contract.ProjectName,
-            customerPO: contract.CustomerPO,
-            vendorPO: contract.VendorPO,
-            scopeOfWorkURL:contract.ScopeOfWorkURL,
-            serviceCatalogID: contract.ServiceCatalogID,
-            slaID: contract.SlaID
-        };
-
-
+    
         const reqOpt = {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -171,7 +189,7 @@ export async function UpdateContract(contract: Partial<ContractUpdateInterface>)
             },
         };
 
-        const res = await axios.patch(`/api/customer/contract/update`, data, reqOpt);
+        const res = await axios.patch(`/api/customer/contract/update`, contract, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -212,7 +230,25 @@ export async function DeleteDeviceById(id: string) {
         }
     };
 
-    let res = await axios.delete(`/api/customer/device/delete/${id}`, reqOpt)
+    let res = await axios.delete(`/api/customer/contract/device/delete/${id}`, reqOpt)
+    .then((res) => {
+        if(res.data){
+            return res.data
+        } else{
+            return false
+        }
+    })
+    return res
+}
+export async function DeleteSoftwareById(id: string) {
+    const reqOpt = {
+        headers:{
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.delete(`/api/customer/contract/software/delete/${id}`, reqOpt)
     .then((res) => {
         if(res.data){
             return res.data

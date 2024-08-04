@@ -21,6 +21,7 @@ export interface CreateOperationServiceInterface {
   ContactNumber?: string;
   ContactEmail?: string;
   ContactLineID?: string;
+  ScopeOfWorkURL?: string;
 
   StatusID?: number;
   PriorityID?: number;
@@ -40,6 +41,7 @@ export interface UpdateOperationServiceInterface {
   OperationSiteGoogleMap?: string;
   Description?: string;
   DateOfVisit?: string;
+  ScopeOfWorkURL?: string;
 
   ContactPerson?: string;
   ContactNumber?: string;
@@ -64,6 +66,7 @@ export interface ListOperationServiceInterface {
   OperationSiteGoogleMap?: string;
   Description?: string;
   DateOfVisit?: Date;
+  ScopeOfWorkURL?: string;
 
   ContactPerson?: string;
   ContactNumber?: string;

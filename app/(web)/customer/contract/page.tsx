@@ -240,7 +240,8 @@ const Contract = ({ children }: any) => {
                                         <TableCell align="center" width="10%"> CustomerPO </TableCell> {/* Adjusted width */}
                                         <TableCell align="center" width="5%"> IncidentPerYear </TableCell>
                                         <TableCell align="center" width="5%"> IncidentPerContract </TableCell>
-                                        <TableCell align="center" width="10%"> Sla </TableCell>
+                                        <TableCell align="center" width="5%"> OverAllIncident </TableCell>
+                                        <TableCell align="center" width="10%"> SLA </TableCell>
                                         <TableCell align="center" width="5%"> View </TableCell>
                                         <TableCell align="center" width="5%"> Device </TableCell>
                                         <TableCell align="center" width="5%"> Ticket </TableCell>
@@ -266,7 +267,8 @@ const Contract = ({ children }: any) => {
                                             <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.CustomerPO || "-"}</TableCell>
                                             <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.IncidentPerYear || "-"}</TableCell>
                                             <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.IncidentPerContract || "-"}</TableCell>
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.Sla?.Name || "-"}</TableCell>
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.OverAllIncident || "-"}</TableCell>
+                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.Sla?.Response || "-"}</TableCell>
                                             <TableCell>
                                                 {
                                                     <Link href={"/customer/contract/update/" + item.Id}>

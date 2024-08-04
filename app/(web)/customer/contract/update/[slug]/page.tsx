@@ -12,11 +12,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ListServiceCatalogs } from '@/services/ServiceCatalog/ServiceCatalogServices'
 
-import { SlaInterface } from '@/interfaces/ISla'
+import { SlaInterface, SlaTypeInterface } from '@/interfaces/ISla'
 import { ContractUpdateInterface } from '@/interfaces/IContract'
 import { ServiceCatalogInterface } from '@/interfaces/IServiceCatalog'
 import { getContractByID, UpdateContract } from '@/services/Contract/ContractServices'
-import { ListSlas } from '@/services/Sla/SlaServices'
+import { GetSlaTypeBySla, ListSlas, ListSlasByType, ListSlaTypes } from '@/services/Sla/SlaServices'
 
 export default function ContractUpdate({ params: { slug } }: { params: { slug: string } }) {
 
@@ -28,6 +28,8 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
         ServiceCatalogID: 0,
         SlaID: 0
     })
+    const [slaType, setSlaType] = React.useState<SlaTypeInterface[]>([])
+    const [slaTypeNumber, setSlaTypeNumber] = React.useState<number>(0)
     const [contractStart, setContractStart] = React.useState<Dayjs>(dayjs())
     const [contractStop, setContractStop] = React.useState<Dayjs>(dayjs())
     const [noticeDate, setNoticeDate] = React.useState<Dayjs>(dayjs())
@@ -45,21 +47,11 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
             if (res.ContractStop && res.ContractStop !== "") {
                 setContractStop(dayjs(res.ContractStop.substring(0, 10)))
             }
+            getSlaTypeByTypeId(res.SlaID)
 
         }
     }
 
-    React.useEffect(() => {
-        if (contractStart) {
-            console.log("Updated contractStart:", contractStart.format("YYYY-MM-DD"));
-        }
-    }, [contractStart]);
-
-    React.useEffect(() => {
-        if (contractStop) {
-            console.log("Updated contractStop:", contractStop.format("YYYY-MM-DD"));
-        }
-    }, [contractStop]);
 
     const getServiceCatalog = async () => {
 
@@ -69,21 +61,49 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
             setServiceCatalog(res);
         }
     }
-    // get Role
-    const getSla = async () => {
-        let res = await ListSlas();
+    const getSlaByType = async (id: number) => {
+        if(slaTypeNumber==0){
+            let res = await ListSlas();
+            console.log(res);
+            if (res) {
+                setSla(res);
+            }
+
+        }else{
+            let res = await ListSlasByType(id);
+            console.log(res);
+            if (res) {
+                setSla(res);
+            }
+        }
+    }
+    const getSlaTypeByTypeId = async (id: number) => {
+        let res = await GetSlaTypeBySla(id);
+            console.log(res);
+            if (res) {
+                setSlaTypeNumber(res);
+            }
+    }
+    const getSlaType = async () => {
+        let res = await ListSlaTypes();
         console.log(res);
         if (res) {
-            setSla(res);
+            setSlaType(res);
         }
     }
     React.useEffect(() => {
         // console.log("slug");
         // console.log(slug);
-        getContract(slug);
+        getContract(slug)
         getServiceCatalog();
-        getSla();
+        getSlaType();
     }, []);
+    React.useEffect(() => {
+        getSlaByType(slaTypeNumber);
+    }, [slaTypeNumber]);
+    const handleInputChangeSlaType = (event: SelectChangeEvent<number>) => {
+        setSlaTypeNumber(Number(event.target.value)); // Ensure value is converted to a number
+    };
 
     // submit
     const [success, setSuccess] = React.useState(false);
@@ -99,7 +119,15 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
         try {
             contract.ContractStart = contractStart.format("YYYY-MM-DD").toString()
             contract.ContractStop = contractStop.format("YYYY-MM-DD").toString()
-            contract.NoticeDate = noticeDate.format("YYYY-MM-DD").toString()
+           // Calculate notice dates
+           let noticeDate1 = contractStop.clone().subtract(90, 'days');
+           let noticeDate2 = contractStop.clone().subtract(60, 'days');
+           let noticeDate3 = contractStop.clone().subtract(30, 'days');
+
+           // Set the notice dates in the contract object
+           contract.NoticeDate1 = noticeDate1.format("YYYY-MM-DD");
+           contract.NoticeDate2 = noticeDate2.format("YYYY-MM-DD");
+           contract.NoticeDate3 = noticeDate3.format("YYYY-MM-DD");
             if (contract.IncidentPerContract != null) {
                 contract.IncidentPerContract = contract.IncidentPerContract * 1
             }
@@ -185,7 +213,7 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                 <ThemeProvider theme={theme}>
                     <div
                         className="flex flex-row justify-between w-full"
-                        style={{ backgroundColor: "#f8f9fa" }}
+                    // style={{ backgroundColor: "#f8f9fa" }}
                     >
 
                         <CardHeader
@@ -201,33 +229,11 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                         ></CardHeader>
                     </div>
                     <Container maxWidth="lg">
-                        <Snackbar
-                            id="success"
-                            open={success}
-                            autoHideDuration={4000}
-                            onClose={handleClose}
-                            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                        >
-                            <Alert onClose={handleClose} severity="success">
-                                บันทึกข้อมูลสำเร็จ
-                            </Alert>
-                        </Snackbar>
 
-                        <Snackbar
-                            id="error"
-                            open={error}
-                            autoHideDuration={4000}
-                            onClose={handleClose}
-                            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                        >
-                            <Alert onClose={handleClose} severity="error">
-                                {message}
-                            </Alert>
-                        </Snackbar>
 
-                        <div style={{ height: `calc(140vh - 300px)`, width: "100%", marginTop: "10px" }}>
+                        <div style={{ height: `calc(130vh - 300px)`, width: "100%", marginTop: "10px" }}>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={10}>
+                                <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Project Name</p>
 
@@ -237,6 +243,21 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                                             type="string"
                                             size="medium"
                                             value={contract.ProjectName || ""}
+                                            onChange={handleInputChange}
+                                            style={{ color: "black" }}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>Cost</p>
+
+                                        <TextField
+                                            id="Cost"
+                                            variant="outlined"
+                                            type="number"
+                                            size="medium"
+                                            value={contract.Cost || ""}
                                             onChange={handleInputChange}
                                             style={{ color: "black" }}
                                         />
@@ -368,22 +389,48 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                                 </Grid>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Cost</p>
-
-                                        <TextField
-                                            id="Cost"
-                                            variant="outlined"
-                                            type="number"
-                                            size="medium"
-                                            value={contract.Cost || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-                                        />
+                                        <p style={{ color: "black" }}>Service Catalog</p>
+                                        <Select
+                                            native
+                                            value={contract.ServiceCatalogID ?? 0}
+                                            onChange={handleChangeNumber}
+                                            inputProps={{
+                                                name: "ServiceCatalogID",
+                                            }}
+                                        >
+                                            <option value={0} key={0}>
+                                                กรุณา เลือกชนิดของ Service Catalog
+                                            </option>
+                                            {service_catalog.map((item: ServiceCatalogInterface) => (
+                                                <option value={item.Id}>{item.Name}</option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
                                 </Grid>
 
+
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                <Grid item xs={5}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <p style={{ color: "black" }}>SLA type</p>
+                                        <Select
+                                            native
+                                            value={slaTypeNumber ?? 1}
+                                            onChange={handleInputChangeSlaType}
+                                            // inputProps={{
+                                            //     name: "SlaID",
+                                            // }}
+                                        >
+                                            <option value={0} key={0}>
+                                                กรุณา เลือกชนิดของ sla type
+                                            </option>
+                                            {slaType.map((item: SlaTypeInterface) => (
+                                                <option value={item.Id}>{item.Type}</option>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>SLA</p>
@@ -399,31 +446,12 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                                                 กรุณา เลือกชนิดของ sla
                                             </option>
                                             {sla.map((item: SlaInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option value={item.Id}>{item.Response}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Service Catalog</p>
-                                        <Select
-                                            native
-                                            value={contract.ServiceCatalogID ?? 0}
-                                            onChange={handleChangeNumber}
-                                            inputProps={{
-                                                name: "ServiceCatalogID",
-                                            }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ Service Catalog
-                                            </option>
-                                            {service_catalog.map((item: SlaInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
+
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={10}>
@@ -472,7 +500,7 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                                             },
                                         }}
                                     >
-                                        Update
+                                        Submit
                                     </Button>
                                 </Grid>
                             </Grid>

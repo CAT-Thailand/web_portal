@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import Layout from "../../layout";
 import { DivisionInterface } from "@/interfaces/IDivision"; 
 import { RoleInterface } from "@/interfaces/IRole";
-import { ListRoles } from "@/services/Role/RoleServices"; 
+import { ListRoles, ListRolesByDivisionId } from "@/services/Role/RoleServices"; 
 import { ListDevisions } from "@/services/Devision/DevisionService";
 import TextField from "@mui/material/TextField";
 import { format } from "date-fns"
@@ -103,6 +103,14 @@ function EmployeeCreate() {
             setRole(res);
         }
     }
+    // // get Role
+    const getRoleByDivision = async (id : number) => {
+        let res = await ListRolesByDivisionId(id);
+        console.log(res);
+        if (res) {
+            setRole(res);
+        }
+    }
     // get Department
     const getDevision = async () => {
         //let id =0;
@@ -117,8 +125,11 @@ function EmployeeCreate() {
     React.useEffect(() => {
         getSupervisor();
         getDevision();
-        getRole();
+        // getRole();
     }, []);
+    React.useEffect(() => {
+        getRoleByDivision(employee.DivisionID!);
+    }, [employee.DivisionID]);
 
     const handleClose = (
         event?: React.SyntheticEvent | Event,
@@ -342,27 +353,28 @@ function EmployeeCreate() {
                                         />
                                     </FormControl>
                                 </Grid>
-
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Role</p>
+                                        <p style={{ color: "black" }}>Supervisor</p>
                                         <Select
                                             native
-                                            value={employee.RoleID ?? 0}
-                                            onChange={handleChangeNumber}
+                                            value={employee.SupervisorID}
+                                            onChange={handleChangeString}
                                             inputProps={{
-                                                name: "RoleID",
+                                                name: "SupervisorID",
                                             }}
                                         >
                                             <option value={0} key={0}>
-                                                กรุณาเลือก role
+                                                กรุณา เลือก supervisor
                                             </option>
-                                            {role.map((item: RoleInterface) => (
+                                            {supervisor.map((item: EmployeeInterface) => (
                                                 <option value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
                                 </Grid>
+
+                                
 
                             </Grid>
 
@@ -387,27 +399,28 @@ function EmployeeCreate() {
                                         </Select>
                                     </FormControl>
                                 </Grid>
-
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Supervisor</p>
+                                        <p style={{ color: "black" }}>Role</p>
                                         <Select
                                             native
-                                            value={employee.SupervisorID}
-                                            onChange={handleChangeString}
+                                            value={employee.RoleID ?? 0}
+                                            onChange={handleChangeNumber}
                                             inputProps={{
-                                                name: "SupervisorID",
+                                                name: "RoleID",
                                             }}
                                         >
                                             <option value={0} key={0}>
-                                                กรุณา เลือก supervisor
+                                                กรุณาเลือก role
                                             </option>
-                                            {supervisor.map((item: EmployeeInterface) => (
+                                            {role.map((item: RoleInterface) => (
                                                 <option value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
                                 </Grid>
+
+                                
 
                             </Grid>
 

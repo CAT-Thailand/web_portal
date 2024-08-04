@@ -216,16 +216,18 @@ const Ticket = ({ children }: any) => {
                             <Table aria-label="simple table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell align="center" width="20%"> Subject </TableCell>
+                                        <TableCell align="center" width="10%"> Subject </TableCell>
                                         <TableCell align="center" width="10%"> SiteName </TableCell> 
                                         <TableCell align="center" width="10%"> GoogleMap </TableCell>
                                         <TableCell align="center" width="10%"> DateOfVisit </TableCell> 
                                         <TableCell align="center" width="10%"> ContactPerson </TableCell>
                                         <TableCell align="center" width="10%"> Phone </TableCell> 
                                         <TableCell align="center" width="5%"> Status </TableCell>
-                                        <TableCell align="center" width="5%"> Company </TableCell>
-                                        <TableCell align="center" width="10%"> Status </TableCell>
-                                        <TableCell align="center" width="10%"> Priority </TableCell>
+                                        <TableCell align="center" width="5%"> Priority </TableCell>
+                                        <TableCell align="center" width="10%"> JuniorEmployee </TableCell>
+                                        <TableCell align="center" width="10%"> SeniorEmployee </TableCell>
+                                        <TableCell align="center" width="10%"> SupervisorEmployee </TableCell>
+                                        <TableCell align="center" width="5%"> ScopeOfWorkURL </TableCell>
                                         <TableCell align="center" width="5%"> View </TableCell>
                                         <TableCell align="center" width="5%"> Delete </TableCell>
 
@@ -245,9 +247,11 @@ const Ticket = ({ children }: any) => {
                                             <TableCell align="center">{item.ContactPerson || "-"}</TableCell>
                                             <TableCell align="center">{item.ContactNumber || "-"}</TableCell>
                                             <TableCell align="center">{item.Status?.Name || "-"}</TableCell>
-                                            <TableCell align="center">{item.Contract?.Customer?.CompanyName || "-"}</TableCell>
-                                            <TableCell align="center">{item.Status?.Name || "-"}</TableCell>
                                             <TableCell align="center">{item.Priority?.Name || "-"}</TableCell>
+                                            <TableCell align="center">{item.JuniorEmployeeResponsible?.Name || "-"}</TableCell>
+                                            <TableCell align="center">{item.SeniorEmployeeResponsible?.Name || "-"}</TableCell>
+                                            <TableCell align="center">{item.SupervisorEmployeeResponsible?.Name || "-"}</TableCell>
+                                            <TableCell align="center">{item.ScopeOfWorkURL || "-"}</TableCell>
                                             <TableCell>
                                                 {
                                                     <Link href={"/customer/contract/ticket/update/" + item.Id}>

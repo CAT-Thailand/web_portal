@@ -1,10 +1,6 @@
 export interface CustomerInterface {
   Id: string;
   CompanyName?: string;
-  ContactPerson?: string;
-  ContactNumber?: string;
-  ContactEmail?: string;
-  ContactLineID?: string;
 
   Description?: string;
   TaxNumber?: string;
@@ -16,10 +12,6 @@ export interface CustomerInterface {
 }
 export interface CustomerCreateInterface {
   CompanyName?: string;
-  ContactPerson?: string;
-  ContactNumber?: string;
-  ContactEmail?: string;
-  ContactLineID?: string;
   Description?: string;
   TaxNumber?: string;
   CreateDate?: Date;
@@ -33,6 +25,10 @@ export interface CustomerAddressInterface {
   Address?: string;
   GoogleMapURL?: string;
   Description?: string;
+  ContactPerson?: string;
+  ContactNumber?: string;
+  ContactEmail?: string;
+  ContactLineID?: string;
   CustomerID: string;
 	Customer:CustomerInterface;
 }
@@ -41,6 +37,10 @@ export interface CreateCustomerAddressInterface {
   Address?: string;
   GoogleMapURL?: string;
   Description?: string;
+  ContactPerson?: string;
+  ContactNumber?: string;
+  ContactEmail?: string;
+  ContactLineID?: string;
   CustomerID: string;
 }
 export interface CustomerGroupInterface {

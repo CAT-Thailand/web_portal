@@ -301,11 +301,7 @@ const Customer = ({ children }: any) => {
                                             <TableRow>
                                                 <TableCell align="center" width="15%"> Company Name </TableCell>
                                                 <TableCell align="center"> TaxNumber </TableCell>
-                                                <TableCell align="center" width="12%"> ContactPerson </TableCell>
-                                                <TableCell align="center"> Phone </TableCell>
-                                                <TableCell align="center" width="10%"> TagGroupCustomer </TableCell>
                                                 <TableCell align="center" width="10%"> TaxNumber </TableCell>
-                                                <TableCell align="center" width="10%"> contract </TableCell>
                                                 <TableCell align="center" width="5%"> View </TableCell>
                                                 <TableCell align="center" width="5%"> Delete </TableCell>
 
@@ -320,10 +316,8 @@ const Customer = ({ children }: any) => {
                                                 >
                                                     <TableCell align="left">{item.CompanyName || "-"}</TableCell>
                                                     <TableCell align="center">{item.TaxNumber || "-"}</TableCell>
-                                                    <TableCell align="center">{item.ContactPerson || "-"}</TableCell>
-                                                    <TableCell align="center">{item.ContactNumber || "-"}</TableCell>
                                                     <TableCell align="center">{item.CustomerGroup.Name || "-"}</TableCell>
-                                                    <TableCell align="center">{item.TaxNumber || "-"}</TableCell>
+                                    
                                                     <TableCell align="center">
                                                         {
                                                             <Link href={"/customer/contract/create/" + item.Id}>

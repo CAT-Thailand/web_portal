@@ -1,4 +1,4 @@
-import { EmployeeCreateInterface, EmployeeInterface } from "@/interfaces/IEmployee";
+import { EmployeeCreateInterface, EmployeeInterface, EmployeeUpdateInterface } from "@/interfaces/IEmployee";
 import axios from "axios";
 
 export async function ListEmployees() {
@@ -43,20 +43,6 @@ export async function DeleteEmployeeById(id: string) {
 
 export async function CreateEmployee(employee: Partial<EmployeeCreateInterface>) {
     try {
-        const data = {
-            name: employee.Name,
-            phone: employee.Phone,
-            lineID: employee.LineID,
-            email: employee.Email,
-            password: employee.Phone,
-            startDate: employee.StartDate,
-            probationDate: employee.ProbationDate,
-            terminationDate: employee.TerminationDate,
-            divisionID: employee.DivisionID,
-            roleID: employee.RoleID,
-            supervisorID: employee.SupervisorID
-        };
-      
         const reqOpt = {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -64,7 +50,7 @@ export async function CreateEmployee(employee: Partial<EmployeeCreateInterface>)
             },
         };
 
-        const res = await axios.post(`/api/employee/create`, data, reqOpt);
+        const res = await axios.post(`/api/employee/create`, employee, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -107,20 +93,8 @@ export async function ListEmployeeByDivision(id: number | undefined) {
         return false
     }
 }
-export async function Updateemployee(employee: Partial<EmployeeInterface>) {
+export async function UpdateEmployee(employee: Partial<EmployeeUpdateInterface>) {
     try {
-        const data = {
-            id: employee.Id,
-            name: employee.Name,
-            phone: employee.Phone,
-            lineID: employee.LineID,
-            email: employee.Email,
-            password: employee.Phone,
-            startDate: employee.StartDate,
-            probationDate: employee.ProbationDate,
-            terminationDate: employee.TerminationDate,
-        };
-
         const reqOpt = {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -128,7 +102,7 @@ export async function Updateemployee(employee: Partial<EmployeeInterface>) {
             },
         };
 
-        const res = await axios.patch(`/api/employee/update`, data, reqOpt);
+        const res = await axios.patch(`/api/employee/update`, employee, reqOpt);
 
         if (res.data) {
             return res.data;

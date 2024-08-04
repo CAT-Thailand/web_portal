@@ -46,10 +46,6 @@ const LoginPage = () => {
   };
  
   const submit = async () => {
-
-    console.log("logging in")
-    console.log(email)
-    console.log(password)
     await login(email, password);
     
   };

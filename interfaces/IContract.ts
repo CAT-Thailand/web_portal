@@ -10,6 +10,7 @@ export interface ContractCreateInterface {
   IncidentPerYear?: number;
   IncidentPerContract?: number;
   Cost?: number;
+  OverAllIncident?: number;
   Description?: string;
   NoticeDate1?: string;
   NoticeDate2?: string;
@@ -32,9 +33,12 @@ export interface ContractUpdateInterface {
   ContractStop?: string;
   IncidentPerYear?: number;
   IncidentPerContract?: number;
+  OverAllIncident?: number;
   Cost?: number;
   Description?: string;
-  NoticeDate?: string;
+  NoticeDate1?: string;
+  NoticeDate2?: string;
+  NoticeDate3?: string;
   UpdateDate?: string;
   CreateDate?: string;
   ProjectName?: string;
@@ -53,6 +57,7 @@ export interface ContractInterface {
   ContractStop?: Date;
   IncidentPerYear?: number;
   IncidentPerContract?: number;
+  OverAllIncident?: number;
   Cost?: number;
   Description?: string;
   NoticeDate?: Date;
@@ -94,6 +99,34 @@ export interface CreateDeviceInterface {
   Brand?: string;
   Model?: string;
   Serial?: string;
+  License?: string;
+  Sku?: string;
+  StartLicenseDate?: string;
+  ExpiredLicenseDate?: string;
+  ContractID?: string;
+}
+
+export interface SoftwareInterface {
+  Id?: string;
+  Brand?: string;
+  Model?: string;
+  Quantity?: number;
+  License?: string;
+  Sku?: string;
+  StartLicenseDate?: Date;
+  ExpiredLicenseDate?: Date;
+
+  ContractID?: string;
+  Contract?: ContractInterface;
+  EmployeeCreatedID?: string;
+  EmployeeCreated?: EmployeeInterface;
+}
+
+export interface CreateSoftwareInterface {
+  Id?: string;
+  Brand?: string;
+  Model?: string;
+  Quantity?: number;
   License?: string;
   Sku?: string;
   StartLicenseDate?: string;
