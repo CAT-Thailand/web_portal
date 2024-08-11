@@ -231,7 +231,7 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                     <Container maxWidth="lg">
 
 
-                        <div style={{ height: `calc(130vh - 300px)`, width: "100%", marginTop: "10px" }}>
+                    <div className="flex flex-col h-screen">
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">

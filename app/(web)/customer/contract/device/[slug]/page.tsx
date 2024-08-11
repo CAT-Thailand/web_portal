@@ -133,6 +133,10 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
             Serial: device.Serial,
             License: device.License,
             Sku: device.Sku,
+            DistributerCompany: device.DistributerCompany,
+            DistributerContactEmail: device.DistributerContactEmail,
+            DistributerContactNumber: device.DistributerContactNumber,
+            DistributerContactPerson: device.DistributerContactPerson
         });
         setStartLisenceDate(dayjs(device.StartLicenseDate));
         setExpiredLisenceDate(dayjs(device.ExpiredLicenseDate));
@@ -147,6 +151,10 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
             Quantity: sf.Quantity,
             License: sf.License,
             Sku: sf.Sku,
+            DistributerCompany:       sf.DistributerCompany,
+            DistributerContactEmail:  sf.DistributerContactEmail,
+            DistributerContactNumber: sf.DistributerContactNumber,
+            DistributerContactPerson: sf.DistributerContactPerson
         });
         setStartSoftwareLisenceDate(dayjs(sf.StartLicenseDate));
         setExpiredSoftwareLisenceDate(dayjs(sf.ExpiredLicenseDate));
@@ -390,7 +398,65 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
                                                 </FormControl>
                                             </Grid>
                                         </Grid>
+                                        <Grid container spacing={3} sx={{ padding: 1 }} style={{ marginLeft: "5%" }}>
+                                            <Grid item xs={3.5}>
+                                                <FormControl fullWidth variant="outlined">
+                                                    <p style={{ color: "black" }}>Distributer Company</p>
+                                                    <TextField
+                                                        id="DistributerCompany"
+                                                        variant="outlined"
+                                                        type="string"
+                                                        size="medium"
+                                                        value={createDevice.DistributerCompany || ""}
+                                                        onChange={handleInputChange}
+                                                        style={{ color: "black" }}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={3.5}>
+                                                <FormControl fullWidth variant="outlined">
+                                                    <p style={{ color: "black" }}>Distributer Contact Person</p>
+                                                    <TextField
+                                                        id="DistributerContactPerson"
+                                                        variant="outlined"
+                                                        type="string"
+                                                        size="medium"
+                                                        value={createDevice.DistributerContactPerson || ""}
+                                                        onChange={handleInputChange}
+                                                        style={{ color: "black" }}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={3.5}>
+                                                <FormControl fullWidth variant="outlined">
+                                                    <p style={{ color: "black" }}>Distributer Contact Number</p>
+                                                    <TextField
+                                                        id="DistributerContactNumber"
+                                                        variant="outlined"
+                                                        type="string"
+                                                        size="medium"
+                                                        value={createDevice.DistributerContactNumber || ""}
+                                                        onChange={handleInputChange}
+                                                        style={{ color: "black" }}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                        </Grid>
                                         <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "5%" }}>
+                                            <Grid item xs={3.5}>
+                                                <FormControl fullWidth variant="outlined">
+                                                    <p style={{ color: "black" }}>Distributer Contact Email</p>
+                                                    <TextField
+                                                        id="DistributerContactEmail"
+                                                        variant="outlined"
+                                                        type="string"
+                                                        size="medium"
+                                                        value={createDevice.DistributerContactEmail || ""}
+                                                        onChange={handleInputChange}
+                                                        style={{ color: "black" }}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
                                             <Grid item xs={3.5}>
                                                 <FormControl fullWidth variant="outlined">
                                                     <p style={{ color: "black" }}>License</p>
@@ -424,7 +490,6 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
                                             <Grid item xs={3.5}>
                                                 <FormControl fullWidth variant="outlined">
                                                     <p style={{ color: "black" }}>Start Lisence Date</p>
-
                                                     <DatePicker
                                                         value={startLisenceDate}
                                                         views={["day", "month", "year"]}
@@ -455,6 +520,7 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
                                                 </FormControl>
                                             </Grid>
 
+
                                             <Grid className=" items-center" item xs={3.5}>
                                                 <FormControl fullWidth variant="outlined">
                                                     <p style={{ color: "black" }}>Project Name</p>
@@ -466,28 +532,6 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
                                                         size="medium"
                                                         disabled
                                                         value={contract.ProjectName || ""}
-                                                        onChange={handleInputChange}
-                                                        style={{ color: "black" }}
-                                                        InputProps={{
-                                                            style: {
-                                                                backgroundColor: "#e8e8e8", // Dark background color
-                                                                color: "#000000", // Light text color
-                                                            },
-                                                        }}
-                                                    />
-                                                </FormControl>
-                                            </Grid>
-                                            <Grid className=" items-center" item xs={3.5}>
-                                                <FormControl fullWidth variant="outlined">
-                                                    <p style={{ color: "black" }}>Customer Po</p>
-
-                                                    <TextField
-                                                        id="VendorPO"
-                                                        variant="outlined"
-                                                        type="string"
-                                                        size="medium"
-                                                        disabled
-                                                        value={contract.CustomerPO || ""}
                                                         onChange={handleInputChange}
                                                         style={{ color: "black" }}
                                                         InputProps={{
@@ -630,7 +674,7 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
                                 </div>
                             </TabPanel>
                             <TabPanel value="2">
-                            <div className="flex flex-col h-screen">
+                                <div className="flex flex-col h-screen">
                                     <div className=" justify-center ">
                                         <Grid container spacing={3} sx={{ padding: 1 }} style={{ marginLeft: "5%" }}>
                                             <Grid item xs={3.5}>
@@ -679,7 +723,70 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
                                                 </FormControl>
                                             </Grid>
                                         </Grid>
+                                        <Grid container spacing={3} sx={{ padding: 1 }} style={{ marginLeft: "5%" }}>
+                                            <Grid item xs={3.5}>
+                                                <FormControl fullWidth variant="outlined">
+                                                    <p style={{ color: "black" }}>Distributer Company</p>
+                                                    <TextField
+                                                        id="DistributerCompany"
+                                                        variant="outlined"
+                                                        type="string"
+                                                        size="medium"
+                                                        value={createSoftware.DistributerCompany || ""}
+                                                        onChange={handleInputChangeSoftware}
+                                                        style={{ color: "black" }}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={3.5}>
+                                                <FormControl fullWidth variant="outlined">
+                                                    <p style={{ color: "black" }}>Distributer Contact Person</p>
+
+                                                    <TextField
+                                                        id="DistributerContactPerson"
+                                                        variant="outlined"
+                                                        type="string"
+                                                        size="medium"
+                                                        value={createSoftware.DistributerContactPerson || ""}
+                                                        onChange={handleInputChangeSoftware}
+                                                        style={{ color: "black" }}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+
+                                            <Grid item xs={3.5}>
+                                                <FormControl fullWidth variant="outlined">
+                                                    <p style={{ color: "black" }}>Distributer Contact Number</p>
+                                                    <TextField
+                                                        id="DistributerContactNumber"
+                                                        variant="outlined"
+                                                        type="string"
+                                                        size="medium"
+                                                        value={createSoftware.DistributerContactNumber || ""}
+                                                        onChange={handleInputChangeSoftware}
+                                                        style={{ color: "black" }}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+
+                                        </Grid>
                                         <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "5%" }}>
+                                            
+                                            <Grid item xs={3.5}>
+                                                <FormControl fullWidth variant="outlined">
+                                                    <p style={{ color: "black" }}>Distributer Contact Email</p>
+                                                    <TextField
+                                                        id="DistributerContactEmail"
+                                                        variant="outlined"
+                                                        type="string"
+                                                        size="medium"
+                                                        value={createSoftware.DistributerContactEmail || ""}
+                                                        onChange={handleInputChangeSoftware}
+                                                        style={{ color: "black" }}
+                                                    />
+                                                </FormControl>
+                                            </Grid>
+
                                             <Grid item xs={3.5}>
                                                 <FormControl fullWidth variant="outlined">
                                                     <p style={{ color: "black" }}>License</p>
@@ -695,6 +802,7 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
                                                     />
                                                 </FormControl>
                                             </Grid>
+
                                             <Grid item xs={3.5}>
                                                 <FormControl fullWidth variant="outlined">
                                                     <p style={{ color: "black" }}>SKU</p>
@@ -710,6 +818,7 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
                                                     />
                                                 </FormControl>
                                             </Grid>
+
                                             <Grid item xs={3.5}>
                                                 <FormControl fullWidth variant="outlined">
                                                     <p style={{ color: "black" }}>Start Lisence Date</p>
@@ -755,28 +864,6 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
                                                         size="medium"
                                                         disabled
                                                         value={contract.ProjectName || ""}
-                                                        onChange={handleInputChange}
-                                                        style={{ color: "black" }}
-                                                        InputProps={{
-                                                            style: {
-                                                                backgroundColor: "#e8e8e8", // Dark background color
-                                                                color: "#000000", // Light text color
-                                                            },
-                                                        }}
-                                                    />
-                                                </FormControl>
-                                            </Grid>
-                                            <Grid className=" items-center" item xs={3.5}>
-                                                <FormControl fullWidth variant="outlined">
-                                                    <p style={{ color: "black" }}>Customer Po</p>
-
-                                                    <TextField
-                                                        id="VendorPO"
-                                                        variant="outlined"
-                                                        type="string"
-                                                        size="medium"
-                                                        disabled
-                                                        value={contract.CustomerPO || ""}
                                                         onChange={handleInputChange}
                                                         style={{ color: "black" }}
                                                         InputProps={{

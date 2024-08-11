@@ -299,9 +299,10 @@ const Customer = ({ children }: any) => {
                                     <Table aria-label="simple table">
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell align="center" width="15%"> Company Name </TableCell>
+                                                <TableCell align="center" width="30%"> Company Name </TableCell>
                                                 <TableCell align="center"> TaxNumber </TableCell>
-                                                <TableCell align="center" width="10%"> TaxNumber </TableCell>
+                                                <TableCell align="center"> Customer Group </TableCell>
+                                                <TableCell align="center" width="5%"> Contract </TableCell>
                                                 <TableCell align="center" width="5%"> View </TableCell>
                                                 <TableCell align="center" width="5%"> Delete </TableCell>
 
@@ -316,8 +317,8 @@ const Customer = ({ children }: any) => {
                                                 >
                                                     <TableCell align="left">{item.CompanyName || "-"}</TableCell>
                                                     <TableCell align="center">{item.TaxNumber || "-"}</TableCell>
-                                                    <TableCell align="center">{item.CustomerGroup.Name || "-"}</TableCell>
-                                    
+                                                    <TableCell align="center">{customerGroups.find((group) => group.Id == item.CustomerGroupId)?.Name}</TableCell>
+
                                                     <TableCell align="center">
                                                         {
                                                             <Link href={"/customer/contract/create/" + item.Id}>
@@ -480,7 +481,7 @@ const Customer = ({ children }: any) => {
 
 
                             <TableContainer >
-                                <Table  aria-label="simple table">
+                                <Table aria-label="simple table">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell align="center" width="10%"> Name </TableCell>
@@ -502,19 +503,19 @@ const Customer = ({ children }: any) => {
 
                                                 <TableCell align="center">
                                                     {
-                                                        
-                                                            <Button
-                                                                variant='outlined'
-                                                                color='warning'
-                                                                sx={{
-                                                                    maxWidth: 75, // Set the maximum width of the button
-                                                                    maxHeight: 60, // Set the maximum height of the button
-                                                                }}
-                                                                onClick={()=>{handleUpdate(item)}}
-                                                            >
-                                                                Update
-                                                            </Button>
-                                              
+
+                                                        <Button
+                                                            variant='outlined'
+                                                            color='warning'
+                                                            sx={{
+                                                                maxWidth: 75, // Set the maximum width of the button
+                                                                maxHeight: 60, // Set the maximum height of the button
+                                                            }}
+                                                            onClick={() => { handleUpdate(item) }}
+                                                        >
+                                                            Update
+                                                        </Button>
+
 
                                                     }
                                                 </TableCell>

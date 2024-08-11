@@ -44,12 +44,9 @@ const AuthProvider = ({ children }: Props) => {
 
 	const handleLogin = async (email: string, password: string) => {
 		try {
+			window.localStorage.clear();
 		
-		
-			console.log("handleLogin")
 			let res = await apiUserLogin(email, password);
-			console.log("res")
-			console.log(res)
 			if (res) {
 				window.localStorage.setItem('at', JSON.stringify(res).slice(1, -1))
 				let userInfo = jwtDecode(String(res)) as UserDataType

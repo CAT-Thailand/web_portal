@@ -144,7 +144,7 @@ const Contract = ({ children }: any) => {
 
             <div
                 className="flex flex-row justify-between w-full"
-                // style={{ backgroundColor: "#f8f9fa" }}
+            // style={{ backgroundColor: "#f8f9fa" }}
             >
 
                 <CardHeader
@@ -159,7 +159,7 @@ const Contract = ({ children }: any) => {
                     title="Contract Admin Management"
                 ></CardHeader>
             </div>
-            <CardContent  sx={{ p: 0, px: 2, py: 2, flexGrow: 1 }}>
+            <CardContent sx={{ p: 0, px: 2, py: 2, flexGrow: 1 }}>
                 <div>
                     <div style={{ marginTop: "10px" }}>
                         <Grid container spacing={1} >
@@ -227,7 +227,7 @@ const Contract = ({ children }: any) => {
 
                     <Divider sx={{ borderColor: "transparent" }} />
 
-                    <div style={{ height: `calc(150vh - 300px)`, width: "100%", marginTop: "10px" }}>
+                    <div className="flex flex-col h-screen">
                         <TableContainer style={{ maxHeight: `calc(100vh - 350px)` }} >
                             <Table aria-label="simple table">
                                 <TableHead>
@@ -240,10 +240,12 @@ const Contract = ({ children }: any) => {
                                         <TableCell align="center" width="10%"> CustomerPO </TableCell> {/* Adjusted width */}
                                         <TableCell align="center" width="5%"> IncidentPerYear </TableCell>
                                         <TableCell align="center" width="5%"> IncidentPerContract </TableCell>
-                                        <TableCell align="center" width="5%"> OverAllIncident </TableCell>
+                                        <TableCell align="center" width="5%"> OverAll Incident Per Contract </TableCell>
+                                        <TableCell align="center" width="5%"> OverAll Incident Per Month </TableCell>
                                         <TableCell align="center" width="10%"> SLA </TableCell>
                                         <TableCell align="center" width="5%"> View </TableCell>
-                                        <TableCell align="center" width="5%"> Device </TableCell>
+                                        <TableCell align="center" width="5%"> Appliance </TableCell>
+                                        <TableCell align="center" width="5%"> Config Backup </TableCell>
                                         <TableCell align="center" width="5%"> Ticket </TableCell>
                                         <TableCell align="center" width="5%"> Delete </TableCell>
 
@@ -259,16 +261,52 @@ const Contract = ({ children }: any) => {
                                         >
 
 
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="left">{item.Customer?.CompanyName || "-"}</TableCell>
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.ProjectName}</TableCell>
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{convertDateFormat(item.ContractStart!) || "-"}</TableCell>
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{convertDateFormat(item.ContractStop!) || "-"}</TableCell>
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.VendorPO || "-"}</TableCell>
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.CustomerPO || "-"}</TableCell>
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.IncidentPerYear || "-"}</TableCell>
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.IncidentPerContract || "-"}</TableCell>
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.OverAllIncident || "-"}</TableCell>
-                                            <TableCell onClick={() => window.location.href = `/customer/contract/update/${item.Id}`} align="center">{item.Sla?.Response || "-"}</TableCell>
+                                            <TableCell align="left">{item.Customer?.CompanyName || "-"}</TableCell>
+                                            <TableCell align="center">{item.ProjectName}</TableCell>
+                                            <TableCell align="center">{convertDateFormat(item.ContractStart!) || "-"}</TableCell>
+                                            <TableCell align="center">{convertDateFormat(item.ContractStop!) || "-"}</TableCell>
+                                            <TableCell align="center">{item.VendorPO || "-"}</TableCell>
+                                            <TableCell align="center">{item.CustomerPO || "-"}</TableCell>
+                                            <TableCell align="center">{item.IncidentPerYear || "-"}</TableCell>
+                                            <TableCell align="center">{item.IncidentPerContract || "-"}</TableCell>
+                                            <TableCell align="center">{item.OverAllIncident || "-"}</TableCell>
+                                            <TableCell align="center">
+                                                <span
+                                                    className={
+                                                        item.IncidentPerYear! > 0 &&
+                                                            item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
+                                                            ? 'ellipsis-wrapper'
+                                                            : ''
+                                                    }
+                                                    style={{
+                                                        borderColor:
+                                                            item.IncidentPerYear! > 0 &&
+                                                                item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
+                                                                ? "White"
+                                                                : 'transparent', // Border color
+                                                        backgroundColor:
+                                                            item.IncidentPerYear! > 0 &&
+                                                                item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
+                                                                ? "#F8F988"
+                                                                : 'transparent',
+                                                        // color: item.IncidentPerYear! > 0 &&
+                                                        //     item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
+                                                        //     ? "white"
+                                                        //     : 'inherit',
+                                                        display: 'inline-block',
+                                                        maxWidth: '150px', // Adjust max-width to control the width of the background
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                        padding: '4px 30px', // Padding to add space around the text
+                                                        border: '1px solid black', // Border color and width
+                                                        borderRadius: '5px', // Optional: rounded corners
+                                                    }}
+                                                >
+                                                    {item.OverAllIncidentPerYear || "0"}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell align="center">{item.Sla?.Response || "-"}</TableCell>
                                             <TableCell>
                                                 {
                                                     <Link href={"/customer/contract/update/" + item.Id}>
@@ -299,6 +337,23 @@ const Contract = ({ children }: any) => {
                                                             }}
                                                         >
                                                             device
+                                                        </Button>
+                                                    </Link>
+
+                                                }
+                                            </TableCell>
+                                            <TableCell>
+                                                {
+                                                    <Link href={"/customer/contract/config/" + item.Id}>
+                                                        <Button
+                                                            variant='outlined'
+                                                            color="error"
+                                                            sx={{
+                                                                maxWidth: 60, // Set the maximum width of the button
+                                                                maxHeight: 60, // Set the maximum height of the button
+                                                            }}
+                                                        >
+                                                            config
                                                         </Button>
                                                     </Link>
 

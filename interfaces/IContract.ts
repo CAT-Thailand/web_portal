@@ -3,6 +3,7 @@ import { CustomerInterface } from "./ICustomer";
 import { EmployeeInterface } from "./IEmployee";
 import { ServiceCatalogInterface } from "./IServiceCatalog";
 import { SlaInterface } from "./ISla";
+import { ListOperationServiceInterface } from "./IOperationService";
 
 export interface ContractCreateInterface {
   ContractStart?: string;
@@ -67,6 +68,7 @@ export interface ContractInterface {
   CustomerPO?: string;
   VendorPO?: string;
   ScopeOfWorkURL?: string;
+  OverAllIncidentPerYear?: number;
 
   ServiceCatalogID?: number;
   ServiceCatalog?: ServiceCatalogInterface;
@@ -87,6 +89,10 @@ export interface DeviceInterface {
   Sku?: string;
   StartLicenseDate?: Date;
   ExpiredLicenseDate?: Date;
+  DistributerCompany?: string;
+  DistributerContactPerson?: string;
+  DistributerContactNumber?: string;
+  DistributerContactEmail?: string;
 
   ContractID?: string;
   Contract?: ContractInterface;
@@ -101,6 +107,10 @@ export interface CreateDeviceInterface {
   Serial?: string;
   License?: string;
   Sku?: string;
+  DistributerCompany?: string;
+  DistributerContactPerson?: string;
+  DistributerContactNumber?: string;
+  DistributerContactEmail?: string;
   StartLicenseDate?: string;
   ExpiredLicenseDate?: string;
   ContractID?: string;
@@ -113,6 +123,10 @@ export interface SoftwareInterface {
   Quantity?: number;
   License?: string;
   Sku?: string;
+  DistributerCompany?: string;
+  DistributerContactPerson?: string;
+  DistributerContactNumber?: string;
+  DistributerContactEmail?: string;
   StartLicenseDate?: Date;
   ExpiredLicenseDate?: Date;
 
@@ -129,7 +143,28 @@ export interface CreateSoftwareInterface {
   Quantity?: number;
   License?: string;
   Sku?: string;
+  DistributerCompany?: string;
+  DistributerContactPerson?: string;
+  DistributerContactNumber?: string;
+  DistributerContactEmail?: string;
   StartLicenseDate?: string;
   ExpiredLicenseDate?: string;
   ContractID?: string;
+}
+
+export interface CreateConfigBackupInterface {
+  Id?: string;
+  Note?: string;
+  FilePath?: string;
+  DeviceID?: string;
+  OperationServiceID?: string;
+}
+export interface ConfigBackupInterface {
+  Id?: string;
+  Note?: string;
+  FilePath?: string;
+  DeviceID?: string;
+  Device?: DeviceInterface;
+  OperationServiceID?: string;
+  OperationService?: ListOperationServiceInterface;
 }

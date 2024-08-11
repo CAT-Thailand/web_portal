@@ -125,3 +125,24 @@ export async function GetOperationServiceById(id: string) {
     return res
 }
 
+export async function GetOperationServiceByContractId(id: string) {
+    const reqOpt = {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/operation/contract/${id}`, reqOpt)
+        .then((res) => {
+            if (res.data) {
+                return res.data.Data
+            } else {
+                return false
+            }
+        })
+    return res
+}
+
+
