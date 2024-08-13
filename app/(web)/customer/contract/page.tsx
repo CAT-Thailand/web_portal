@@ -141,10 +141,11 @@ const Contract = ({ children }: any) => {
     return (
 
         <Layout >
+            <div style={{ backgroundColor: "#f8f9fa"}}>
 
             <div
-                className="flex flex-row justify-between w-full"
-            // style={{ backgroundColor: "#f8f9fa" }}
+                className="justify-between w-full"
+                style={{ backgroundColor: "#f8f9fa", width: "130%" }}
             >
 
                 <CardHeader
@@ -159,9 +160,9 @@ const Contract = ({ children }: any) => {
                     title="Contract Admin Management"
                 ></CardHeader>
             </div>
-            <CardContent sx={{ p: 0, px: 2, py: 2, flexGrow: 1 }}>
-                <div>
-                    <div style={{ marginTop: "10px" }}>
+            <CardContent  sx={{ p: 0, px: 0, py: 0, flexGrow: 0 }}>
+                <div >
+                    <div style={{backgroundColor: "#f8f9fa", width: "130%"}}>
                         <Grid container spacing={1} >
                             <Grid item xs={3} className="flex justify-center flex-col-reverse">
                                 <TextField
@@ -202,47 +203,24 @@ const Contract = ({ children }: any) => {
                                     <SearchIcon />
                                 </Button>
                             </Grid>
-                            <Grid item xs={7}>
-
-                            </Grid>
-                            {/* <Grid
-                                className="flex justify-center flex-col-reverse"
-                                item
-                                xs={1.5}
-                                // sx={{ pr: 2 }}
-                                style={{ alignItems: "end" }}
-                            >
-
-                                <Button
-                                    variant="contained"
-                                    href="/customer/createProfile"
-                                    style={{ borderRadius: "24px" }}
-                                >
-                                    + Create
-                                </Button>
-                            </Grid> */}
-
                         </Grid>
                     </div>
-
-                    <Divider sx={{ borderColor: "transparent" }} />
-
-                    <div className="flex flex-col h-screen">
-                        <TableContainer style={{ maxHeight: `calc(100vh - 350px)` }} >
+                    <div style={{ height: 800, width: "130%", backgroundColor: "#f8f9fa" }} >
+                        <TableContainer  >
                             <Table aria-label="simple table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell align="center" width="20%"> Company Name </TableCell>
+                                        <TableCell align="center" width="10%"> Company Name </TableCell>
                                         <TableCell align="center" width="10%"> ProjectName </TableCell> {/* Adjusted width */}
-                                        <TableCell align="center" width="10%"> ContractStart </TableCell>
-                                        <TableCell align="center" width="10%"> ContractStop </TableCell> {/* Adjusted width */}
-                                        <TableCell align="center" width="10%"> VendorPO </TableCell>
-                                        <TableCell align="center" width="10%"> CustomerPO </TableCell> {/* Adjusted width */}
+                                        <TableCell align="center" width="5%"> ContractStart </TableCell>
+                                        <TableCell align="center" width="5%"> ContractStop </TableCell> {/* Adjusted width */}
+                                        <TableCell align="center" width="5%"> VendorPO </TableCell>
+                                        <TableCell align="center" width="5%"> CustomerPO </TableCell> {/* Adjusted width */}
                                         <TableCell align="center" width="5%"> IncidentPerYear </TableCell>
                                         <TableCell align="center" width="5%"> IncidentPerContract </TableCell>
                                         <TableCell align="center" width="5%"> OverAll Incident Per Contract </TableCell>
                                         <TableCell align="center" width="5%"> OverAll Incident Per Month </TableCell>
-                                        <TableCell align="center" width="10%"> SLA </TableCell>
+                                        <TableCell align="center" width="5%"> SLA </TableCell>
                                         <TableCell align="center" width="5%"> View </TableCell>
                                         <TableCell align="center" width="5%"> Appliance </TableCell>
                                         <TableCell align="center" width="5%"> Config Backup </TableCell>
@@ -432,6 +410,7 @@ const Contract = ({ children }: any) => {
 
                 </div>
             </CardContent>
+            </div>
 
         </Layout>
     )

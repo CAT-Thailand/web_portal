@@ -31,8 +31,6 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     backgroundColor: "#f8f9fa",
-    // marginLeft: 120,
-    // padding: 3,
   },
   texticon: {
     color: "#fff",

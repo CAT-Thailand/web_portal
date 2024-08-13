@@ -80,6 +80,36 @@ export interface ContractInterface {
   EmployeeCreated?: EmployeeInterface;
 }
 
+export interface ContractHistoryInterface {
+  HistoryID: string;
+  ContractStart?: Date;
+  ContractStop?: Date;
+  IncidentPerYear?: number;
+  IncidentPerContract?: number;
+  OverAllIncident?: number;
+  Cost?: number;
+  Description?: string;
+  NoticeDate?: Date;
+  UpdateDate?: string;
+  CreateDate?: string;
+  ProjectName?: string;
+  CustomerPO?: string;
+  VendorPO?: string;
+  ScopeOfWorkURL?: string;
+  OverAllIncidentPerYear?: number;
+
+  ServiceCatalogID?: number;
+  ServiceCatalog?: ServiceCatalogInterface;
+  SlaID?: number;
+  Sla?: SlaInterface;
+  CustomerID?: string;
+  Customer?: CustomerInterface;
+  EmployeeCreatedID?: string;
+  EmployeeCreated?: EmployeeInterface;
+  ContractID?: string;
+  Contract?: ContractInterface;
+}
+
 export interface DeviceInterface {
   Id?: string;
   Brand?: string;

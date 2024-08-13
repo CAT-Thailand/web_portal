@@ -185,6 +185,24 @@ export async function ListDeviceByContractId(id :string) {
         })
     return res
 }
+export async function ListContractHistoryByContractId(id :string) {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/customer/contract/history/contract/${id}`, reqOpt)
+        .then((res) => {
+            if (res.data) {
+                return res.data.Data
+            } else {
+                return false
+            }
+        })
+    return res
+}
 export async function ListConfigBackupByContractId(id :string) {
     const reqOpt = {
         headers: {

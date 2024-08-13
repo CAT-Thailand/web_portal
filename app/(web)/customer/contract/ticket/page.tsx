@@ -211,7 +211,7 @@ const Ticket = ({ children }: any) => {
 
                     <Divider sx={{ borderColor: "transparent" }} />
 
-                    <div style={{ height: `calc(150vh - 300px)`, width: "100%", marginTop: "10px" }}>
+                    <div className="flex flex-col h-screen">
                         <TableContainer style={{ maxHeight: `calc(100vh - 350px)` }} >
                             <Table aria-label="simple table">
                                 <TableHead>

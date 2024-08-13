@@ -90,3 +90,39 @@ export interface ListOperationServiceInterface {
   OperationTypeID?: number;
   OperationType?: OperationTypeInterface;
 }
+export interface ListOperationServiceHistoryInterface {
+  Id: string;
+  OperationSubject?: string;
+  OperationSiteName?: string;
+  OperationSiteAddress?: string;
+  OperationSiteGoogleMap?: string;
+  Description?: string;
+  DateOfVisit?: Date;
+  ScopeOfWorkURL?: string;
+
+  ContactPerson?: string;
+  ContactNumber?: string;
+  ContactEmail?: string;
+  ContactLineID?: string;
+
+  StatusID?: number;
+  Status?: StatusInterface;
+  PriorityID?: number;
+  Priority?: PriorityInterface;
+  ContractID?: string;
+  Contract?: ContractInterface;
+  EmployeeCreatedID?: string;
+  EmployeeCreated?: EmployeeInterface;
+  EmployeeUpdatedID?: string;
+  EmployeeUpdated?: EmployeeInterface;
+  JuniorEmployeeResponsibleID?: string;
+  JuniorEmployeeResponsible?: EmployeeInterface;
+  SeniorEmployeeResponsibleID?: string;
+  SeniorEmployeeResponsible?: EmployeeInterface;
+  SupervisorEmployeeResponsibleID?: string;
+  SupervisorEmployeeResponsible?: EmployeeInterface;
+  OperationTypeID?: number;
+  OperationType?: OperationTypeInterface;
+  OperationId?: string;
+  Operation?: ListOperationServiceInterface;
+}

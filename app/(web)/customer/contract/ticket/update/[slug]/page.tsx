@@ -3,13 +3,13 @@
 import Layout from "@/app/(web)/layout"
 import { ContractCreateInterface, ContractInterface, ContractUpdateInterface } from "@/interfaces/IContract"
 import { CustomerAddressInterface, CustomerInterface } from "@/interfaces/ICustomer"
-import { CreateOperationServiceInterface, UpdateOperationServiceInterface } from "@/interfaces/IOperationService"
+import { CreateOperationServiceInterface, ListOperationServiceHistoryInterface, UpdateOperationServiceInterface } from "@/interfaces/IOperationService"
 import { PriorityInterface } from "@/interfaces/IPriority"
 import { ServiceCatalogInterface } from "@/interfaces/IServiceCatalog"
 import { SlaInterface } from "@/interfaces/ISla"
 import { StatusInterface } from "@/interfaces/IStatus"
 import { getContractByID } from "@/services/Contract/ContractServices"
-import { CreateOperationService, GetOperationServiceById, ListOperationTypes, UpdateOperationService } from "@/services/Operation/OperationServices"
+import { CreateOperationService, GetOperationServiceById, GetOperationServiceHistoryByOperationId, ListOperationTypes, UpdateOperationService } from "@/services/Operation/OperationServices"
 import { ListPriorities } from "@/services/Priority/PriorityServices"
 
 import { ListServiceCatalogs } from "@/services/ServiceCatalog/ServiceCatalogServices"
@@ -19,7 +19,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 import dayjs, { Dayjs } from "dayjs"
 import React from "react"
-import { Container, Alert, Button, FormControl, Snackbar, TextField, createTheme, OutlinedInput, ThemeProvider, CardHeader, Select, SelectChangeEvent, Grid } from '@mui/material'
+import { Container, Alert, Button, FormControl, Snackbar, TextField, createTheme, OutlinedInput, ThemeProvider, CardHeader, Select, SelectChangeEvent, Grid, Divider, TableCell, Link, TableRow, TableBody, Table, TableContainer, TableHead, IconButton, Tooltip } from '@mui/material'
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import { ListDevisions } from "@/services/Devision/DevisionService"
 import { ListEmployeeByDivision, ListEmployees } from "@/services/Employee/EmployeeServices"
@@ -28,6 +28,7 @@ import { OperationTypeInterface } from "@/interfaces/IOperationType"
 import { EmployeeCreateInterface, EmployeeInterface } from "@/interfaces/IEmployee"
 import { useRouter } from 'next/navigation'
 import { GetCustomerAddressCustomerByID } from "@/services/Customer/CustomerServices"
+import { ContentCopy } from "@mui/icons-material"
 export default function UpdateOperationTicket({ params: { slug } }: { params: { slug: string } }) {
     let router = useRouter()
     const [operationType, setOperationType] = React.useState<ServiceCatalogInterface[]>([])
@@ -35,6 +36,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
     const [priority, setPriority] = React.useState<PriorityInterface[]>([])
     const [divisions, setDivisions] = React.useState<DivisionInterface[]>([])
     const [employee, setEmployee] = React.useState<EmployeeInterface[]>([])
+    const [operationHistory, setOperationHistory] = React.useState<ListOperationServiceHistoryInterface[]>([])
     const [division, setDivision] = React.useState<number>(0)
     const [operation, setOperation] = React.useState<Partial<UpdateOperationServiceInterface>>({
         StatusID: 0,
@@ -61,6 +63,13 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
             console.log(res)
             setOperation(res)
             getContract(res.ContractID)
+        }
+    }
+    const getOperationHistory = async (id: string) => {
+        let res = await GetOperationServiceHistoryByOperationId(id)
+        if (res && res.Status !== "error") {
+            console.log(res)
+            setOperationHistory(res)
         }
     }
 
@@ -134,10 +143,12 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
             setError(true);
         }
     }
+    
 
 
     React.useEffect(() => {
         getOperation(slug);
+        getOperationHistory(slug);
         getPriority();
         getOperationType();
         getStatus();
@@ -169,6 +180,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
 
             let res = await UpdateOperationService(operation)
             if (res && res.Status !== "error") {
+                getOperationHistory(slug);
                 setAlertMessage("บันทึกข้อมูลสำเร็จ");
                 setSuccess(true);
             } else {
@@ -218,6 +230,10 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
             [name]: event.target.value,
         });
     };
+    const convertDateFormat = (date: Date) => {
+        const newDate = new Date(date)
+        return `${newDate.getDate() < 10 ? "0" + newDate.getDate() : newDate.getDate()}/${newDate.getMonth() + 1 < 10 ? "0" + (newDate.getMonth() + 1) : newDate.getMonth() + 1}/${newDate.getFullYear() < 10 ? "000" + newDate.getFullYear() : newDate.getFullYear() < 100 ? "00" + newDate.getFullYear() : newDate.getFullYear() < 1000 ? "0" + newDate.getFullYear() : newDate.getFullYear()}`
+    }
 
     const handleChangeSiteName = (event: SelectChangeEvent<string>) => {
         const { name, value } = event.target;
@@ -245,15 +261,15 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
     };
 
 
-    // Change Value in Box
-    const handleChange: any = (event: React.ChangeEvent<{ name: string; value: any }>) => {
-        const name = event.target.name as keyof typeof operation;
-
-        setOperation({
-            ...operation,
-            [name]: event.target.value
-        })
-    }
+    const handleCopyClick = (url: string) => {
+        if (url !== "-") {
+            navigator.clipboard.writeText(url).then(
+                (err) => {
+                    console.error("Could not copy text: ", err);
+                }
+            );
+        }
+    };
 
     const handleClose = (
         event?: React.SyntheticEvent | Event,
@@ -330,9 +346,9 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                             </Alert>
                         </Snackbar>
 
-                        <div className="w-full">
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={5}>
+                        <div className="flex flex-col h-screen" style={{height:"105%"}} >
+                        <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Subject</p>
 
@@ -347,7 +363,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         />
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>ScopeOfWorkURL</p>
 
@@ -359,13 +375,23 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                             value={operation.ScopeOfWorkURL || ""}
                                             onChange={handleInputChange}
                                             style={{ color: "black" }}
+                                            InputProps={{
+                                                endAdornment: operation?.ScopeOfWorkURL ? (
+                                                    <Tooltip title="Copy URL">
+                                                        <IconButton
+                                                            onClick={()=>handleCopyClick(operation?.ScopeOfWorkURL!)}
+                                                            size="small"
+                                                            style={{ marginLeft: 8 }}
+                                                        >
+                                                            <ContentCopy style={{ color: "#0000EE" }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                ) : null,
+                                            }}
                                         />
                                     </FormControl>
                                 </Grid>
-
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>SiteName</p>
 
@@ -389,7 +415,11 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={5}>
+                                
+
+                            </Grid>
+                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                            <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Map URL</p>
 
@@ -407,14 +437,22 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                                     backgroundColor: "#e8e8e8", // Dark background color
                                                     color: "#000000", // Light text color
                                                 },
+                                                endAdornment: operation?.ScopeOfWorkURL ? (
+                                                    <Tooltip title="Copy URL">
+                                                        <IconButton
+                                                            onClick={()=>handleCopyClick(operation?.ScopeOfWorkURL!)}
+                                                            size="small"
+                                                            style={{ marginLeft: 8 }}
+                                                        >
+                                                            <ContentCopy style={{ color: "#0000EE" }} />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                ) : null,
                                             }}
                                         />
                                     </FormControl>
                                 </Grid>
-                            </Grid>
-                                
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                            <Grid item xs={10}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Address</p>
 
@@ -436,10 +474,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         />
                                     </FormControl>
                                 </Grid>
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>ContactPerson</p>
 
@@ -455,7 +490,9 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         />
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={5}>
+                            </Grid>
+                            <Grid container spacing={3} sx={{ padding: 1 }} style={{ marginLeft: "6.5%" }}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>LineID</p>
 
@@ -469,12 +506,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         />
                                     </FormControl>
                                 </Grid>
-
-
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Phone</p>
                                         <TextField
@@ -487,7 +519,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         />
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Email</p>
 
@@ -502,12 +534,9 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         />
                                     </FormControl>
                                 </Grid>
-
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-
-
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Date Of Visit</p>
 
@@ -523,7 +552,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         />
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Priority</p>
                                         <Select
@@ -544,10 +573,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         </Select>
                                     </FormControl>
                                 </Grid>
-
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Status</p>
                                         <Select
@@ -567,7 +593,11 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={5}>
+
+                            </Grid>
+                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                                
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>OperationType</p>
                                         <Select
@@ -587,18 +617,16 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Division</p>
                                         <Select
                                             native
                                             value={division ?? 1}
                                             onChange={handleInputChangeDivision}
-                                        // inputProps={{
-                                        //     name: "StatusID",
-                                        // }}
+                                        inputProps={{
+                                            name: "DivisionID",
+                                        }}
                                         >
                                             <option value={0} key={0}>
                                                 กรุณา เลือกชนิดของ division
@@ -609,7 +637,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Junior Employee</p>
                                         <Select
@@ -631,7 +659,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                 </Grid>
                             </Grid>
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Senior Employee</p>
                                         <Select
@@ -651,7 +679,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={5}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Supervisor Employee</p>
                                         <Select
@@ -671,9 +699,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={10}>
+                                <Grid item xs={3.5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Description</p>
                                         <OutlinedInput
@@ -689,9 +715,6 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                     </FormControl>
                                 </Grid>
                             </Grid>
-
-
-
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={4}>
                                     <a href={"/customer/contract"}>
@@ -719,10 +742,59 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                             },
                                         }}
                                     >
-                                        Submit
+                                        Update
                                     </Button>
                                 </Grid>
                             </Grid>
+                            <Divider sx={{ borderColor: "border-gray-600" }} />
+                            <TableContainer style={{ height:"50%" }} >
+                            <Table aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center" width="10%"> Subject </TableCell>
+                                        <TableCell align="center" width="10%"> SiteName </TableCell> 
+                                        <TableCell align="center" width="10%"> GoogleMap </TableCell>
+                                        <TableCell align="center" width="10%"> DateOfVisit </TableCell> 
+                                        <TableCell align="center" width="10%"> ContactPerson </TableCell>
+                                        <TableCell align="center" width="10%"> Phone </TableCell> 
+                                        <TableCell align="center" width="5%"> Status </TableCell>
+                                        <TableCell align="center" width="5%"> Priority </TableCell>
+                                        <TableCell align="center" width="10%"> JuniorEmployee </TableCell>
+                                        <TableCell align="center" width="10%"> SeniorEmployee </TableCell>
+                                        <TableCell align="center" width="10%"> SupervisorEmployee </TableCell>
+                                        <TableCell align="center" width="5%"> ScopeOfWorkURL </TableCell>
+                                        <TableCell align="center" width="5%"> Employee Update Email </TableCell>
+
+                                    </TableRow>
+                                </TableHead>
+
+                                <TableBody>
+                                    {operationHistory.map((item: ListOperationServiceHistoryInterface) => (
+                                        <TableRow
+                                            key={item.Id}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+                                            <TableCell align="left">{item.OperationSubject || "-"}</TableCell>
+                                            <TableCell align="center">{item.OperationSiteName}</TableCell>
+                                            <TableCell align="center">{item.OperationSiteGoogleMap || "-"}</TableCell>
+                                            <TableCell align="center">{convertDateFormat(item.DateOfVisit!) || "-"}</TableCell>
+                                            <TableCell align="center">{item.ContactPerson || "-"}</TableCell>
+                                            <TableCell align="center">{item.ContactNumber || "-"}</TableCell>
+                                            <TableCell align="center">{status.find((st) => st.Id == item.StatusID)?.Name || "-"}</TableCell>
+                                            <TableCell align="center">{priority.find((p) => p.Id == item.PriorityID)?.Name || "-"}</TableCell>
+                                            <TableCell align="center">{employee.find((emp) => emp.Id == item.JuniorEmployeeResponsibleID)?.Email || "-"}</TableCell>
+                                            <TableCell align="center">{employee.find((emp) => emp.Id == item.SeniorEmployeeResponsibleID)?.Email || "-"}</TableCell>
+                                            <TableCell align="center">{employee.find((emp) => emp.Id == item.SupervisorEmployeeResponsibleID)?.Email || "-"}</TableCell>
+                                            <TableCell align="center">{item.ScopeOfWorkURL || "-"}</TableCell>
+                                            <TableCell align="center">{employee.find((emp) => emp.Id == item.EmployeeUpdatedID)?.Email || "-"}</TableCell>
+                                            
+                                        
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+
                         </div>
                     </Container>
                 </ThemeProvider>
