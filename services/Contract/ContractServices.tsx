@@ -1,4 +1,4 @@
-import { ConfigBackupInterface, ContractCreateInterface, ContractInterface, ContractUpdateInterface, CreateConfigBackupInterface, CreateDeviceInterface, CreateSoftwareInterface, DeviceInterface } from "@/interfaces/IContract";
+import { DeviceConfigBackupInterface, ContractCreateInterface, ContractInterface, ContractUpdateInterface, CreateDeviceConfigBackupInterface, CreateDeviceInterface, CreateSoftwareInterface, DeviceInterface } from "@/interfaces/IContract";
 import axios from "axios";
 
 export async function CreateContract(contract: Partial<ContractCreateInterface>) {
@@ -65,7 +65,7 @@ export async function CreateSoftware(sf: Partial<CreateSoftwareInterface>) {
         return false;
     }
 }
-export async function CreateConfigBackup(cf: Partial<CreateConfigBackupInterface>) {
+export async function CreateDeviceConfigBackup(cf: Partial<CreateDeviceConfigBackupInterface>) {
     try {
         const reqOpt = {
             headers: {
@@ -74,7 +74,7 @@ export async function CreateConfigBackup(cf: Partial<CreateConfigBackupInterface
             },
         };
 
-        const res = await axios.post(`/api/customer/contract/config/create`, cf, reqOpt);
+        const res = await axios.post(`/api/customer/contract/config/device/create`, cf, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -86,7 +86,7 @@ export async function CreateConfigBackup(cf: Partial<CreateConfigBackupInterface
         return false;
     }
 }
-export async function UpdateConfigBackup(cf: Partial<ConfigBackupInterface>) {
+export async function UpdateDeviceConfigBackup(cf: Partial<DeviceConfigBackupInterface>) {
     try {
         const reqOpt = {
             headers: {
@@ -95,7 +95,7 @@ export async function UpdateConfigBackup(cf: Partial<ConfigBackupInterface>) {
             },
         };
 
-        const res = await axios.patch(`/api/customer/contract/config/update`, cf, reqOpt);
+        const res = await axios.patch(`/api/customer/contract/config/device/update`, cf, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -203,7 +203,7 @@ export async function ListContractHistoryByContractId(id :string) {
         })
     return res
 }
-export async function ListConfigBackupByContractId(id :string) {
+export async function ListDeviceConfigBackupByContractId(id :string) {
     const reqOpt = {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -211,7 +211,7 @@ export async function ListConfigBackupByContractId(id :string) {
         }
     };
 
-    let res = await axios.get(`/api/customer/contract/config/list/contract/${id}`, reqOpt)
+    let res = await axios.get(`/api/customer/contract/config/device/list/contract/${id}`, reqOpt)
         .then((res) => {
             if (res.data) {
                 return res.data.Data
@@ -336,7 +336,7 @@ export async function DeleteSoftwareById(id: string) {
     })
     return res
 }
-export async function DeleteConfigBackupById(id: string) {
+export async function DeleteDeviceConfigBackupById(id: string) {
     const reqOpt = {
         headers:{
             Authorization: `Bearer ${localStorage.getItem("at")}`,
@@ -344,7 +344,7 @@ export async function DeleteConfigBackupById(id: string) {
         }
     };
 
-    let res = await axios.delete(`/api/customer/contract/config/delete/${id}`, reqOpt)
+    let res = await axios.delete(`/api/customer/contract/config/device/delete/${id}`, reqOpt)
     .then((res) => {
         if(res.data){
             return res.data

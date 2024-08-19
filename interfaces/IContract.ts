@@ -182,14 +182,14 @@ export interface CreateSoftwareInterface {
   ContractID?: string;
 }
 
-export interface CreateConfigBackupInterface {
+export interface CreateDeviceConfigBackupInterface {
   Id?: string;
   Note?: string;
   FilePath?: string;
   DeviceID?: string;
   OperationServiceID?: string;
 }
-export interface ConfigBackupInterface {
+export interface DeviceConfigBackupInterface {
   Id?: string;
   Note?: string;
   FilePath?: string;

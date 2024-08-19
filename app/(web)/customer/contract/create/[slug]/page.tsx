@@ -82,10 +82,10 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
         getCustomer(slug);
         getServiceCatalog();
         getSlaType();
-    }, []);
+    }, [slug, getCustomer]);
     React.useEffect(() => {
         getSlaByType(slaTypeNumber);
-    }, [slaTypeNumber]);
+    }, [slaTypeNumber, getSlaByType]);
     const handleInputChangeSlaType = (event: SelectChangeEvent<number>) => {
         setSlaTypeNumber(Number(event.target.value)); // Ensure value is converted to a number
     };
@@ -220,7 +220,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                 },
                             }}
                             className="font-bold"
-                            title={`สัญญาโปรเจค ${contract.ProjectName || ""}`}
+                            title={`Create Customer Contract`}
                         ></CardHeader>
                     </div>
                     <Container maxWidth="lg">
@@ -397,7 +397,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                                 กรุณา เลือกชนิดของ Service Catalog
                                             </option>
                                             {service_catalog.map((item: ServiceCatalogInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -421,7 +421,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                                 กรุณา เลือกชนิดของ sla type
                                             </option>
                                             {slaType.map((item: SlaTypeInterface) => (
-                                                <option value={item.Id}>{item.Type}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Type}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -441,7 +441,7 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
                                                 กรุณา เลือกชนิดของ sla
                                             </option>
                                             {sla.map((item: SlaInterface) => (
-                                                <option value={item.Id}>{item.Response}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Response}</option>
                                             ))}
                                         </Select>
                                     </FormControl>

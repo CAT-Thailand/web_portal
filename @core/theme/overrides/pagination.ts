@@ -7,7 +7,7 @@ const Pagination = () => {
 		MuiPaginationItem: {
 			styleOverrides: {
 				outlined: ({ theme }: OwnerStateThemeType) => ({
-					borderColor: `rgba(${theme.palette.customColors.main}, 0.22)`,
+					borderColor: `rgba(${theme.palette.common.white}, 0.22)`,
 				}),
 				outlinedPrimary: ({ theme }: OwnerStateThemeType) => ({
 					'&.Mui-selected': {

@@ -11,7 +11,7 @@ const Rating = () => {
 					},
 				}),
 				iconEmpty: ({ theme }: OwnerStateThemeType) => ({
-					color: `rgba(${theme.palette.customColors.main}, 0.22)`,
+					color: `rgba(${theme.palette.common.white}, 0.22)`,
 				}),
 			},
 		},

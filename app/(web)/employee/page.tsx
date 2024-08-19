@@ -97,7 +97,7 @@ const Employee = ({ children }: any) => {
                         },
                     }}
                     className="font-bold"
-                    title="Employee Admin Management"
+                    title="HR Management"
                 ></CardHeader>
             </div>
             <CardContent style={{ backgroundColor: "#f8f9fa" }} sx={{ p: 0, px: 2, py: 2, flexGrow: 1 }}>

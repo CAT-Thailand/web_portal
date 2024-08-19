@@ -1,14 +1,14 @@
 "use client";
 
 import Layout from "@/app/(web)/layout";
-import { ConfigBackupInterface, ContractCreateInterface, CreateConfigBackupInterface, CreateDeviceInterface, CreateSoftwareInterface, DeviceInterface, SoftwareInterface } from "@/interfaces/IContract";
+import { DeviceConfigBackupInterface, ContractCreateInterface, CreateDeviceConfigBackupInterface, CreateDeviceInterface, CreateSoftwareInterface, DeviceInterface, SoftwareInterface } from "@/interfaces/IContract";
 import { Alert, Box, Button, CardHeader, createTheme, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, Grid, IconButton, Select, SelectChangeEvent, Snackbar, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, ThemeProvider, Tooltip } from "@mui/material";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { CreateConfigBackup, CreateDevice, CreateSoftware, DeleteConfigBackupById, DeleteDeviceById, DeleteSoftwareById, getContractByID, LisSoftwareByContractId, ListConfigBackupByContractId, ListDeviceByContractId, UpdateConfigBackup, UpdateDevice, UpdateSoftware } from "@/services/Contract/ContractServices";
+import { CreateDeviceConfigBackup, CreateDevice, CreateSoftware, DeleteDeviceConfigBackupById, DeleteDeviceById, DeleteSoftwareById, getContractByID, LisSoftwareByContractId, ListDeviceConfigBackupByContractId, ListDeviceByContractId, UpdateDeviceConfigBackup, UpdateDevice, UpdateSoftware } from "@/services/Contract/ContractServices";
 import { ContentCopy } from "@mui/icons-material";
 import { ListOperationServiceInterface } from "@/interfaces/IOperationService";
 import { GetOperationServiceByContractId, GetOperationServiceById } from "@/services/Operation/OperationServices";
@@ -48,8 +48,8 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
         ServiceCatalogID: 0,
         SlaID: 0
     })
-    const [createConfig, setCreateConfig] = React.useState<Partial<CreateConfigBackupInterface>>({})
-    const [listConfigs, setListConfigss] = React.useState<Partial<ConfigBackupInterface>[]>([])
+    const [createConfig, setCreateConfig] = React.useState<Partial<CreateDeviceConfigBackupInterface>>({})
+    const [listConfigs, setListConfigss] = React.useState<Partial<DeviceConfigBackupInterface>[]>([])
     const [updateState, setUpdateState] = React.useState<boolean>(false)
 
     const [device, setDevice] = React.useState<Partial<DeviceInterface>[]>([])
@@ -78,7 +78,7 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
     };
 
     const getConfigByContractId = async (id: string) => {
-        let res = await ListConfigBackupByContractId(id);
+        let res = await ListDeviceConfigBackupByContractId(id);
         if (res && res.Status !== "error") {
             console.log(res)
             setListConfigss(res)
@@ -96,12 +96,7 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
             setDevice(res)
         }
     }
-    React.useEffect(() => {
-        getConfigByContractId(slug);
-        getContract(slug);
-        getOperationByContractId(slug)
-        getDeviceByContractId(slug)
-    }, [])
+    
     const getContract = async (id: string | undefined) => {
         let res = await getContractByID(id)
         if (res && res.Status !== "error") {
@@ -111,6 +106,13 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
             console.log(contract)
         }
     }
+    React.useEffect(() => {
+        getConfigByContractId(slug);
+        getContract(slug);
+        getOperationByContractId(slug);
+        getDeviceByContractId(slug);
+    }, [slug,getContract]);
+    
     const handleChangeDevice = (event: SelectChangeEvent<string>) => {
         const { name, value } = event.target;
         setCreateConfig((prevDevice) => ({
@@ -157,7 +159,7 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
         setSelectDevice({});
     }
 
-    const handleUpdate = (cf: ConfigBackupInterface) => {
+    const handleUpdate = (cf: DeviceConfigBackupInterface) => {
         setUpdateState(true)
         setCreateConfig({
             ...createConfig,
@@ -172,7 +174,7 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
         try {
 
             if (updateState) {
-                let res = await UpdateConfigBackup(createConfig)
+                let res = await UpdateDeviceConfigBackup(createConfig)
                 if (res && res.Status !== "error") {
                     setAlertMessage("บันทึกข้อมูลสำเร็จ");
                     setSuccess(true);
@@ -184,7 +186,7 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
                 setUpdateState(false)
 
             } else {
-                let res = await CreateConfigBackup(createConfig)
+                let res = await CreateDeviceConfigBackup(createConfig)
                 if (res && res.Status !== "error") {
                     setAlertMessage("บันทึกข้อมูลสำเร็จ");
                     setSuccess(true);
@@ -217,7 +219,7 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
     const [openDelete, setOpenDelete] = React.useState(false);
 
     const handleDelete = async () => { // when click submit
-        let res = await DeleteConfigBackupById(deleteID)
+        let res = await DeleteDeviceConfigBackupById(deleteID)
         if (res) {
             console.log(res.data)
         } else {
@@ -259,7 +261,7 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
                                 },
                             }}
                             className="font-bold"
-                            title={`Device management for contract `}
+                            title={`Config management`}
                         />
                         <Snackbar
                             id="success"
@@ -333,7 +335,7 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
                                                     กรุณา เลือกอุปกรณ์
                                                 </option>
                                                 {device.map((item: DeviceInterface) => (
-                                                    <option value={item.Id}>{item.Serial}</option>
+                                                    <option key={item.Id} value={item.Id}>{item.Serial}</option>
                                                 ))}
                                             </Select>
                                         </FormControl>
@@ -539,7 +541,7 @@ export default function Config({ params: { slug } }: { params: { slug: string } 
                                         </TableHead>
 
                                         <TableBody>
-                                            {listConfigs.map((item: ConfigBackupInterface) => (
+                                            {listConfigs.map((item: DeviceConfigBackupInterface) => (
                                                 <TableRow
                                                     key={item.Id}
                                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

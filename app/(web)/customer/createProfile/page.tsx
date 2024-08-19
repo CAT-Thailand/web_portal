@@ -243,7 +243,7 @@ function CustomerCreate() {
                                             กรุณา เลือก customer group
                                         </option>
                                         {customerGroup.map((item: CustomerGroupInterface) => (
-                                            <option value={item.Id}>{item.Name}</option>
+                                            <option key={item.Id} value={item.Id}>{item.Name}</option>
                                         ))}
                                     </Select>
                                 </FormControl>

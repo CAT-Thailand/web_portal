@@ -28,7 +28,7 @@ const Accordion = () => {
 						'&:first-of-type': { borderTop: `1px solid ${theme.palette.divider}` },
 					}),
 					...(ownerState.disabled === true && {
-						backgroundColor: `rgba(${theme.palette.customColors.main}, 0.12)`,
+						backgroundColor: `rgba(${theme.palette.augmentColor}, 0.12)`,
 					}),
 					...(ownerState.expanded === true && {
 						boxShadow: theme.shadows[skin === 'bordered' ? 0 : 3],

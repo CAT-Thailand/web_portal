@@ -1,7 +1,7 @@
 
 import { ReactNode, createContext, useContext } from 'react'
-import { UserRole } from '../../../../services/api'
-import { Storage } from '../../../../services/storage'
+import { UserRole } from '@/services/api' 
+import { Storage } from '@/services/storage' 
 import  { jwtDecode }  from 'jwt-decode'
 
 export type UserInfoSession = {

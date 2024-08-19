@@ -157,7 +157,7 @@ const Contract = ({ children }: any) => {
                         },
                     }}
                     className="font-bold"
-                    title="Contract Admin Management"
+                    title="Operation Management"
                 ></CardHeader>
             </div>
             <CardContent  sx={{ p: 0, px: 0, py: 0, flexGrow: 0 }}>
@@ -219,7 +219,7 @@ const Contract = ({ children }: any) => {
                                         <TableCell align="center" width="5%"> IncidentPerYear </TableCell>
                                         <TableCell align="center" width="5%"> IncidentPerContract </TableCell>
                                         <TableCell align="center" width="5%"> OverAll Incident Per Contract </TableCell>
-                                        <TableCell align="center" width="5%"> OverAll Incident Per Month </TableCell>
+                                        <TableCell align="center" width="5%"> OverAll Incident Per Year </TableCell>
                                         <TableCell align="center" width="5%"> SLA </TableCell>
                                         <TableCell align="center" width="5%"> View </TableCell>
                                         <TableCell align="center" width="5%"> Appliance </TableCell>

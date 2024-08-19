@@ -215,7 +215,7 @@ const Customer = ({ children }: any) => {
                         },
                     }}
                     className="font-bold"
-                    title="Customer Admin Management"
+                    title="Customer & Contract Management"
                 ></CardHeader>
             </div>
             <TabContext value={String(tabValue)}>

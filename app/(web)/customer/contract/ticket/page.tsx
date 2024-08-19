@@ -156,7 +156,7 @@ const Ticket = ({ children }: any) => {
                         },
                     }}
                     className="font-bold"
-                    title="Operation System Management"
+                    title="Ticket Management"
                 ></CardHeader>
             </div>
             <CardContent style={{ backgroundColor: "#f8f9fa" }} sx={{ p: 0, px: 2, py: 2, flexGrow: 1 }}>

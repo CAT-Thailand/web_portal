@@ -1,7 +1,8 @@
 import { Skin } from '@/@core/layouts/type';
-import { Palette } from '@mui/material';
+import { Palette, PaletteMode } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 
-const DefaultPalette = (mode: Palette['mode'], skin: Skin): Palette => {
+const DefaultPalette = (mode: PaletteMode, skin: Skin): Palette => {
   const whiteColor = '#FFF';
   const lightColor = '76, 78, 100';
   const darkColor = '234, 234, 255';
@@ -17,6 +18,10 @@ const DefaultPalette = (mode: Palette['mode'], skin: Skin): Palette => {
     } else return '#f8f9fa';
   };
 
+  // Creating a base theme to use for augmentColor and other utilities
+  const baseTheme = createTheme();
+
+  // Returning the palette object, first cast to 'unknown', then to 'Palette'
   return {
     customColors: {
       dark: darkColor,
@@ -106,7 +111,11 @@ const DefaultPalette = (mode: Palette['mode'], skin: Skin): Palette => {
       disabledBackground: `rgba(${mainColor}, 0.12)`,
       focus: `rgba(${mainColor}, 0.12)`,
     },
-  } as Palette;
+    contrastThreshold: 3,
+    tonalOffset: 0.2,
+    getContrastText: baseTheme.palette.getContrastText,
+    augmentColor: baseTheme.palette.augmentColor,
+  } as unknown as Palette; // Cast to 'unknown' first, then 'Palette'
 };
 
 export default DefaultPalette;

@@ -371,7 +371,7 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
                                                 กรุณา เลือกชนิดของ role
                                             </option>
                                             {role.map((item: RoleInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -395,7 +395,7 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
                                                 กรุณา เลือกแผนก
                                             </option>
                                             {devision.map((item: DivisionInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -416,7 +416,7 @@ export default function EmployeeUpdate({ params: { slug } }: { params: { slug: s
                                                 กรุณาเลือก supervisor
                                             </option>
                                             {supervisor.map((item: EmployeeInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>

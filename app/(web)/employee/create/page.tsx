@@ -368,7 +368,7 @@ function EmployeeCreate() {
                                                 กรุณา เลือก supervisor
                                             </option>
                                             {supervisor.map((item: EmployeeInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -394,7 +394,7 @@ function EmployeeCreate() {
                                                 กรุณา เลือกแผนก
                                             </option>
                                             {devision.map((item: DivisionInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -414,7 +414,7 @@ function EmployeeCreate() {
                                                 กรุณาเลือก role
                                             </option>
                                             {role.map((item: RoleInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>

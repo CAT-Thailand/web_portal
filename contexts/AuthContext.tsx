@@ -65,6 +65,8 @@ const AuthProvider = ({ children }: Props) => {
 
 	const handleLogout = () => {
 		setUser(null)
+		window.localStorage.clear();
+		cookies.remove('token')
 		// storage.clearAllSession()
 		router.push('/login')
 	}

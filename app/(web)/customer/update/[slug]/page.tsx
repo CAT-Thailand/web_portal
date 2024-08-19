@@ -369,7 +369,7 @@ export default function CustomerUpdate({ params: { slug } }: { params: { slug: s
                                                     กรุณา เลือก customer group
                                                 </option>
                                                 {customerGroup.map((item: CustomerGroupInterface) => (
-                                                    <option value={item.Id}>{item.Name}</option>
+                                                    <option key={item.Id} value={item.Id}>{item.Name}</option>
                                                 ))}
                                             </Select>
                                         </FormControl>

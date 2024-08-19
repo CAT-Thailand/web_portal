@@ -316,7 +316,7 @@ export default function Device({ params: { slug } }: { params: { slug: string } 
                                 },
                             }}
                             className="font-bold"
-                            title={`Device management for contract `}
+                            title={`Appliance & Software management`}
                         />
                         <Snackbar
                             id="success"

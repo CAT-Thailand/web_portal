@@ -292,7 +292,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                 },
                             }}
                             className="font-bold"
-                            title={`สร้าง operation จากสัญญาโปรเจค ${contract.ProjectName || ""} customerPo: ${contract.CustomerPO || ""}`}
+                            title={`Create Ticket`}
                         ></CardHeader>
                     </div>
                     <Container maxWidth="lg">
@@ -529,7 +529,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                                 กรุณา เลือกชนิดของ priority
                                             </option>
                                             {priority.map((item: PriorityInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -552,7 +552,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                                 กรุณา เลือกชนิดของ status
                                             </option>
                                             {status.map((item: StatusInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -572,7 +572,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                                 กรุณา เลือกชนิดของ OperationType
                                             </option>
                                             {operationType.map((item: OperationTypeInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -594,7 +594,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                                 กรุณา เลือกชนิดของ division
                                             </option>
                                             {divisions.map((item: DivisionInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -614,7 +614,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                                 กรุณา เลือกชนิดของ Junior Employee
                                             </option>
                                             {employee.map((item: EmployeeInterface) => (
-                                                <option value={item.Id}>{item.Email}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Email}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -636,7 +636,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                                 กรุณา เลือกชนิดของ Senior Employee
                                             </option>
                                             {employee.map((item: EmployeeInterface) => (
-                                                <option value={item.Id}>{item.Email}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Email}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -656,7 +656,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                                 กรุณา เลือกชนิดของ Supervisor Employee
                                             </option>
                                             {employee.map((item: EmployeeInterface) => (
-                                                <option value={item.Id}>{item.Email}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Email}</option>
                                             ))}
                                         </Select>
                                     </FormControl>

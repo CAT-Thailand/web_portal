@@ -402,7 +402,7 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                                                 กรุณา เลือกชนิดของ Service Catalog
                                             </option>
                                             {service_catalog.map((item: ServiceCatalogInterface) => (
-                                                <option value={item.Id}>{item.Name}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -426,7 +426,7 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                                                 กรุณา เลือกชนิดของ sla type
                                             </option>
                                             {slaType.map((item: SlaTypeInterface) => (
-                                                <option value={item.Id}>{item.Type}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Type}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -446,7 +446,7 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                                                 กรุณา เลือกชนิดของ sla
                                             </option>
                                             {sla.map((item: SlaInterface) => (
-                                                <option value={item.Id}>{item.Response}</option>
+                                                <option key={item.Id} value={item.Id}>{item.Response}</option>
                                             ))}
                                         </Select>
                                     </FormControl>
