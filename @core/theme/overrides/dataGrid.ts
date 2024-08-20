@@ -12,7 +12,7 @@ const DataGrid = () => {
 					},
 				}),
 				columnHeaders: ({ theme }: OwnerStateThemeType) => ({
-					backgroundColor: theme.palette.common.black,
+					backgroundColor: theme.palette.customColors.tableHeaderBg,
 				}),
 				columnHeader: ({ theme }: OwnerStateThemeType) => ({
 					'&:not(.MuiDataGrid-columnHeaderCheckbox)': {

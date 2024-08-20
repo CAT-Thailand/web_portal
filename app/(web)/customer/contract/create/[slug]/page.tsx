@@ -82,10 +82,10 @@ export default function ContractCreate({ params: { slug } }: { params: { slug: s
         getCustomer(slug);
         getServiceCatalog();
         getSlaType();
-    }, [slug, getCustomer]);
+    }, []);
     React.useEffect(() => {
         getSlaByType(slaTypeNumber);
-    }, [slaTypeNumber, getSlaByType]);
+    }, [slaTypeNumber]);
     const handleInputChangeSlaType = (event: SelectChangeEvent<number>) => {
         setSlaTypeNumber(Number(event.target.value)); // Ensure value is converted to a number
     };

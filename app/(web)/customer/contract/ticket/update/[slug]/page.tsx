@@ -19,7 +19,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 import dayjs, { Dayjs } from "dayjs"
 import React from "react"
-import { Container, Alert, Button, FormControl, Snackbar, TextField, createTheme, OutlinedInput, ThemeProvider, CardHeader, Select, SelectChangeEvent, Grid, Divider, TableCell, Link, TableRow, TableBody, Table, TableContainer, TableHead, IconButton, Tooltip } from '@mui/material'
+import { Container, Alert, Button, FormControl, Snackbar, TextField, createTheme, OutlinedInput, ThemeProvider, CardHeader, Select, SelectChangeEvent, Grid, Divider, TableCell, Link, TableRow, TableBody, Table, TableContainer, TableHead, IconButton, Tooltip, Box, Tab, List, ListItem, ListItemText } from '@mui/material'
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import { ListDevisions } from "@/services/Devision/DevisionService"
 import { ListEmployeeByDivision, ListEmployees } from "@/services/Employee/EmployeeServices"
@@ -29,6 +29,9 @@ import { EmployeeCreateInterface, EmployeeInterface } from "@/interfaces/IEmploy
 import { useRouter } from 'next/navigation'
 import { GetCustomerAddressCustomerByID } from "@/services/Customer/CustomerServices"
 import { ContentCopy } from "@mui/icons-material"
+import TabContext from "@mui/lab/TabContext"
+import TabList from "@mui/lab/TabList"
+import TabPanel from "@mui/lab/TabPanel"
 export default function UpdateOperationTicket({ params: { slug } }: { params: { slug: string } }) {
     let router = useRouter()
     const [operationType, setOperationType] = React.useState<ServiceCatalogInterface[]>([])
@@ -125,7 +128,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
         }
 
     }
-    
+
     const [customerAddress, setCustomerAddress] = React.useState<CustomerAddressInterface[]>([]);
     const getCustomerAddress = async (id: string) => {
         try {
@@ -143,7 +146,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
             setError(true);
         }
     }
-    
+
 
 
     React.useEffect(() => {
@@ -231,23 +234,27 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
         });
     };
     const convertDateFormat = (date: Date) => {
-        const newDate = new Date(date)
-        return `${newDate.getDate() < 10 ? "0" + newDate.getDate() : newDate.getDate()}/${newDate.getMonth() + 1 < 10 ? "0" + (newDate.getMonth() + 1) : newDate.getMonth() + 1}/${newDate.getFullYear() < 10 ? "000" + newDate.getFullYear() : newDate.getFullYear() < 100 ? "00" + newDate.getFullYear() : newDate.getFullYear() < 1000 ? "0" + newDate.getFullYear() : newDate.getFullYear()}`
+        const newDate = new Date(date);
+
+        const day = newDate.getDate() < 10 ? "0" + newDate.getDate() : newDate.getDate();
+        const month = newDate.getMonth() + 1 < 10 ? "0" + (newDate.getMonth() + 1) : newDate.getMonth() + 1;
+        const year = newDate.getFullYear();
+        let h = newDate.getHours() - 7;
+        const hours = h < 10 ? "0" + h : h;
+        const minutes = newDate.getMinutes() < 10 ? "0" + newDate.getMinutes() : newDate.getMinutes();
+        const seconds = newDate.getSeconds() < 10 ? "0" + newDate.getSeconds() : newDate.getSeconds();
+
+        return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`
     }
 
     const handleChangeSiteName = (event: SelectChangeEvent<string>) => {
         const { name, value } = event.target;
-        setOperation((prevOperation) => ({
-            ...prevOperation,
-            [name as string]: value,
-        }));
-
         // Find the selected site by name
         const selectedSite = customerAddress.find((site) => site.SiteName === value);
-        console.log("selectedSite: ", selectedSite)
         if (selectedSite) {
             // Update the fields with the selected site's data
-            setOperation({
+            setOperation((prevOperation) => ({
+                ...prevOperation,
                 OperationSiteName: selectedSite.SiteName,
                 OperationSiteAddress: selectedSite.Address,
                 ContactPerson: selectedSite.ContactPerson,
@@ -255,9 +262,8 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                 ContactNumber: selectedSite.ContactNumber,
                 ContactEmail: selectedSite.ContactEmail,
                 OperationSiteGoogleMap: selectedSite.GoogleMapURL
-            });
+            }));
         }
-        console.log("operation: ",operation)
     };
 
 
@@ -283,6 +289,11 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
         setSuccess(false);
         setError(false);
     };
+    const [tabValue, setTabValue] = React.useState(1);
+
+    const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+        setTabValue(newValue);
+    };
 
     let theme = createTheme({ // button theme
         palette: {
@@ -302,7 +313,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Layout>
-                <ThemeProvider theme={theme}>
+                <ThemeProvider theme={theme} >
 
                     <div
                         className="flex flex-row justify-between w-full"
@@ -318,10 +329,10 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                 },
                             }}
                             className="font-bold"
-                            title={`สร้าง operation จากสัญญาโปรเจค ${contract.ProjectName || ""} customerPo: ${contract.CustomerPO || ""}`}
+                            title={`Ticker Number: ${operation.OperationNumber || ""}`}
                         ></CardHeader>
                     </div>
-                    <Container maxWidth="lg">
+                    <div>
                         <Snackbar
                             id="success"
                             open={success}
@@ -346,457 +357,496 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                             </Alert>
                         </Snackbar>
 
-                        <div className="flex flex-col h-screen" style={{height:"105%"}} >
-                        <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Subject</p>
+                        <div className="flex flex-col h-screen" style={{ background: "#f8f9fa" }}>
+                            <TabContext value={String(tabValue)}>
+                                <Box >
+                                    <TabList sx={{ padding: 0, margin: 0 }} onChange={handleChangeTab} aria-label="lab API tabs example" >
+                                        <Tab label="Case detail" value="1" />
+                                        <Tab label="Comment" value="2" />
+                                    </TabList>
+                                </Box>
 
-                                        <TextField
-                                            id="OperationSubject"
-                                            variant="outlined"
-                                            type="string"
-                                            size="medium"
-                                            value={operation.OperationSubject || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>ScopeOfWorkURL</p>
+                                <TabPanel value="1">
+                                    <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "0%" }}>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Subject</p>
+                                                <TextField
+                                                    id="OperationSubject"
+                                                    variant="outlined"
+                                                    type="string"
+                                                    size="medium"
+                                                    value={operation.OperationSubject || ""}
+                                                    onChange={handleInputChange}
+                                                    style={{ color: "black" }}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>ScopeOfWorkURL</p>
+                                                <TextField
+                                                    id="ScopeOfWorkURL"
+                                                    variant="outlined"
+                                                    type="string"
+                                                    size="medium"
+                                                    value={operation.ScopeOfWorkURL || ""}
+                                                    onChange={handleInputChange}
+                                                    style={{ color: "black" }}
+                                                    InputProps={{
+                                                        endAdornment: operation?.ScopeOfWorkURL ? (
+                                                            <Tooltip title="Copy URL">
+                                                                <IconButton
+                                                                    onClick={() => handleCopyClick(operation?.ScopeOfWorkURL!)}
+                                                                    size="small"
+                                                                    style={{ marginLeft: 8 }}
+                                                                >
+                                                                    <ContentCopy style={{ color: "#0000EE" }} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        ) : null,
+                                                    }}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Priority</p>
+                                                <Select
+                                                    native
+                                                    value={operation.PriorityID ?? 0}
+                                                    onChange={handleChangeNumber}
+                                                    inputProps={{
+                                                        name: "PriorityID",
+                                                    }}
+                                                    style={{ color: "black" }}
+                                                >
+                                                    <option value={0} key={0}>
+                                                        กรุณา เลือกชนิดของ priority
+                                                    </option>
+                                                    {priority.map((item: PriorityInterface) => (
+                                                        <option key={item.Id} value={item.Id}>{item.Name}</option>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Status</p>
+                                                <Select
+                                                    native
+                                                    value={operation.StatusID ?? 1}
+                                                    onChange={handleChangeNumber}
+                                                    inputProps={{
+                                                        name: "StatusID",
+                                                    }}
+                                                >
+                                                    <option value={0} key={0}>
+                                                        กรุณา เลือกชนิดของ status
+                                                    </option>
+                                                    {status.map((item: StatusInterface) => (
+                                                        <option key={item.Id} value={item.Id}>{item.Name}</option>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "0%" }}>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>SiteName</p>
+                                                <Select
+                                                    native
+                                                    value={operation.OperationSiteName}
+                                                    onChange={handleChangeSiteName}
+                                                    inputProps={{
+                                                        name: "OperationSiteName",
+                                                    }}
+                                                    style={{ color: "black" }}
+                                                >
+                                                    <option value={0} key={0}>
+                                                        กรุณา เลือกชนิดของ site name
+                                                    </option>
+                                                    {customerAddress.map((item: CustomerAddressInterface) => (
+                                                        <option value={item.SiteName} key={item.Id}>
+                                                            {item.SiteName}
+                                                        </option>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>ContactPerson</p>
+                                                <TextField
+                                                    id="ContactPerson"
+                                                    variant="outlined"
+                                                    size="medium"
+                                                    value={operation.ContactPerson || ""}
+                                                    onChange={handleInputChange}
+                                                    style={{ color: "black" }}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>LineID</p>
 
-                                        <TextField
-                                            id="ScopeOfWorkURL"
-                                            variant="outlined"
-                                            type="string"
-                                            size="medium"
-                                            value={operation.ScopeOfWorkURL || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-                                            InputProps={{
-                                                endAdornment: operation?.ScopeOfWorkURL ? (
-                                                    <Tooltip title="Copy URL">
-                                                        <IconButton
-                                                            onClick={()=>handleCopyClick(operation?.ScopeOfWorkURL!)}
-                                                            size="small"
-                                                            style={{ marginLeft: 8 }}
-                                                        >
-                                                            <ContentCopy style={{ color: "#0000EE" }} />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                ) : null,
-                                            }}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>SiteName</p>
+                                                <TextField
+                                                    id="ContactLineID"
+                                                    variant="outlined"
+                                                    size="medium"
+                                                    value={operation.ContactLineID || ""}
+                                                    onChange={handleInputChange}
+                                                    style={{ color: "black" }}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Phone</p>
+                                                <TextField
+                                                    id="ContactNumber"
+                                                    variant="outlined"
+                                                    size="medium"
+                                                    value={operation.ContactNumber || ""}
+                                                    onChange={handleInputChange}
+                                                    style={{ color: "black" }}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container spacing={3} sx={{ padding: 1 }} style={{ marginLeft: "0%" }}>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Email</p>
+                                                <TextField
+                                                    id="ContactEmail"
+                                                    variant="outlined"
+                                                    type="string"
+                                                    size="medium"
+                                                    value={operation.ContactEmail || ""}
+                                                    onChange={handleInputChange}
+                                                    style={{ color: "black" }}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Date Of Visit</p>
 
-                                        <Select
-                                            native
-                                            value={operation.OperationSiteName}
-                                            onChange={handleChangeSiteName}
-                                            inputProps={{
-                                                name: "OperationSiteName",
-                                            }}
-                                            style={{ color: "black" }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ site name
-                                            </option>
-                                            {customerAddress.map((item: CustomerAddressInterface) => (
-                                                <option value={item.SiteName} key={item.Id}>
-                                                {item.SiteName}
-                                              </option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                
+                                                <DatePicker
+                                                    value={dateOfVisit}
+                                                    views={["day", "month", "year"]}
+                                                    onChange={(newValue: any) => {
+                                                        if (newValue !== null && newValue != undefined) {
+                                                            setDateOfVisit(newValue)
+                                                        }
+                                                    }}
+                                                    format="DD/MM/YYYY"
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>OperationType</p>
+                                                <Select
+                                                    native
+                                                    value={operation.OperationTypeID ?? 0}
+                                                    onChange={handleChangeNumber}
+                                                    inputProps={{
+                                                        name: "OperationTypeID",
+                                                    }}
+                                                >
+                                                    <option value={0} key={0}>
+                                                        กรุณา เลือกชนิดของ OperationType
+                                                    </option>
+                                                    {operationType.map((item: OperationTypeInterface) => (
+                                                        <option key={item.Id} value={item.Id}>{item.Name}</option>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Map URL</p>
 
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                            <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Map URL</p>
+                                                <TextField
+                                                    disabled
+                                                    id="OperationSiteGoogleMap"
+                                                    variant="outlined"
+                                                    type="string"
+                                                    size="medium"
+                                                    value={operation.OperationSiteGoogleMap || ""}
+                                                    onChange={handleInputChange}
+                                                    style={{ color: "black" }}
+                                                    InputProps={{
+                                                        style: {
+                                                            backgroundColor: "#e8e8e8", // Dark background color
+                                                            color: "#000000", // Light text color
+                                                        },
+                                                        endAdornment: operation?.ScopeOfWorkURL ? (
+                                                            <Tooltip title="Copy URL">
+                                                                <IconButton
+                                                                    onClick={() => handleCopyClick(operation?.ScopeOfWorkURL!)}
+                                                                    size="small"
+                                                                    style={{ marginLeft: 8 }}
+                                                                >
+                                                                    <ContentCopy style={{ color: "#0000EE" }} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        ) : null,
+                                                    }}
+                                                />
+                                            </FormControl>
+                                        </Grid>
 
-                                        <TextField
-                                        disabled
-                                            id="OperationSiteGoogleMap"
-                                            variant="outlined"
-                                            type="string"
-                                            size="medium"
-                                            value={operation.OperationSiteGoogleMap || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-                                            InputProps={{
-                                                style: {
-                                                    backgroundColor: "#e8e8e8", // Dark background color
-                                                    color: "#000000", // Light text color
-                                                },
-                                                endAdornment: operation?.ScopeOfWorkURL ? (
-                                                    <Tooltip title="Copy URL">
-                                                        <IconButton
-                                                            onClick={()=>handleCopyClick(operation?.ScopeOfWorkURL!)}
-                                                            size="small"
-                                                            style={{ marginLeft: 8 }}
-                                                        >
-                                                            <ContentCopy style={{ color: "#0000EE" }} />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                ) : null,
-                                            }}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Address</p>
+                                    </Grid>
+                                    <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "0%" }}>
+                                        <Grid item xs={13}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Address</p>
 
-                                        <TextField
-                                        disabled
-                                            id="OperationSiteAddress"
-                                            variant="outlined"
-                                            type="string"
-                                            size="medium"
-                                            value={operation.OperationSiteAddress || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-                                            InputProps={{
-                                                style: {
-                                                    backgroundColor: "#e8e8e8", // Dark background color
-                                                    color: "#000000", // Light text color
-                                                },
-                                            }}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>ContactPerson</p>
+                                                <TextField
+                                                    disabled
+                                                    id="OperationSiteAddress"
+                                                    variant="outlined"
+                                                    type="string"
+                                                    size="medium"
+                                                    value={operation.OperationSiteAddress || ""}
+                                                    onChange={handleInputChange}
+                                                    style={{ color: "black" }}
+                                                    InputProps={{
+                                                        style: {
+                                                            backgroundColor: "#e8e8e8", // Dark background color
+                                                            color: "#000000", // Light text color
+                                                        },
+                                                    }}
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                    </Grid>
 
-                                        <TextField
-                                            id="ContactPerson"
-                                            variant="outlined"
-                                            size="medium"
-                                            value={operation.ContactPerson || ""}
-                                            onChange={handleInputChange}
+                                    <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "0%" }}>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Division</p>
+                                                <Select
+                                                    native
+                                                    value={division ?? 1}
+                                                    onChange={handleInputChangeDivision}
+                                                    inputProps={{
+                                                        name: "DivisionID",
+                                                    }}
+                                                >
+                                                    <option value={0} key={0}>
+                                                        กรุณา เลือกชนิดของ division
+                                                    </option>
+                                                    {divisions.map((item: DivisionInterface) => (
+                                                        <option key={item.Id} value={item.Id}>{item.Name}</option>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Junior Employee</p>
+                                                <Select
+                                                    native
+                                                    value={operation.JuniorEmployeeResponsibleID}
+                                                    onChange={handleChangeString}
+                                                    inputProps={{
+                                                        name: "JuniorEmployeeResponsibleID",
+                                                    }}
+                                                >
+                                                    <option value={0} key={0}>
+                                                        กรุณา เลือกชนิดของ Junior Employee
+                                                    </option>
+                                                    {employee.map((item: EmployeeInterface) => (
+                                                        <option key={item.Id} value={item.Id}>{item.Email}</option>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Senior Employee</p>
+                                                <Select
+                                                    native
+                                                    value={operation.SeniorEmployeeResponsibleID}
+                                                    onChange={handleChangeString}
+                                                    inputProps={{
+                                                        name: "SeniorEmployeeResponsibleID",
+                                                    }}
+                                                >
+                                                    <option value={0} key={0}>
+                                                        กรุณา เลือกชนิดของ Senior Employee
+                                                    </option>
+                                                    {employee.map((item: EmployeeInterface) => (
+                                                        <option key={item.Id} value={item.Id}>{item.Email}</option>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Supervisor Employee</p>
+                                                <Select
+                                                    native
+                                                    value={operation.SupervisorEmployeeResponsibleID}
+                                                    onChange={handleChangeString}
+                                                    inputProps={{
+                                                        name: "SupervisorEmployeeResponsibleID",
+                                                    }}
+                                                >
+                                                    <option value={0} key={0}>
+                                                        กรุณา เลือกชนิดของ Supervisor Employee
+                                                    </option>
+                                                    {employee.map((item: EmployeeInterface) => (
+                                                        <option key={item.Id} value={item.Id}>{item.Email}</option>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
 
-                                            style={{ color: "black" }}
+                                    </Grid>
 
-                                        />
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 1 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>LineID</p>
+                                    <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "0%" }}>
+                                        <Grid item xs={13}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <p style={{ color: "black" }}>Description</p>
+                                                <OutlinedInput
+                                                    id="Description"
+                                                    type="string"
+                                                    size="medium"
+                                                    value={operation.Description || ""}
+                                                    onChange={handleInputChange}
+                                                    style={{ color: "black" }}
+                                                    rows={5}
+                                                    multiline
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "0%" }}>
+                                        <Grid item xs={4}>
+                                            <a href={"/customer/contract/ticket"}>
+                                                <Button
+                                                    variant="contained"
+                                                    sx={{
+                                                        "&.MuiButton-root": {
+                                                            backgroundColor: "#0082EF",
+                                                        },
+                                                    }}
+                                                >
+                                                    Back
+                                                </Button>
+                                            </a>
+                                        </Grid>
+                                        <Grid item xs={8}>
+                                            <Button
+                                                style={{ float: "right" }}
+                                                onClick={submit}
+                                                variant="contained"
+                                                color="primary"
+                                                sx={{
+                                                    "&.MuiButton-root": {
+                                                        backgroundColor: "#0082EF",
+                                                    },
+                                                }}
+                                            >
+                                                Update
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
 
-                                        <TextField
-                                            id="ContactLineID"
-                                            variant="outlined"
-                                            size="medium"
-                                            value={operation.ContactLineID || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Phone</p>
-                                        <TextField
-                                            id="ContactNumber"
-                                            variant="outlined"
-                                            size="medium"
-                                            value={operation.ContactNumber || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Email</p>
-
-                                        <TextField
-                                            id="ContactEmail"
-                                            variant="outlined"
-                                            type="string"
-                                            size="medium"
-                                            value={operation.ContactEmail || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-                                        />
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Date Of Visit</p>
-
-                                        <DatePicker
-                                            value={dateOfVisit}
-                                            views={["day", "month", "year"]}
-                                            onChange={(newValue: any) => {
-                                                if (newValue !== null && newValue != undefined) {
-                                                    setDateOfVisit(newValue)
-                                                }
-                                            }}
-                                            format="DD/MM/YYYY"
-                                        />
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Priority</p>
-                                        <Select
-                                            native
-                                            value={operation.PriorityID ?? 0}
-                                            onChange={handleChangeNumber}
-                                            inputProps={{
-                                                name: "PriorityID",
-                                            }}
-                                            style={{ color: "black" }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ priority
-                                            </option>
-                                            {priority.map((item: PriorityInterface) => (
-                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Status</p>
-                                        <Select
-                                            native
-                                            value={operation.StatusID ?? 1}
-                                            onChange={handleChangeNumber}
-                                            inputProps={{
-                                                name: "StatusID",
-                                            }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ status
-                                            </option>
-                                            {status.map((item: StatusInterface) => (
-                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>OperationType</p>
-                                        <Select
-                                            native
-                                            value={operation.OperationTypeID ?? 0}
-                                            onChange={handleChangeNumber}
-                                            inputProps={{
-                                                name: "OperationTypeID",
-                                            }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ OperationType
-                                            </option>
-                                            {operationType.map((item: OperationTypeInterface) => (
-                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Division</p>
-                                        <Select
-                                            native
-                                            value={division ?? 1}
-                                            onChange={handleInputChangeDivision}
-                                        inputProps={{
-                                            name: "DivisionID",
-                                        }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ division
-                                            </option>
-                                            {divisions.map((item: DivisionInterface) => (
-                                                <option key={item.Id} value={item.Id}>{item.Name}</option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Junior Employee</p>
-                                        <Select
-                                            native
-                                            value={operation.JuniorEmployeeResponsibleID}
-                                            onChange={handleChangeString}
-                                            inputProps={{
-                                                name: "JuniorEmployeeResponsibleID",
-                                            }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ Junior Employee
-                                            </option>
-                                            {employee.map((item: EmployeeInterface) => (
-                                                <option key={item.Id} value={item.Id}>{item.Email}</option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Senior Employee</p>
-                                        <Select
-                                            native
-                                            value={operation.SeniorEmployeeResponsibleID}
-                                            onChange={handleChangeString}
-                                            inputProps={{
-                                                name: "SeniorEmployeeResponsibleID",
-                                            }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ Senior Employee
-                                            </option>
-                                            {employee.map((item: EmployeeInterface) => (
-                                                <option key={item.Id} value={item.Id}>{item.Email}</option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Supervisor Employee</p>
-                                        <Select
-                                            native
-                                            value={operation.SupervisorEmployeeResponsibleID}
-                                            onChange={handleChangeString}
-                                            inputProps={{
-                                                name: "SupervisorEmployeeResponsibleID",
-                                            }}
-                                        >
-                                            <option value={0} key={0}>
-                                                กรุณา เลือกชนิดของ Supervisor Employee
-                                            </option>
-                                            {employee.map((item: EmployeeInterface) => (
-                                                <option key={item.Id} value={item.Id}>{item.Email}</option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={3.5}>
-                                    <FormControl fullWidth variant="outlined">
-                                        <p style={{ color: "black" }}>Description</p>
-                                        <OutlinedInput
-                                            id="Description"
-                                            type="string"
-                                            size="medium"
-                                            value={operation.Description || ""}
-                                            onChange={handleInputChange}
-                                            style={{ color: "black" }}
-                                            rows={1}
-                                            multiline
-                                        />
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                                <Grid item xs={4}>
-                                    <a href={"/customer/contract"}>
-                                        <Button
-                                            variant="contained"
-                                            sx={{
-                                                "&.MuiButton-root": {
-                                                    backgroundColor: "#0082EF",
-                                                },
-                                            }}
-                                        >
-                                            Back
-                                        </Button>
-                                    </a>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Button
-                                        style={{ float: "right" }}
-                                        onClick={submit}
-                                        variant="contained"
-                                        color="primary"
+                                </TabPanel>
+                                <TabPanel value="2">
+                                    <Box
                                         sx={{
-                                            "&.MuiButton-root": {
-                                                backgroundColor: "#0082EF",
-                                            },
+                                            maxHeight: '600px',
+                                            minHeight: '600px',
+                                            overflowY: 'auto',
+                                            padding: 2,
+                                            border: '1px solid #ccc',
+                                            borderRadius: '8px',
                                         }}
                                     >
-                                        Update
-                                    </Button>
-                                </Grid>
-                            </Grid>
+                                        <List>
+                                            {operationHistory.toReversed().map((op, index) => (
+                                                <ListItem
+                                                    key={index}
+                                                    sx={{
+                                                        justifyContent: index % 2 === 0 ? 'flex-start' : 'flex-end',
+                                                    }}
+                                                >
+                                                    <ListItemText
+                                                        sx={{
+                                                            backgroundColor: index % 2 === 0 ? '#e0e0e0' : '#e0f7fa',
+                                                            borderRadius: '10px',
+                                                            padding: 1,
+                                                            maxWidth: '60%',
+                                                            maxHeight: '50%',
+                                                            color: "black"
+
+
+                                                        }}
+
+                                                        primary={op.Description}
+                                                        secondary={`Comment By: ${employee.find((emp) => emp.Id == op.EmployeeUpdatedID)?.Email || " - "} | ${convertDateFormat(op.UpdateDate!) || " - "} น`}
+
+                                                    />
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                    </Box>
+
+                                </TabPanel>
+                            </TabContext>
+
+
                             <Divider sx={{ borderColor: "border-gray-600" }} />
-                            <TableContainer style={{ height:"50%" }} >
-                            <Table aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="center" width="10%"> Subject </TableCell>
-                                        <TableCell align="center" width="10%"> SiteName </TableCell> 
-                                        <TableCell align="center" width="10%"> GoogleMap </TableCell>
-                                        <TableCell align="center" width="10%"> DateOfVisit </TableCell> 
-                                        <TableCell align="center" width="10%"> ContactPerson </TableCell>
-                                        <TableCell align="center" width="10%"> Phone </TableCell> 
-                                        <TableCell align="center" width="5%"> Status </TableCell>
-                                        <TableCell align="center" width="5%"> Priority </TableCell>
-                                        <TableCell align="center" width="10%"> JuniorEmployee </TableCell>
-                                        <TableCell align="center" width="10%"> SeniorEmployee </TableCell>
-                                        <TableCell align="center" width="10%"> SupervisorEmployee </TableCell>
-                                        <TableCell align="center" width="5%"> ScopeOfWorkURL </TableCell>
-                                        <TableCell align="center" width="5%"> Employee Update Email </TableCell>
 
-                                    </TableRow>
-                                </TableHead>
+                            <div style={{ height: `calc(150vh - 300px)`, width: "100%", marginTop: "10px", backgroundColor: "#f8f9fa" }}>
+                                <TableContainer style={{ maxHeight: `calc(100vh - 350px)` }} >
+                                    <Table aria-label="simple table">
+                                        <TableHead>
+                                            <TableRow>
 
-                                <TableBody>
-                                    {operationHistory.map((item: ListOperationServiceHistoryInterface) => (
-                                        <TableRow
-                                            key={item.Id}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell align="left">{item.OperationSubject || "-"}</TableCell>
-                                            <TableCell align="center">{item.OperationSiteName}</TableCell>
-                                            <TableCell align="center">{item.OperationSiteGoogleMap || "-"}</TableCell>
-                                            <TableCell align="center">{convertDateFormat(item.DateOfVisit!) || "-"}</TableCell>
-                                            <TableCell align="center">{item.ContactPerson || "-"}</TableCell>
-                                            <TableCell align="center">{item.ContactNumber || "-"}</TableCell>
-                                            <TableCell align="center">{status.find((st) => st.Id == item.StatusID)?.Name || "-"}</TableCell>
-                                            <TableCell align="center">{priority.find((p) => p.Id == item.PriorityID)?.Name || "-"}</TableCell>
-                                            <TableCell align="center">{employee.find((emp) => emp.Id == item.JuniorEmployeeResponsibleID)?.Email || "-"}</TableCell>
-                                            <TableCell align="center">{employee.find((emp) => emp.Id == item.SeniorEmployeeResponsibleID)?.Email || "-"}</TableCell>
-                                            <TableCell align="center">{employee.find((emp) => emp.Id == item.SupervisorEmployeeResponsibleID)?.Email || "-"}</TableCell>
-                                            <TableCell align="center">{item.ScopeOfWorkURL || "-"}</TableCell>
-                                            <TableCell align="center">{employee.find((emp) => emp.Id == item.EmployeeUpdatedID)?.Email || "-"}</TableCell>
-                                            
-                                        
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                                                <TableCell align="center" width="10%"> SiteName </TableCell>
+                                                <TableCell align="center" width="10%"> GoogleMap </TableCell>
+                                                <TableCell align="center" width="5%"> Priority </TableCell>
+                                                <TableCell align="center" width="5%"> Status </TableCell>
+                                                <TableCell align="center" width="5%"> Update By </TableCell>
+                                                <TableCell align="center" width="10%"> Update Date </TableCell>
+
+                                            </TableRow>
+                                        </TableHead>
+
+                                        <TableBody >
+                                            {operationHistory.map((item: ListOperationServiceHistoryInterface) => (
+                                                <TableRow
+                                                    key={item.Id}
+                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                >
+                                                    <TableCell align="center">{item.OperationSiteName}</TableCell>
+                                                    <TableCell align="center">{item.OperationSiteGoogleMap || "-"}</TableCell>
+                                                    <TableCell align="center">{priority.find((p) => p.Id == item.PriorityID)?.Name || "-"}</TableCell>
+                                                    <TableCell align="center">{status.find((st) => st.Id == item.StatusID)?.Name || "-"}</TableCell>
+                                                    <TableCell align="center">{employee.find((emp) => emp.Id == item.EmployeeUpdatedID)?.Email || "-"}</TableCell>
+                                                    <TableCell align="center">{convertDateFormat(item.UpdateDate!)}</TableCell>
+
+
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </div>
 
                         </div>
-                    </Container>
+                    </div>
+                    {/* </Container> */}
                 </ThemeProvider>
             </Layout>
         </LocalizationProvider>

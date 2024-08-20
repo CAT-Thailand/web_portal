@@ -17,7 +17,7 @@ const Switch = () => {
 						},
 					},
 					'& .Mui-disabled + .MuiSwitch-track': {
-						backgroundColor: `rgb(${theme.palette.common.white})`,
+						backgroundColor: `rgb(${theme.palette.customColors.main})`,
 					},
 				}),
 			},

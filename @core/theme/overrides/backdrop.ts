@@ -9,7 +9,7 @@ const Backdrop = () => {
 				root: ({ theme }: OwnerStateThemeType) => ({
 					backgroundColor:
 						theme.palette.mode === 'light'
-							? `rgba(${theme.palette.common.black}, 0.5)`
+							? `rgba(${theme.palette.customColors.main}, 0.5)`
 							: hexToRGBA('#101121', 0.87),
 				}),
 				invisible: {

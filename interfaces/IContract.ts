@@ -132,9 +132,9 @@ export interface DeviceInterface {
 
 export interface CreateDeviceInterface {
   Id?: string;
-  Brand?: string;
-  Model?: string;
-  Serial?: string;
+  Brand: string;
+  Model: string;
+  Serial: string;
   License?: string;
   Sku?: string;
   DistributerCompany?: string;
@@ -195,6 +195,24 @@ export interface DeviceConfigBackupInterface {
   FilePath?: string;
   DeviceID?: string;
   Device?: DeviceInterface;
+  OperationServiceID?: string;
+  OperationService?: ListOperationServiceInterface;
+}
+
+
+export interface CreateSoftwareConfigBackupInterface {
+  Id?: string;
+  Note?: string;
+  FilePath?: string;
+  SoftwareID?: string;
+  OperationServiceID?: string;
+}
+export interface SoftwareConfigBackupInterface {
+  Id?: string;
+  Note?: string;
+  FilePath?: string;
+  SoftwareID?: string;
+  Software?: SoftwareInterface;
   OperationServiceID?: string;
   OperationService?: ListOperationServiceInterface;
 }

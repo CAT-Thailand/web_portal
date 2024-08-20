@@ -1,4 +1,4 @@
-import { DeviceConfigBackupInterface, ContractCreateInterface, ContractInterface, ContractUpdateInterface, CreateDeviceConfigBackupInterface, CreateDeviceInterface, CreateSoftwareInterface, DeviceInterface } from "@/interfaces/IContract";
+import { DeviceConfigBackupInterface, ContractCreateInterface, ContractInterface, ContractUpdateInterface, CreateDeviceConfigBackupInterface, CreateDeviceInterface, CreateSoftwareInterface, DeviceInterface, CreateSoftwareConfigBackupInterface, SoftwareConfigBackupInterface } from "@/interfaces/IContract";
 import axios from "axios";
 
 export async function CreateContract(contract: Partial<ContractCreateInterface>) {
@@ -96,6 +96,48 @@ export async function UpdateDeviceConfigBackup(cf: Partial<DeviceConfigBackupInt
         };
 
         const res = await axios.patch(`/api/customer/contract/config/device/update`, cf, reqOpt);
+
+        if (res.data) {
+            return res.data;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error("Error creating config backup:", error);
+        return false;
+    }
+}
+export async function CreateSoftwareConfigBackup(cf: Partial<CreateSoftwareConfigBackupInterface>) {
+    try {
+        const reqOpt = {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("at")}`,
+                "Content-Type": "application/json",
+            },
+        };
+
+        const res = await axios.post(`/api/customer/contract/config/software/create`, cf, reqOpt);
+
+        if (res.data) {
+            return res.data;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error("Error creating config backup:", error);
+        return false;
+    }
+}
+export async function UpdateSoftwareConfigBackup(cf: Partial<SoftwareConfigBackupInterface>) {
+    try {
+        const reqOpt = {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("at")}`,
+                "Content-Type": "application/json",
+            },
+        };
+
+        const res = await axios.patch(`/api/customer/contract/config/software/update`, cf, reqOpt);
 
         if (res.data) {
             return res.data;
@@ -212,6 +254,24 @@ export async function ListDeviceConfigBackupByContractId(id :string) {
     };
 
     let res = await axios.get(`/api/customer/contract/config/device/list/contract/${id}`, reqOpt)
+        .then((res) => {
+            if (res.data) {
+                return res.data.Data
+            } else {
+                return false
+            }
+        })
+    return res
+}
+export async function ListSoftwareConfigBackupByContractId(id :string) {
+    const reqOpt = {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/customer/contract/config/software/list/contract/${id}`, reqOpt)
         .then((res) => {
             if (res.data) {
                 return res.data.Data
@@ -345,6 +405,24 @@ export async function DeleteDeviceConfigBackupById(id: string) {
     };
 
     let res = await axios.delete(`/api/customer/contract/config/device/delete/${id}`, reqOpt)
+    .then((res) => {
+        if(res.data){
+            return res.data
+        } else{
+            return false
+        }
+    })
+    return res
+}
+export async function DeleteSoftwareConfigBackupById(id: string) {
+    const reqOpt = {
+        headers:{
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.delete(`/api/customer/contract/config/software/delete/${id}`, reqOpt)
     .then((res) => {
         if(res.data){
             return res.data

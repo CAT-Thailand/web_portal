@@ -4,7 +4,7 @@ import { createTheme } from '@mui/material/styles';
 
 const DefaultPalette = (mode: PaletteMode, skin: Skin): Palette => {
   const whiteColor = '#FFF';
-  const lightColor = '76, 78, 100';
+  const lightColor = '0, 0, 0';
   const darkColor = '234, 234, 255';
   const mainColor = mode === 'light' ? lightColor : darkColor;
 

@@ -42,6 +42,7 @@ export interface UpdateOperationServiceInterface {
   Description?: string;
   DateOfVisit?: string;
   ScopeOfWorkURL?: string;
+  OperationNumber?: string;
 
   ContactPerson?: string;
   ContactNumber?: string;
@@ -67,6 +68,7 @@ export interface ListOperationServiceInterface {
   Description?: string;
   DateOfVisit?: Date;
   ScopeOfWorkURL?: string;
+  OperationNumber?: string;
 
   ContactPerson?: string;
   ContactNumber?: string;
@@ -125,4 +127,6 @@ export interface ListOperationServiceHistoryInterface {
   OperationType?: OperationTypeInterface;
   OperationId?: string;
   Operation?: ListOperationServiceInterface;
+
+  UpdateDate?:Date;
 }

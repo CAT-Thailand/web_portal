@@ -212,17 +212,12 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
 
     const handleChangeSiteName = (event: SelectChangeEvent<string>) => {
         const { name, value } = event.target;
-        setOperation((prevOperation) => ({
-            ...prevOperation,
-            [name as string]: value,
-        }));
-
         // Find the selected site by name
         const selectedSite = customerAddress.find((site) => site.SiteName === value);
-        console.log("selectedSite: ", selectedSite)
         if (selectedSite) {
             // Update the fields with the selected site's data
-            setOperation({
+            setOperation((prevOperation) => ({
+                ...prevOperation,
                 OperationSiteName: selectedSite.SiteName,
                 OperationSiteAddress: selectedSite.Address,
                 ContactPerson: selectedSite.ContactPerson,
@@ -230,9 +225,8 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                 ContactNumber: selectedSite.ContactNumber,
                 ContactEmail: selectedSite.ContactEmail,
                 OperationSiteGoogleMap: selectedSite.GoogleMapURL
-            });
+            }));
         }
-        console.log("operation: ",operation)
     };
 
     // Change Value in Box
@@ -277,12 +271,10 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Layout>
                 <ThemeProvider theme={theme}>
-
                     <div
                         className="flex flex-row justify-between w-full"
                         style={{ backgroundColor: "#f8f9fa" }}
                     >
-
                         <CardHeader
                             sx={{
                                 "& .MuiCardHeader-title": {
@@ -321,7 +313,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                         </Snackbar>
 
                         <div className="w-full">
-                        <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
+                            <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
                                 <Grid item xs={5}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Subject</p>
@@ -373,8 +365,8 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                             </option>
                                             {customerAddress.map((item: CustomerAddressInterface) => (
                                                 <option value={item.SiteName} key={item.Id}>
-                                                {item.SiteName}
-                                              </option>
+                                                    {item.SiteName}
+                                                </option>
                                             ))}
                                         </Select>
                                     </FormControl>
@@ -384,7 +376,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                         <p style={{ color: "black" }}>Map URL</p>
 
                                         <TextField
-                                        disabled
+                                            disabled
                                             id="OperationSiteGoogleMap"
                                             variant="outlined"
                                             type="string"
@@ -402,14 +394,14 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                     </FormControl>
                                 </Grid>
                             </Grid>
-                                
+
                             <Grid container spacing={3} sx={{ padding: 2 }} style={{ marginLeft: "6.5%" }}>
-                            <Grid item xs={10}>
+                                <Grid item xs={10}>
                                     <FormControl fullWidth variant="outlined">
                                         <p style={{ color: "black" }}>Address</p>
 
                                         <TextField
-                                        disabled
+                                            disabled
                                             id="OperationSiteAddress"
                                             variant="outlined"
                                             type="string"
@@ -673,7 +665,7 @@ export default function OperationTicket({ params: { slug } }: { params: { slug: 
                                             value={operation.Description || ""}
                                             onChange={handleInputChange}
                                             style={{ color: "black" }}
-                                            rows={1}
+                                            rows={4}
                                             multiline
                                         />
                                     </FormControl>

@@ -34,15 +34,9 @@ const LoginPage = () => {
     setPassword(value);
   };
 
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSuccess(false);
-    setError(false);
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    submit();
   };
  
   const submit = async () => {
@@ -50,6 +44,7 @@ const LoginPage = () => {
     
   };
   return (
+    <form onSubmit={handleSubmit}>
 
     <Grid container component="main" sx={{ height: '100vh' }}>
       <CssBaseline />
@@ -134,6 +129,7 @@ const LoginPage = () => {
         </Box>
       </Grid>
     </Grid>
+    </form>
   );
 };
 

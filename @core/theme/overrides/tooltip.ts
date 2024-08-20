@@ -9,10 +9,10 @@ const Tooltip = () => {
 				tooltip: ({ theme }: OwnerStateThemeType) => ({
 					borderRadius: 6,
 					lineHeight: 1.455,
-					backgroundColor: hexToRGBA(theme.palette.common.white, 0.9),
+					backgroundColor: hexToRGBA(theme.palette.customColors.tooltipBg, 0.9),
 				}),
 				arrow: ({ theme }: OwnerStateThemeType) => ({
-					color: hexToRGBA(theme.palette.common.white, 0.9),
+					color: hexToRGBA(theme.palette.customColors.tooltipBg, 0.9),
 				}),
 			},
 		},

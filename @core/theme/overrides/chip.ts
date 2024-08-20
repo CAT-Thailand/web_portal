@@ -1,5 +1,4 @@
 import { hexToRGBA } from '@/@core/utils/hex-to-rgba'
-
 import { OwnerStateThemeType } from "."
 
 const Chip = () => {
@@ -13,7 +12,7 @@ const Chip = () => {
 				},
 				outlined: ({ theme }: OwnerStateThemeType) => ({
 					'&.MuiChip-colorDefault': {
-						borderColor: `rgba(${theme.palette.common.black}, 0.22)`,
+						borderColor: `rgba(${theme.palette.customColors.main}, 0.22)`,
 					},
 				}),
 				avatar: ({ theme }: OwnerStateThemeType) => ({

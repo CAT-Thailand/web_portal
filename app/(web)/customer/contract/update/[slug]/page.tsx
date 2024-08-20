@@ -228,6 +228,29 @@ export default function ContractUpdate({ params: { slug } }: { params: { slug: s
                             title={`สัญญาโปรเจค ${contract.ProjectName || ""}`}
                         ></CardHeader>
                     </div>
+                    <Snackbar
+                            id="success"
+                            open={success}
+                            autoHideDuration={4000}
+                            onClose={handleClose}
+                            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                        >
+                            <Alert onClose={handleClose} severity="success">
+                                บันทึกข้อมูลสำเร็จ
+                            </Alert>
+                        </Snackbar>
+
+                        <Snackbar
+                            id="error"
+                            open={error}
+                            autoHideDuration={4000}
+                            onClose={handleClose}
+                            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                        >
+                            <Alert onClose={handleClose} severity="error">
+                                {message}
+                            </Alert>
+                        </Snackbar>
                     <Container maxWidth="lg">
 
 

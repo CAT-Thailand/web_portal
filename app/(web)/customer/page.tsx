@@ -199,8 +199,6 @@ const Customer = ({ children }: any) => {
     return (
 
         <Layout>
-
-
             <div
                 className="flex flex-row justify-between w-full"
                 style={{ backgroundColor: "#f8f9fa" }}

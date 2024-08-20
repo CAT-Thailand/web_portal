@@ -6,7 +6,7 @@ const Avatar = () => {
 			styleOverrides: {
 				colorDefault: ({ theme }: OwnerStateThemeType) => ({
 					color: theme.palette.text.secondary,
-					backgroundColor: theme.palette.common.black,
+					backgroundColor: theme.palette.customColors.avatarBg,
 				}),
 				rounded: {
 					borderRadius: 8,

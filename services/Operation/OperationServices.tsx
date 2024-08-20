@@ -144,6 +144,25 @@ export async function GetOperationServiceByContractId(id: string) {
         })
     return res
 }
+export async function GetOperationServiceByStatusId(id: Number) {
+    const reqOpt = {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("at")}`,
+            "Content-Type": "application/json",
+        }
+    };
+
+    let res = await axios.get(`/api/operation/status/${id}`, reqOpt)
+        .then((res) => {
+            if (res.data) {
+                return res.data.Data
+            } else {
+                return false
+            }
+        })
+    return res
+}
 export async function GetOperationServiceHistoryByOperationId(id: string) {
     const reqOpt = {
         method: "GET",

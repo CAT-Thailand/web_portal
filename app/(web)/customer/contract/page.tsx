@@ -141,275 +141,314 @@ const Contract = ({ children }: any) => {
     return (
 
         <Layout >
-            <div style={{ backgroundColor: "#f8f9fa"}}>
-
             <div
-                className="justify-between w-full"
-                style={{ backgroundColor: "#f8f9fa", width: "130%" }}
+                style={{
+                    backgroundColor: "#f8f9fa",
+                    minHeight: "100vh", // Ensure it fills the entire height
+                    display: "flex",
+                    flexDirection: "column",
+                }}
             >
 
-                <CardHeader
-                    sx={{
-                        "& .MuiCardHeader-title": {
-                            color: "#161616",
-                            fontSize: "32px",
-                            lineHeight: "48px",
-                        },
-                    }}
-                    className="font-bold"
-                    title="Operation Management"
-                ></CardHeader>
-            </div>
-            <CardContent  sx={{ p: 0, px: 0, py: 0, flexGrow: 0 }}>
-                <div >
-                    <div style={{backgroundColor: "#f8f9fa", width: "130%"}}>
-                        <Grid container spacing={1} >
-                            <Grid item xs={3} className="flex justify-center flex-col-reverse">
-                                <TextField
-                                    style={{
-                                        width: "100%",
-                                        backgroundColor: "white",
-                                        borderRadius: "10px 0px 0px 10px",
-                                    }}
-                                    sx={{
-                                        "& .MuiOutlinedInput-root": {
-                                            borderRadius: "10px 0px 0px 10px",
-                                        },
-                                    }}
-                                    size="small"
-                                    label="Search Name, Email"
-                                    variant="outlined"
-                                    value={searchValue || ""}
-                                    onChange={handleInputChange}
+                <div
+                    className="justify-between w-full"
+                    style={{ backgroundColor: "#f8f9fa", width: "130%" }}
+                >
 
-                                />
-                            </Grid>
-                            <Grid className="flex justify-center flex-col-reverse" sx={{ paddingTop: "4px" }} xs={0.5}>
-                                <Button
-                                    variant="contained"
-                                    onClick={() => { handleSearch() }}
-                                    style={{
-                                        borderRadius: "0px 10px 10px 0px",
-                                        height: "100%",
-                                        width: "100%",
-                                        padding: "10px",
-                                    }}
-                                    sx={{
-                                        "&.MuiButton-root": {
-                                            backgroundColor: "#0082EF",
-                                        },
-                                    }}
-                                >
-                                    <SearchIcon />
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </div>
-                    <div style={{ height: 800, width: "130%", backgroundColor: "#f8f9fa" }} >
-                        <TableContainer  >
-                            <Table aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="center" width="10%"> Company Name </TableCell>
-                                        <TableCell align="center" width="10%"> ProjectName </TableCell> {/* Adjusted width */}
-                                        <TableCell align="center" width="5%"> ContractStart </TableCell>
-                                        <TableCell align="center" width="5%"> ContractStop </TableCell> {/* Adjusted width */}
-                                        <TableCell align="center" width="5%"> VendorPO </TableCell>
-                                        <TableCell align="center" width="5%"> CustomerPO </TableCell> {/* Adjusted width */}
-                                        <TableCell align="center" width="5%"> IncidentPerYear </TableCell>
-                                        <TableCell align="center" width="5%"> IncidentPerContract </TableCell>
-                                        <TableCell align="center" width="5%"> OverAll Incident Per Contract </TableCell>
-                                        <TableCell align="center" width="5%"> OverAll Incident Per Year </TableCell>
-                                        <TableCell align="center" width="5%"> SLA </TableCell>
-                                        <TableCell align="center" width="5%"> View </TableCell>
-                                        <TableCell align="center" width="5%"> Appliance </TableCell>
-                                        <TableCell align="center" width="5%"> Config Backup </TableCell>
-                                        <TableCell align="center" width="5%"> Ticket </TableCell>
-                                        <TableCell align="center" width="5%"> Delete </TableCell>
-
-                                    </TableRow>
-                                </TableHead>
-
-                                <TableBody>
-                                    {contract.map((item: ContractInterface) => (
-                                        <TableRow
-                                            key={item.Id}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-
-                                        >
-
-
-                                            <TableCell align="left">{item.Customer?.CompanyName || "-"}</TableCell>
-                                            <TableCell align="center">{item.ProjectName}</TableCell>
-                                            <TableCell align="center">{convertDateFormat(item.ContractStart!) || "-"}</TableCell>
-                                            <TableCell align="center">{convertDateFormat(item.ContractStop!) || "-"}</TableCell>
-                                            <TableCell align="center">{item.VendorPO || "-"}</TableCell>
-                                            <TableCell align="center">{item.CustomerPO || "-"}</TableCell>
-                                            <TableCell align="center">{item.IncidentPerYear || "-"}</TableCell>
-                                            <TableCell align="center">{item.IncidentPerContract || "-"}</TableCell>
-                                            <TableCell align="center">{item.OverAllIncident || "-"}</TableCell>
-                                            <TableCell align="center">
-                                                <span
-                                                    className={
-                                                        item.IncidentPerYear! > 0 &&
-                                                            item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
-                                                            ? 'ellipsis-wrapper'
-                                                            : ''
-                                                    }
-                                                    style={{
-                                                        borderColor:
-                                                            item.IncidentPerYear! > 0 &&
-                                                                item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
-                                                                ? "White"
-                                                                : 'transparent', // Border color
-                                                        backgroundColor:
-                                                            item.IncidentPerYear! > 0 &&
-                                                                item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
-                                                                ? "#F8F988"
-                                                                : 'transparent',
-                                                        // color: item.IncidentPerYear! > 0 &&
-                                                        //     item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
-                                                        //     ? "white"
-                                                        //     : 'inherit',
-                                                        display: 'inline-block',
-                                                        maxWidth: '150px', // Adjust max-width to control the width of the background
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        whiteSpace: 'nowrap',
-                                                        padding: '4px 30px', // Padding to add space around the text
-                                                        border: '1px solid black', // Border color and width
-                                                        borderRadius: '5px', // Optional: rounded corners
-                                                    }}
-                                                >
-                                                    {item.OverAllIncidentPerYear || "0"}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell align="center">{item.Sla?.Response || "-"}</TableCell>
-                                            <TableCell>
-                                                {
-                                                    <Link href={"/customer/contract/update/" + item.Id}>
-                                                        <Button
-                                                            variant='outlined'
-                                                            color='warning'
-                                                            sx={{
-                                                                maxWidth: 60, // Set the maximum width of the button
-                                                                maxHeight: 60, // Set the maximum height of the button
-                                                            }}
-                                                        >
-                                                            view
-                                                        </Button>
-                                                    </Link>
-
-                                                }
-                                            </TableCell>
-
-                                            <TableCell>
-                                                {
-                                                    <Link href={"/customer/contract/device/" + item.Id}>
-                                                        <Button
-                                                            variant='outlined'
-                                                            color='primary'
-                                                            sx={{
-                                                                maxWidth: 60, // Set the maximum width of the button
-                                                                maxHeight: 60, // Set the maximum height of the button
-                                                            }}
-                                                        >
-                                                            device
-                                                        </Button>
-                                                    </Link>
-
-                                                }
-                                            </TableCell>
-                                            <TableCell>
-                                                {
-                                                    <Link href={"/customer/contract/config/" + item.Id}>
-                                                        <Button
-                                                            variant='outlined'
-                                                            color="error"
-                                                            sx={{
-                                                                maxWidth: 60, // Set the maximum width of the button
-                                                                maxHeight: 60, // Set the maximum height of the button
-                                                            }}
-                                                        >
-                                                            config
-                                                        </Button>
-                                                    </Link>
-
-                                                }
-                                            </TableCell>
-                                            <TableCell>
-                                                {
-                                                    <Link href={"/customer/contract/ticket/create/" + item.Id}>
-                                                        <Button
-                                                            variant='outlined'
-                                                            color='info'
-                                                            sx={{
-                                                                maxWidth: 60, // Set the maximum width of the button
-                                                                maxHeight: 60, // Set the maximum height of the button
-                                                            }}
-                                                        >
-                                                            ticket
-                                                        </Button>
-                                                    </Link>
-
-                                                }
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                {
-
-                                                    <Button
-                                                        variant='outlined'
-                                                        color='error'
-                                                        onClick={() => { handleDialogDeleteOpen(item.Id) }}
-                                                        sx={{
-                                                            maxWidth: 60, // Set the maximum width of the button
-                                                            maxHeight: 60, // Set the maximum height of the button
-                                                        }}
-
-                                                    >
-                                                        Delete
-                                                    </Button>
-                                                }
-
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                        <Box>
-                        </Box>
-                        <Dialog
-                            open={openDelete}
-                            onClose={handleDialogDeleteclose}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                            PaperProps={{
-                                style: {
-                                    backgroundColor: "#f8f9fa",
-                                },
-                            }}
-                        >
-                            <DialogTitle id="alert-dialog-title">
-                                {`คุณต้องการลบสัญญษโปรเจค ${contract.filter((emp) => (emp.Id === deleteID)).at(0)?.ProjectName} จริงหรือไม่`}
-                            </DialogTitle>
-                            <DialogContent>
-                                <DialogContentText id="alert-dialog-description">
-                                    หากคุณลบข้อมูลนี้แล้วนั้น คุณจะไม่สามารถกู้คืนได้อีก คุณต้องการลบข้อมูลนี้ใช่หรือไม่
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleDialogDeleteclose}>ยกเลิก</Button>
-                                <Button onClick={handleDelete} className="bg-red" autoFocus>
-                                    ยืนยัน
-                                </Button>
-                            </DialogActions>
-
-                        </Dialog>
-                    </div>
-
+                    <CardHeader
+                        sx={{
+                            "& .MuiCardHeader-title": {
+                                color: "#161616",
+                                fontSize: "32px",
+                                lineHeight: "48px",
+                            },
+                        }}
+                        className="font-bold"
+                        title="Operation Management"
+                    ></CardHeader>
                 </div>
-            </CardContent>
+                <CardContent sx={{ p: 0, px: 0, py: 0, flexGrow: 0 }}>
+                    <div >
+                        <div style={{ backgroundColor: "#f8f9fa", width: "130%" }}>
+                            <Grid container spacing={1} >
+                                <Grid item xs={3} className="flex justify-center flex-col-reverse">
+                                    <TextField
+                                        style={{
+                                            width: "100%",
+                                            backgroundColor: "white",
+                                            borderRadius: "10px 0px 0px 10px",
+                                        }}
+                                        sx={{
+                                            "& .MuiOutlinedInput-root": {
+                                                borderRadius: "10px 0px 0px 10px",
+                                            },
+                                        }}
+                                        size="small"
+                                        label="Search Name, Email"
+                                        variant="outlined"
+                                        value={searchValue || ""}
+                                        onChange={handleInputChange}
+
+                                    />
+                                </Grid>
+                                <Grid className="flex justify-center flex-col-reverse" sx={{ paddingTop: "4px" }} xs={0.5}>
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => { handleSearch() }}
+                                        style={{
+                                            borderRadius: "0px 10px 10px 0px",
+                                            height: "100%",
+                                            width: "100%",
+                                            padding: "10px",
+                                        }}
+                                        sx={{
+                                            "&.MuiButton-root": {
+                                                backgroundColor: "#0082EF",
+                                            },
+                                        }}
+                                    >
+                                        <SearchIcon />
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </div>
+                        <div style={{ height: 800, minHeight: "100%", width: "130%", backgroundColor: "#f8f9fa" }} >
+                            <TableContainer  >
+                                <Table aria-label="simple table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell align="center" width="10%"> Company Name </TableCell>
+                                            <TableCell align="center" width="10%"> ProjectName </TableCell> {/* Adjusted width */}
+                                            <TableCell align="center" width="5%"> ContractStart </TableCell>
+                                            <TableCell align="center" width="5%"> ContractStop </TableCell> {/* Adjusted width */}
+                                            <TableCell align="center" width="5%"> VendorPO </TableCell>
+                                            <TableCell align="center" width="5%"> CustomerPO </TableCell> {/* Adjusted width */}
+                                            <TableCell align="center" width="5%"> IncidentPerYear </TableCell>
+                                            <TableCell align="center" width="5%"> OverAll Incident Per Year </TableCell>
+                                            <TableCell align="center" width="5%"> IncidentPerContract </TableCell>
+                                            <TableCell align="center" width="5%"> OverAll Incident Per Contract </TableCell>
+                                            <TableCell align="center" width="5%"> SLA </TableCell>
+                                            <TableCell align="center" width="5%"> View </TableCell>
+                                            <TableCell align="center" width="5%"> Appliance </TableCell>
+                                            <TableCell align="center" width="5%"> Config Backup </TableCell>
+                                            <TableCell align="center" width="5%"> Ticket </TableCell>
+                                            <TableCell align="center" width="5%"> Delete </TableCell>
+
+                                        </TableRow>
+                                    </TableHead>
+
+                                    <TableBody>
+                                        {contract.map((item: ContractInterface) => (
+                                            <TableRow
+                                                key={item.Id}
+                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+
+                                            >
+
+
+                                                <TableCell align="left">{item.Customer?.CompanyName || "-"}</TableCell>
+                                                <TableCell align="center">{item.ProjectName}</TableCell>
+                                                <TableCell align="center">{convertDateFormat(item.ContractStart!) || "-"}</TableCell>
+                                                <TableCell align="center">{convertDateFormat(item.ContractStop!) || "-"}</TableCell>
+                                                <TableCell align="center">{item.VendorPO || "-"}</TableCell>
+                                                <TableCell align="center">{item.CustomerPO || "-"}</TableCell>
+                                                <TableCell align="center">{item.IncidentPerYear || "-"}</TableCell>
+                                                <TableCell align="center">
+                                                    <span
+                                                        className={
+                                                            item.IncidentPerYear! > 0 &&
+                                                                item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
+                                                                ? 'ellipsis-wrapper'
+                                                                : ''
+                                                        }
+                                                        style={{
+                                                            borderColor:
+                                                                item.IncidentPerYear! > 0 &&
+                                                                    item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
+                                                                    ? "White"
+                                                                    : 'transparent', // Border color
+                                                            backgroundColor:
+                                                                item.IncidentPerYear! > 0 &&
+                                                                    item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
+                                                                    ? "#F8F988"
+                                                                    : 'transparent',
+                                                            // color: item.IncidentPerYear! > 0 &&
+                                                            //     item.OverAllIncidentPerYear! / item.IncidentPerYear! >= 0.8
+                                                            //     ? "white"
+                                                            //     : 'inherit',
+                                                            display: 'inline-block',
+                                                            maxWidth: '150px', // Adjust max-width to control the width of the background
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap',
+                                                            padding: '4px 30px', // Padding to add space around the text
+                                                            border: '1px solid black', // Border color and width
+                                                            borderRadius: '5px', // Optional: rounded corners
+                                                        }}
+                                                    >
+                                                        {item.OverAllIncidentPerYear || "0"}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell align="center">{item.IncidentPerContract || "-"}</TableCell>
+                                                <TableCell align="center">
+                                                    <span
+                                                        className={
+                                                            item.IncidentPerContract! > 0 &&
+                                                                item.OverAllIncident! / item.IncidentPerContract! >= 0.8
+                                                                ? 'ellipsis-wrapper'
+                                                                : ''
+                                                        }
+                                                        style={{
+                                                            borderColor:
+                                                                item.IncidentPerContract! > 0 &&
+                                                                    item.OverAllIncident! / item.IncidentPerContract! >= 0.8
+                                                                    ? "White"
+                                                                    : 'transparent', // Border color
+                                                            backgroundColor:
+                                                                item.IncidentPerContract! > 0 &&
+                                                                    item.OverAllIncident! / item.IncidentPerContract! >= 0.8
+                                                                    ? "#F8F988"
+                                                                    : 'transparent',
+
+                                                            display: 'inline-block',
+                                                            maxWidth: '150px', // Adjust max-width to control the width of the background
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap',
+                                                            padding: '4px 30px', // Padding to add space around the text
+                                                            border: '1px solid black', // Border color and width
+                                                            borderRadius: '5px', // Optional: rounded corners
+                                                        }}
+                                                    >
+                                                        {item.OverAllIncident || "0"}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell align="center">{item.Sla?.Response || "-"}</TableCell>
+                                                <TableCell>
+                                                    {
+                                                        <Link href={"/customer/contract/update/" + item.Id}>
+                                                            <Button
+                                                                variant='outlined'
+                                                                color='warning'
+                                                                sx={{
+                                                                    maxWidth: 60, // Set the maximum width of the button
+                                                                    maxHeight: 60, // Set the maximum height of the button
+                                                                }}
+                                                            >
+                                                                view
+                                                            </Button>
+                                                        </Link>
+
+                                                    }
+                                                </TableCell>
+
+                                                <TableCell>
+                                                    {
+                                                        <Link href={"/customer/contract/device/" + item.Id}>
+                                                            <Button
+                                                                variant='outlined'
+                                                                color='primary'
+                                                                sx={{
+                                                                    maxWidth: 60, // Set the maximum width of the button
+                                                                    maxHeight: 60, // Set the maximum height of the button
+                                                                }}
+                                                            >
+                                                                device
+                                                            </Button>
+                                                        </Link>
+
+                                                    }
+                                                </TableCell>
+                                                <TableCell>
+                                                    {
+                                                        <Link href={"/customer/contract/config/" + item.Id}>
+                                                            <Button
+                                                                variant='outlined'
+                                                                color="error"
+                                                                sx={{
+                                                                    maxWidth: 60, // Set the maximum width of the button
+                                                                    maxHeight: 60, // Set the maximum height of the button
+                                                                }}
+                                                            >
+                                                                config
+                                                            </Button>
+                                                        </Link>
+
+                                                    }
+                                                </TableCell>
+                                                <TableCell>
+                                                    {
+                                                        <Link href={"/customer/contract/ticket/create/" + item.Id}>
+                                                            <Button
+                                                                variant='outlined'
+                                                                color='info'
+                                                                sx={{
+                                                                    maxWidth: 60, // Set the maximum width of the button
+                                                                    maxHeight: 60, // Set the maximum height of the button
+                                                                }}
+                                                            >
+                                                                ticket
+                                                            </Button>
+                                                        </Link>
+
+                                                    }
+                                                </TableCell>
+                                                <TableCell align="center">
+                                                    {
+
+                                                        <Button
+                                                            variant='outlined'
+                                                            color='error'
+                                                            onClick={() => { handleDialogDeleteOpen(item.Id) }}
+                                                            sx={{
+                                                                maxWidth: 60, // Set the maximum width of the button
+                                                                maxHeight: 60, // Set the maximum height of the button
+                                                            }}
+
+                                                        >
+                                                            Delete
+                                                        </Button>
+                                                    }
+
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            <Box>
+                            </Box>
+                            <Dialog
+                                open={openDelete}
+                                onClose={handleDialogDeleteclose}
+                                aria-labelledby="alert-dialog-title"
+                                aria-describedby="alert-dialog-description"
+                                PaperProps={{
+                                    style: {
+                                        backgroundColor: "#f8f9fa",
+                                    },
+                                }}
+                            >
+                                <DialogTitle id="alert-dialog-title">
+                                    {`คุณต้องการลบสัญญษโปรเจค ${contract.filter((emp) => (emp.Id === deleteID)).at(0)?.ProjectName} จริงหรือไม่`}
+                                </DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText id="alert-dialog-description">
+                                        หากคุณลบข้อมูลนี้แล้วนั้น คุณจะไม่สามารถกู้คืนได้อีก คุณต้องการลบข้อมูลนี้ใช่หรือไม่
+                                    </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleDialogDeleteclose}>ยกเลิก</Button>
+                                    <Button onClick={handleDelete} className="bg-red" autoFocus>
+                                        ยืนยัน
+                                    </Button>
+                                </DialogActions>
+
+                            </Dialog>
+                        </div>
+
+                    </div>
+                </CardContent>
             </div>
 
         </Layout>
