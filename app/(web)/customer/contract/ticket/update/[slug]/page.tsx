@@ -773,7 +773,7 @@ export default function UpdateOperationTicket({ params: { slug } }: { params: { 
                                         }}
                                     >
                                         <List>
-                                            {operationHistory.toReversed().map((op, index) => (
+                                            {operationHistory.map((op, index) => (
                                                 <ListItem
                                                     key={index}
                                                     sx={{
