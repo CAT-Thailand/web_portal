@@ -298,10 +298,10 @@ const Customer = ({ children }: any) => {
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell align="center" width="30%"> Company Name </TableCell>
-                                                <TableCell align="center"> TaxNumber </TableCell>
+                                                <TableCell align="center"> Tax Invoice Number </TableCell>
                                                 <TableCell align="center"> Customer Group </TableCell>
                                                 <TableCell align="center" width="5%"> Contract </TableCell>
-                                                <TableCell align="center" width="5%"> View </TableCell>
+                                                <TableCell align="center" width="5%"> Edit </TableCell>
                                                 <TableCell align="center" width="5%"> Delete </TableCell>
 
                                             </TableRow>
@@ -345,7 +345,7 @@ const Customer = ({ children }: any) => {
                                                                         maxHeight: 60, // Set the maximum height of the button
                                                                     }}
                                                                 >
-                                                                    View
+                                                                    EDIT
                                                                 </Button>
                                                             </Link>
 

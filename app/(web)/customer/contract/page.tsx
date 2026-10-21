@@ -430,7 +430,7 @@ const Contract = ({ children }: any) => {
                                 }}
                             >
                                 <DialogTitle id="alert-dialog-title">
-                                    {`คุณต้องการลบสัญญษโปรเจค ${contract.filter((emp) => (emp.Id === deleteID)).at(0)?.ProjectName} จริงหรือไม่`}
+                                    {`คุณต้องการลบสัญญาโปรเจค ${contract.filter((emp) => (emp.Id === deleteID)).at(0)?.ProjectName} จริงหรือไม่`}
                                 </DialogTitle>
                                 <DialogContent>
                                     <DialogContentText id="alert-dialog-description">
